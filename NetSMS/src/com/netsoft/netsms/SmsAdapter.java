@@ -7,6 +7,7 @@ import java.util.List;
 
 
 
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SmsAdapter extends BaseAdapter{
@@ -54,8 +56,26 @@ public class SmsAdapter extends BaseAdapter{
         	convertView = inflater.inflate(R.layout.list_sms_row, null);
         
 		TextView tviBody = (TextView) convertView.findViewById(R.id.body);
+		TextView tviType = (TextView) convertView.findViewById(R.id.type);
+		
+		
 	
 		tviBody.setText(item.body.toString());
+		tviType.setText( Integer.toString(item.type));
+		
+		if(item.type == 2){
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			tviBody.setLayoutParams(params);
+		}
+		else{
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
+			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			tviBody.setLayoutParams(params);
+		}
+		
+		
+		
 		return convertView;
 	}
 

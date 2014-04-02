@@ -1,8 +1,12 @@
 package com.netsoft.netsms;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +16,10 @@ import android.widget.TextView;
 
 public class ListContactAdapter extends BaseAdapter{
 	private  Context context;
-	private  List<String> listContacts;
+	private  List<ListContactItem> listContacts;
 	private static LayoutInflater inflater=null;
 	
-	public ListContactAdapter(Context context, List<String> listItems) {
+	public ListContactAdapter(Context context, List<ListContactItem> listItems) {
 		this.context = context;
 		this.listContacts = listItems;
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -44,7 +48,7 @@ public class ListContactAdapter extends BaseAdapter{
 		// TODO Auto-generated method stub
 		 if(convertView==null)
 	        	convertView = inflater.inflate(R.layout.contact_row, null);
-		 final String address = this.listContacts.get(position);
+		 final ListContactItem listContactItem = this.listContacts.get(position);
 		 
 		ImageView imgThum = (ImageView) convertView.findViewById(R.id.list_image);
 		TextView tviAddress = (TextView)convertView.findViewById(R.id.address);
@@ -52,10 +56,12 @@ public class ListContactAdapter extends BaseAdapter{
 		TextView tviTime = (TextView) convertView.findViewById(R.id.time);
 		 
 		imgThum.setImageResource(R.drawable.ic_launcher);
-		tviAddress.setText(address);
-		tviBody.setText("hi hi  " + position);
-		tviTime.setText("ho ho  " + position);
+		tviAddress.setText(listContactItem.address);
+		tviBody.setText(listContactItem.body);
+		tviTime.setText(listContactItem.time);
 		
+		List<SmsItem> listSMS =  new ArrayList<SmsItem>();
+
 		return convertView;
 	}
 

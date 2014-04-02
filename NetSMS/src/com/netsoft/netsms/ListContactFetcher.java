@@ -7,8 +7,8 @@ import android.database.Cursor;
 
 public class ListContactFetcher {
 	
-	public List<String>getListContact(Cursor cursor){	
-		ArrayList<String> listContact = new ArrayList<String>();
+	public List<ListContactItem>getListContact(Cursor cursor){	
+		ArrayList<ListContactItem> listContact = new ArrayList<ListContactItem>();
 		cursor.moveToFirst();
 		do{   
 			int status = 0;
@@ -21,10 +21,14 @@ public class ListContactFetcher {
 				   }
 			   }
 					
-				if(status == 0 && cursor.getColumnName(idx).equals("address"))
+				if(status == 0 && cursor.getColumnName(idx).equals("address")){
+					ListContactItem listContactItem = new ListContactItem();
 					
-					listContact.add(cursor.getString(idx));
-
+					listContactItem.address = cursor.getString(idx);
+					listContactItem.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
+					listContactItem.time = cursor.getString(cursor.getColumnIndexOrThrow("date")).toString();
+					listContact.add(listContactItem);
+				}				
 		   }
 		}while(cursor.moveToNext());
 		

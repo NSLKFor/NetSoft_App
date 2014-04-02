@@ -23,7 +23,7 @@ public class MainActivity extends ListActivity {
 //	private List<SmsItem>smsItems;
 //	private SmsAdapter sadapter;
 	private ListContactAdapter listContactAdapter;
-	private List<String> listContact;
+	private List<ListContactItem> listContact;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -100,11 +100,11 @@ public class MainActivity extends ListActivity {
 
     protected void onListItemClick(ListView l, View v, int position, long id) {              
         //get selected items
-        String address = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, address, Toast.LENGTH_SHORT).show();
+    	ListContactItem listContactItem = (ListContactItem) getListAdapter().getItem(position);
+        Toast.makeText(this, listContactItem.address.toString(), Toast.LENGTH_SHORT).show();
         
         NetSMSApplication application = (NetSMSApplication) getApplication();
-		application.setAddress(address);
+		application.setAddress(listContactItem.address.toString());
 		
 		
 		Intent intent = new Intent(this, ListSMSActivity.class);
