@@ -4,5 +4,9 @@
     <string name="app_name">NetSMS</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="empty_string">Empty</string>
+    <string name="title_activity_list_sms">ListSMSActivity</string>
+    <string name="strEnterBox">Enter your message</string>
+    
 
 </resources>

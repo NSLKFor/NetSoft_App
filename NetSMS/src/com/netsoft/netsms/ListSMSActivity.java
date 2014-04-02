@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,55 +15,56 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class MainActivity extends ListActivity {
+public class ListSMSActivity extends ListActivity {
+
+	private String address;
 	private TextView empty;
-//	private List<SmsItem>smsItems;
-//	private SmsAdapter sadapter;
-	private ListContactAdapter listContactAdapter;
-	private List<String> listContact;
+	private List<SmsItem> listSMS;
+	private SmsAdapter smsAdapter;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-//		if (savedInstanceState == null) {
-//			getFragmentManager().beginTransaction()
-//					.add(R.id.container, new PlaceholderFragment()).commit();
-//		}
+		setContentView(R.layout.activity_list_sms);
+		NetSMSApplication application = (NetSMSApplication) getApplication();
+		address = application.getAddress();
 		
-		this.empty = (TextView) findViewById(R.id.empty);
+		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
 		final ListView listView = getListView();
 		listView.setItemsCanFocus(false);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 		
+//		if (savedInstanceState == null) {
+//			getFragmentManager().beginTransaction()
+//					.add(R.id.container, new PlaceholderFragment()).commit();
+//		}
 		
 		loadListContact();
-		listContactAdapter =  new ListContactAdapter(MainActivity.this, listContact);
-		setListAdapter(listContactAdapter);
-		
+		smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
+		setListAdapter(smsAdapter);
 		
 	}
-	
+
 	private void loadListContact() {
 		// TODO Auto-generated method stub
-		final ListContactFetcher lf=  new ListContactFetcher();	
-    
+		final SmsFetcher sf=  new SmsFetcher(this.address);	
+	    
 		Uri message = Uri.parse("content://sms/");
 		ContentResolver cr = getContentResolver();
 		Cursor cursor = cr.query(message, null, null, null, null);
 
-		listContact = lf.getListContact(cursor);
+		listSMS = sf.getListSMS(cursor);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.list_sm, menu);
 		return true;
 	}
 
@@ -85,31 +85,16 @@ public class MainActivity extends ListActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
-
 		public PlaceholderFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
+			View rootView = inflater.inflate(R.layout.fragment_list_sm,
+					container, false);
 			return rootView;
 		}
 	}
 
-    protected void onListItemClick(ListView l, View v, int position, long id) {              
-        //get selected items
-        String address = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, address, Toast.LENGTH_SHORT).show();
-        
-        NetSMSApplication application = (NetSMSApplication) getApplication();
-		application.setAddress(address);
-		
-		
-		Intent intent = new Intent(this, ListSMSActivity.class);
-		startActivity(intent);
-		
-
-}
 }
