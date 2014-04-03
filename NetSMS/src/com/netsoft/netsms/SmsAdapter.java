@@ -60,8 +60,7 @@ public class SmsAdapter extends BaseAdapter{
 		
 		
 	
-		tviBody.setText(item.body.toString());
-		tviType.setText( Integer.toString(item.type));
+		
 		
 		if(item.type == 2){
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
@@ -71,10 +70,11 @@ public class SmsAdapter extends BaseAdapter{
 		else{
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
 			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			tviBody.setLayoutParams(params);
+			tviBody.setLayoutParams(params);	
 		}
 		
-		
+		tviBody.setText(item.body.toString());
+		tviType.setText( Integer.toString(item.type));
 		
 		return convertView;
 	}

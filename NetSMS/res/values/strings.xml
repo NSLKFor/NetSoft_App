@@ -7,6 +7,7 @@
     <string name="empty_string">Empty</string>
     <string name="title_activity_list_sms">ListSMSActivity</string>
     <string name="strEnterBox">Enter your message</string>
+    <string name="strAddButton">Send</string>
     
 
 </resources>

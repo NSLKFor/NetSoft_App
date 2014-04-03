@@ -12,14 +12,20 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListSMSActivity extends ListActivity {
 
 	private String address;
 	private TextView empty;
+	private Button btnSend;
+	private EditText edtMessage;
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
 	
@@ -29,7 +35,7 @@ public class ListSMSActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_sms);
 		NetSMSApplication application = (NetSMSApplication) getApplication();
-		address = application.getAddress();
+		this.address = application.getAddress();
 		
 		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
@@ -38,14 +44,24 @@ public class ListSMSActivity extends ListActivity {
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 		
-//		if (savedInstanceState == null) {
-//			getFragmentManager().beginTransaction()
-//					.add(R.id.container, new PlaceholderFragment()).commit();
-//		}
-		
 		loadListContact();
 		smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
 		setListAdapter(smsAdapter);
+		
+		edtMessage = (EditText)findViewById(R.id.EnterBox);
+		
+		btnSend = (Button) findViewById(R.id.sendButton);
+		btnSend.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				SMSSender sendSMS =  new SMSSender();
+				sendSMS.sendSMSMessage(address, edtMessage.getText().toString());
+				
+			}
+
+		});
 		
 	}
 

@@ -16,12 +16,13 @@
    
       <EditText
    		android:id="@+id/EnterBox"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minLines="4"
         android:layout_alignParentBottom="true"
-        android:hint="@string/strEnterBox"   
-        android:focusable="false"     
+        android:hint="@string/strEnterBox"
+        android:text=" hello moto"
+        android:focusable="false"
         />
       
         <TextView
@@ -29,15 +30,24 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="#00aa00"
-        android:layout_above="@id/EnterBox"
-        android:text=" " />
+        android:layout_above="@id/EnterBox"/>
         
-         <ListView
+        <ListView
 		android:id="@android:id/list"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
-		android:layout_weight="1" 
 		android:drawSelectorOnTop="false"
-		android:layout_above="@id/sep"/>
+		android:layout_above="@id/sep"
+		/>
+        
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width = "wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strAddButton"
+            android:layout_toRightOf="@id/EnterBox"
+            android:layout_alignParentBottom="true"
+            />
+        
     
 </RelativeLayout>
