@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+ 
+    <TextView
+        android:text="@string/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#040404"
+        android:typeface="sans"
+        android:textSize="20sp"
+        android:layout_marginTop="1dip"
+        android:textStyle="bold"/>
+    
+    <ImageButton
+        android:id="@+id/header"
+        android:src="@drawable/add_icon"
+            android:layout_width="30dip"
+            android:layout_height="30dip" />
+
+</LinearLayout>

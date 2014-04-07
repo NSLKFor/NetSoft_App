@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +29,10 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_main);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
 //		if (savedInstanceState == null) {
 //			getFragmentManager().beginTransaction()
@@ -40,13 +45,22 @@ public class MainActivity extends ListActivity {
 		listView.setItemsCanFocus(false);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
-		
-		
+
 		loadListContact();
 		listContactAdapter =  new ListContactAdapter(MainActivity.this, listContact);
 		setListAdapter(listContactAdapter);
 		
+		ImageButton Add = (ImageButton)findViewById(R.id.header);
 		
+		Add.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(v.getContext(), AddNewSMSActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 	
 	private void loadListContact() {

@@ -1,12 +1,8 @@
 package com.netsoft.netsms;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +15,8 @@ public class ListContactAdapter extends BaseAdapter{
 	private  List<ListContactItem> listContacts;
 	private static LayoutInflater inflater=null;
 	
-	public ListContactAdapter(Context context, List<ListContactItem> listItems) {
-		this.context = context;
+	public ListContactAdapter(Context context1, List<ListContactItem> listItems) {
+		this.context = context1;
 		this.listContacts = listItems;
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
@@ -60,7 +56,6 @@ public class ListContactAdapter extends BaseAdapter{
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(listContactItem.time);
 		
-		List<SmsItem> listSMS =  new ArrayList<SmsItem>();
 
 		return convertView;
 	}

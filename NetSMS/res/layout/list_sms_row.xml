@@ -9,7 +9,7 @@
         android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#040404"
+        android:textColor="#C8C8C8"
         android:typeface="sans"
         android:textSize="15sp"
         android:layout_marginTop="1dip"
@@ -20,7 +20,7 @@
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#040404"
+        android:textColor="#C8C8C8"
         android:typeface="sans"
         android:textSize="15sp"
         android:layout_below="@id/body"
@@ -31,6 +31,6 @@
         android:id="@+id/sep"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#00aa00"/>
+        android:background="#66CCFF"/>
 
 </RelativeLayout>

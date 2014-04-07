@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ListSMSActivity extends ListActivity {
 
@@ -29,22 +28,54 @@ public class ListSMSActivity extends ListActivity {
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
 	
+	Bundle bundle;
+	String strAdd = "";
+	String strBody = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_sms);
+		// get address in application 
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		this.address = application.getAddress();
 		
 		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
+		//*************** Get add from Bundle extra ****************
+		
+		bundle = getIntent().getExtras();
+		if (bundle != null){
+			if(bundle.getString("address") != null ||
+					!(bundle.getString("address").equals(""))){
+				strAdd = bundle.getString("address");
+			}
+			if(bundle.getString("body") != null || 
+					!(bundle.getString("body").equals(""))){
+				strBody = bundle.getString("body");
+			}
+			
+			if(!strAdd.equals("")){
+				address = strAdd;
+				addMessage2List(strAdd, strBody);
+			}
+
+		}
+
+		//**********************************************************
+		
+		//***********Set ListView to render **************
 		final ListView listView = getListView();
 		listView.setItemsCanFocus(false);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 		
+		//**************
+		
+		//***********Load List contact sms *************
 		loadListContact();
+		
+		//*******************************************
 		smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
 		setListAdapter(smsAdapter);
 		
@@ -65,6 +96,18 @@ public class ListSMSActivity extends ListActivity {
 		
 	}
 
+	private void addMessage2List(String strAdd2, String strBody2) {
+		// TODO Auto-generated method stub
+		
+		final SmsFetcher sf=  new SmsFetcher(strAdd2);	
+	    
+		Uri message = Uri.parse("content://sms/");
+		ContentResolver cr = getContentResolver();
+		Cursor cursor = cr.query(message, null, null, null, null);
+
+		listSMS = sf.addItem2List(cursor, strBody2);
+	}
+
 	private void loadListContact() {
 		// TODO Auto-generated method stub
 		final SmsFetcher sf=  new SmsFetcher(this.address);	
@@ -75,6 +118,7 @@ public class ListSMSActivity extends ListActivity {
 
 		listSMS = sf.getListSMS(cursor);
 	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -13,17 +13,19 @@
         android:text="@string/empty_string"
         android:layout_alignParentTop="true" />
     
-   
       <EditText
-   		android:id="@+id/EnterBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minLines="4"
-        android:layout_alignParentBottom="true"
-        android:hint="@string/strEnterBox"
-        android:text=" hello moto"
-        android:focusable="false"
-        />
+          android:id="@+id/EnterBox"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@+id/sep"
+          android:layout_alignParentBottom="true"
+          android:layout_toLeftOf="@+id/sendButton"
+          android:hint="@string/strEnterBox"
+          android:minLines="4"
+          
+          android:focusable="true"
+          android:focusableInTouchMode="true" 
+          />
       
         <TextView
         android:id="@+id/sep"
@@ -39,15 +41,14 @@
 		android:drawSelectorOnTop="false"
 		android:layout_above="@id/sep"
 		/>
-        
+
         <Button
             android:id="@+id/sendButton"
-            android:layout_width = "wrap_content"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/strAddButton"
-            android:layout_toRightOf="@id/EnterBox"
-            android:layout_alignParentBottom="true"
-            />
-        
+            android:layout_alignBottom="@+id/EnterBox"
+            android:layout_alignRight="@+id/sep"
+            android:layout_alignTop="@+id/EnterBox"
+            android:text="@string/strAddButton" />
     
 </RelativeLayout>

@@ -11,21 +11,25 @@ public class SMSRECEIVER extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
+		
+
+		
+		
 		Bundle bundle = intent.getExtras();
 		SmsMessage[] msgs = null;
-		String str = "";
+		String address = "";
+		String body = "";
 		if(bundle != null){
 			Object[] pdus  = (Object[]) bundle.get("pdus");
 			msgs = new SmsMessage[pdus.length];
 			for(int i = 0; i< msgs.length; i++){
 				msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-				str += "SMS from " + msgs[i].getOriginatingAddress();
-				str += " : ";
-				str += msgs[i].getMessageBody().toString();
-				str += "\n";
+				address += msgs[i].getOriginatingAddress();
+				
+				body += msgs[i].getMessageBody().toString();
 			}
 			
-			Toast.makeText(context, str, Toast.LENGTH_LONG).show();
+			Toast.makeText(context, "Receive message from: " + address, Toast.LENGTH_LONG).show();
 			
 /*			Set broadcast intent to action into app to receice 
 			Intent mainActivityIntent = new Intent (context, MainActivity.class);
@@ -39,11 +43,21 @@ public class SMSRECEIVER extends BroadcastReceiver{
 			//this.abortBroadcast();
 			
 */
-			Intent mainActivityIntent = new Intent (context, ListSMSActivity.class);
-			mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			mainActivityIntent.putExtra("sms", str);
+			
+//			
+//			NotifySMS notiSMS = new NotifySMS();
+//			
+//			notiSMS.AlertMessage(context,address, body);
+			
+			
+			
+			
+			Intent smsReceiveIntent = new Intent (context, NotifySMS.class);
+			smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			smsReceiveIntent.putExtra("add", address);
+			smsReceiveIntent.putExtra("bd", body);
 		
-			context.startActivity(mainActivityIntent);
+			context.startActivity(smsReceiveIntent);
 			
 			
 			

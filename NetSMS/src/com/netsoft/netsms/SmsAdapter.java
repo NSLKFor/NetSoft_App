@@ -1,20 +1,11 @@
 package com.netsoft.netsms;
 
 import java.util.List;
-
-
-
-
-
-
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,8 +15,8 @@ public class SmsAdapter extends BaseAdapter{
 	private final List<SmsItem> smsItems;
 	private static LayoutInflater inflater=null;
 	
-	public SmsAdapter(Context context, List<SmsItem> smsItems) {
-		this.context = context;
+	public SmsAdapter(Context context1, List<SmsItem> smsItems) {
+		this.context = context1;
 		this.smsItems = smsItems;
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
