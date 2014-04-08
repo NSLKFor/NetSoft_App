@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/imgPopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="17dp"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/txtAddPopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imgPopup"
+        android:layout_alignRight="@+id/txtPopupEnterBox"
+        android:layout_alignTop="@+id/imgPopup"
+        android:layout_toRightOf="@+id/imgPopup"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/btnDismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtBodyPopup"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:text="Dismiss" />
+
+    <Button
+        android:id="@+id/btnPopupSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtPopupEnterBox"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/txtPopupEnterBox"
+        android:layout_marginRight="16dp"
+        android:text="Send" />
+
+    <TextView
+        android:id="@+id/txtBodyPopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imgPopup"
+        android:layout_alignRight="@+id/btnDismiss"
+        android:layout_below="@+id/imgPopup"
+        android:minLines="5"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/txtPopupEnterBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtBodyPopup"
+        android:layout_below="@+id/txtBodyPopup"
+        android:layout_toLeftOf="@+id/btnPopupSend"
+        android:minLines="3"
+        android:text="TextView" />
+
+</RelativeLayout>

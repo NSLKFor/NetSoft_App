@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,11 +35,6 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.activity_main);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
-//		if (savedInstanceState == null) {
-//			getFragmentManager().beginTransaction()
-//					.add(R.id.container, new PlaceholderFragment()).commit();
-//		}
-		
 		this.empty = (TextView) findViewById(R.id.empty);
 		
 		final ListView listView = getListView();
@@ -126,4 +122,6 @@ public class MainActivity extends ListActivity {
 		
 
 }
+    
+
 }

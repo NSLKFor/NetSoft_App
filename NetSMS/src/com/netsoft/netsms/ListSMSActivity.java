@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListSMSActivity extends ListActivity {
 
@@ -156,5 +158,22 @@ public class ListSMSActivity extends ListActivity {
 			return rootView;
 		}
 	}
+	
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event)
+//    {
+//        if ((keyCode == KeyEvent.KEYCODE_BACK))
+//        {
+//        	Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+    
+    @Override
+    public void onBackPressed() {
+    	Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
+            super.onBackPressed();
+            this.finish();
+    }
 
 }
