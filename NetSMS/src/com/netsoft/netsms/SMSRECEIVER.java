@@ -12,9 +12,6 @@ public class SMSRECEIVER extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		
-
-		
-		
 		Bundle bundle = intent.getExtras();
 		SmsMessage[] msgs = null;
 		String address = "";

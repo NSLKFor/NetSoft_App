@@ -7,6 +7,6 @@ public class SmsItem {
 	public String body;
 	public int readStatus;
 	public int type;
-	public String date;
+	public long date;
 	
 }

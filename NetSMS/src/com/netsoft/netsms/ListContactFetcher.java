@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,10 @@ public class ListContactFetcher {
 					
 					listContactItem.address = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString();
 					listContactItem.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
-					listContactItem.time = cursor.getString(cursor.getColumnIndexOrThrow("date")).toString();
+					listContactItem.time =   cursor.getLong(cursor.getColumnIndexOrThrow("date"));
+					
+//					listContactItem.body = DateFormat.getInstance().format(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
+					
 					listContact.add(listContactItem);
 				}
 		}while(cursor.moveToNext());

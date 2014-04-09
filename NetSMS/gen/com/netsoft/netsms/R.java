@@ -24,8 +24,10 @@ public final class R {
     public static final class drawable {
         public static final int add=0x7f020000;
         public static final int add_icon=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
-        public static final int insert_for_not_empty=0x7f020003;
+        public static final int background=0x7f020002;
+        public static final int background_2=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int insert_for_not_empty=0x7f020005;
     }
     public static final class id {
         public static final int EnterBox=0x7f080004;

@@ -1,5 +1,6 @@
 package com.netsoft.netsms;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import android.content.Context;
@@ -54,7 +55,9 @@ public class ListContactAdapter extends BaseAdapter{
 		imgThum.setImageResource(R.drawable.ic_launcher);
 		tviAddress.setText(listContactItem.address);
 		tviBody.setText(listContactItem.body);
-		tviTime.setText(listContactItem.time);
+		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
+		
+//		listContactItem.body = DateFormat.getInstance().format(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
 		
 
 		return convertView;

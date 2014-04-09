@@ -1,8 +1,10 @@
 package com.netsoft.netsms;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R.integer;
 import android.database.Cursor;
 
 public class SmsFetcher {
@@ -24,7 +26,9 @@ public class SmsFetcher {
 				item.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-				item.date = cursor.getString(cursor.getColumnIndexOrThrow("date")).toString();
+				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000 ;
+				
+				
 				
 				listMessage.add(item);
 			}
@@ -45,8 +49,9 @@ public class SmsFetcher {
 				item.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-				item.date = cursor.getString(cursor.getColumnIndexOrThrow("date")).toString();
+				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000;
 				
+//				item.body = Integer.toString((int) System.currentTimeMillis());
 				listMessage.add(item);
 			}
 		}while(cursor.moveToNext());
@@ -58,7 +63,7 @@ public class SmsFetcher {
 		item.id = (Integer) 0; //Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString()) ;
 		item.readStatus = (Integer) 0; //Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0 ; //Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-		item.date = null; //cursor.getString(cursor.getColumnIndexOrThrow("date")).toString();
+		item.date = 0; //cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000;
 		
 		//listMessage.add(item);
 		return listMessage;
