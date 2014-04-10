@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +29,8 @@ public class ListSMSActivity extends ListActivity {
 
 	private String address;
 	private TextView empty;
-	private Button btnSend;
+	private ImageView btnSend;
+	
 	private EditText edtMessage;
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
@@ -33,11 +38,22 @@ public class ListSMSActivity extends ListActivity {
 	Bundle bundle;
 	String strAdd = "";
 	String strBody = "";
+	String isNotify = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_list_sms);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+		
+		ImageButton Add = (ImageButton)findViewById(R.id.header);
+		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+		
+		
+		
+		
 		// get address in application 
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		this.address = application.getAddress();
@@ -46,16 +62,23 @@ public class ListSMSActivity extends ListActivity {
 		
 		//*************** Get add from Bundle extra ****************
 		
+		
+		
 		bundle = getIntent().getExtras();
 		if (bundle != null){
-			if(bundle.getString("address") != null ||
+			if(bundle.getString("address") != null &&
 					!(bundle.getString("address").equals(""))){
 				strAdd = bundle.getString("address");
 			}
-			if(bundle.getString("body") != null || 
+			if(bundle.getString("body") != null && 
 					!(bundle.getString("body").equals(""))){
 				strBody = bundle.getString("body");
 			}
+			if(bundle.getString("isNotify") != null && 
+					!(bundle.getString("isNotify").equals(""))){
+				isNotify = bundle.getString("isNotify");
+			}
+			
 			
 			if(!strAdd.equals("")){
 				address = strAdd;
@@ -65,6 +88,10 @@ public class ListSMSActivity extends ListActivity {
 		}
 
 		//**********************************************************
+		
+		// set title bar 
+		Add.setVisibility(View.INVISIBLE);
+		nameTitle.setText(address);
 		
 		//***********Set ListView to render **************
 		final ListView listView = getListView();
@@ -83,7 +110,7 @@ public class ListSMSActivity extends ListActivity {
 		
 		edtMessage = (EditText)findViewById(R.id.EnterBox);
 		
-		btnSend = (Button) findViewById(R.id.sendButton);
+		btnSend = (ImageView) findViewById(R.id.imgSend);
 		btnSend.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -173,7 +200,13 @@ public class ListSMSActivity extends ListActivity {
     public void onBackPressed() {
     	Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
             super.onBackPressed();
-            this.finish();
+//            this.finish();
+            if(isNotify.equals("1")){
+            	Intent intent = new Intent(Intent.ACTION_MAIN);
+            	intent.addCategory(Intent.CATEGORY_HOME);
+            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            	startActivity(intent);
+            }
     }
 
 }

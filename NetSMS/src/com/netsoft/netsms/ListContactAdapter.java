@@ -52,7 +52,7 @@ public class ListContactAdapter extends BaseAdapter{
 		TextView tviBody = (TextView)convertView.findViewById(R.id.body);
 		TextView tviTime = (TextView) convertView.findViewById(R.id.time);
 		 
-		imgThum.setImageResource(R.drawable.ic_launcher);
+		imgThum.setImageResource(R.drawable.user_icon);
 		tviAddress.setText(listContactItem.address);
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));

@@ -15,17 +15,23 @@ public class NotifySMS extends Activity{
 	Bundle bundle;
 	String add = "";
 	String bd = "";
+	String timeStamp = "";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		bundle = getIntent().getExtras();
 		
+		if(bundle.getString("EXIT").equals("true")){
+			finish();
+		}
+		
 		add  = bundle.getString("add");
 		bd  = bundle.getString("bd");
+		timeStamp = bundle.getString("timeStamp");
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(" Message from: 01252840600\n Time: today\n This is a test dialod alert for NetSMS")
+		builder.setMessage("New message from: " + add + "\n" + bd + "\n" + timeStamp)
 		.setCancelable(false)
 		.setPositiveButton("Reply", new DialogInterface.OnClickListener() {
 			
@@ -37,6 +43,7 @@ public class NotifySMS extends Activity{
 				smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				smsReceiveIntent.putExtra("address", add);
 				smsReceiveIntent.putExtra("body", bd);
+				smsReceiveIntent.putExtra("isNotify", "1");
 				NotifySMS.this.startActivity(smsReceiveIntent);
 				
 			}
@@ -46,17 +53,23 @@ public class NotifySMS extends Activity{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
+//				Intent intent = new Intent(Intent.ACTION_MAIN);
+//            	intent.addCategory(Intent.CATEGORY_HOME);
+//            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            	startActivity(intent);
+				
+				Intent intent = getIntent();
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.putExtra("EXIT", "true");
+				startActivity(intent);
 				
 			}
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-		
-		
+
 		AlertMessage(this, add, bd);
-		
-		
-		
+	
 	}
 	
 	

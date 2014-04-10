@@ -9,9 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class AddNewSMSActivity extends Activity {
 
@@ -21,7 +24,15 @@ public class AddNewSMSActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_add_new_sms);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+		
+		ImageButton Add = (ImageButton)findViewById(R.id.header);
+		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+		nameTitle.setText("New message");
+		
 
 //		if (savedInstanceState == null) {
 //			getFragmentManager().beginTransaction()

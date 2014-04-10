@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.text.DateFormat;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,14 +18,17 @@ public class SMSRECEIVER extends BroadcastReceiver{
 		SmsMessage[] msgs = null;
 		String address = "";
 		String body = "";
+		String timeStamp = "";
 		if(bundle != null){
 			Object[] pdus  = (Object[]) bundle.get("pdus");
 			msgs = new SmsMessage[pdus.length];
 			for(int i = 0; i< msgs.length; i++){
 				msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-				address += msgs[i].getOriginatingAddress();
+				address = msgs[i].getOriginatingAddress();
 				
-				body += msgs[i].getMessageBody().toString();
+				body = msgs[i].getMessageBody().toString();
+				
+				timeStamp = DateFormat.getInstance().format( msgs[i].getTimestampMillis());
 			}
 			
 			Toast.makeText(context, "Receive message from: " + address, Toast.LENGTH_LONG).show();
@@ -53,6 +58,9 @@ public class SMSRECEIVER extends BroadcastReceiver{
 			smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			smsReceiveIntent.putExtra("add", address);
 			smsReceiveIntent.putExtra("bd", body);
+			smsReceiveIntent.putExtra("timeStamp", timeStamp);
+			smsReceiveIntent.putExtra("EXIT", "");
+			
 		
 			context.startActivity(smsReceiveIntent);
 			

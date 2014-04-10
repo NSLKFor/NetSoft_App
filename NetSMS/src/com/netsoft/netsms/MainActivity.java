@@ -47,6 +47,8 @@ public class MainActivity extends ListActivity {
 		setListAdapter(listContactAdapter);
 		
 		ImageButton Add = (ImageButton)findViewById(R.id.header);
+		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+		nameTitle.setText("NetSMS");
 		
 		Add.setOnClickListener(new View.OnClickListener() {
 			

@@ -2,7 +2,10 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dip" >
+    android:padding="5dip" 
+    android:background="@drawable/background"
+    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+    >
 
   
 		 
@@ -17,38 +20,29 @@
           android:id="@+id/EnterBox"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignLeft="@+id/sep"
+          android:layout_alignLeft="@android:id/list"
           android:layout_alignParentBottom="true"
-          android:layout_toLeftOf="@+id/sendButton"
-          android:hint="@string/strEnterBox"
-          android:minLines="4"
-          
+          android:layout_toLeftOf="@+id/imgSend"
           android:focusable="true"
-          android:focusableInTouchMode="true" 
-          />
-      
-        <TextView
-        android:id="@+id/sep"
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="#00aa00"
-        android:layout_above="@id/EnterBox"/>
-        
+          android:focusableInTouchMode="true"
+          android:hint="@string/strEnterBox"
+          android:minLines="4" />
+
         <ListView
 		android:id="@android:id/list"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
 		android:drawSelectorOnTop="false"
-		android:layout_above="@id/sep"
+		android:layout_above="@id/EnterBox"
 		/>
 
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imgSend"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
             android:layout_alignBottom="@+id/EnterBox"
-            android:layout_alignRight="@+id/sep"
+            android:layout_alignRight="@android:id/list"
             android:layout_alignTop="@+id/EnterBox"
-            android:text="@string/strAddButton" />
+            android:src="@drawable/send_icon" />
     
 </RelativeLayout>
