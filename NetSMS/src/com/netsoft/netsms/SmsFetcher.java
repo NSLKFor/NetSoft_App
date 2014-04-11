@@ -26,7 +26,7 @@ public class SmsFetcher {
 				item.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000 ;
+				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) ;
 				
 				
 				
@@ -49,7 +49,7 @@ public class SmsFetcher {
 				item.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000;
+				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date"));
 				
 //				item.body = Integer.toString((int) System.currentTimeMillis());
 				listMessage.add(item);

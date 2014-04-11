@@ -29,12 +29,11 @@
           android:minLines="4" />
 
         <ListView
-		android:id="@android:id/list"
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent"
-		android:drawSelectorOnTop="false"
-		android:layout_above="@id/EnterBox"
-		/>
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/EnterBox"
+            android:drawSelectorOnTop="false" />
 
         <ImageView
             android:id="@+id/imgSend"

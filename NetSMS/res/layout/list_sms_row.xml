@@ -9,11 +9,12 @@
         android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#3385FF"
+        android:textColor="#003366"
         android:typeface="sans"
         android:textSize="15sp"
         android:layout_marginTop="1dip"
         android:maxWidth="300dp"
+        android:text="Body"
         android:textStyle="bold"/>
     
     <TextView
@@ -24,7 +25,7 @@
         android:typeface="sans"
         android:textSize="15sp"
         android:layout_below="@id/body"
-       
+        android:text="readType"       
         android:textStyle="bold"/>
 
 </RelativeLayout>

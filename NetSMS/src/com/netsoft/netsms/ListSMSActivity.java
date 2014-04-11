@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,6 +32,8 @@ public class ListSMSActivity extends ListActivity {
 	private EditText edtMessage;
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
+	private SmsItem smsItem = new SmsItem();
+	
 	
 	Bundle bundle;
 	String strAdd = "";
@@ -116,11 +116,18 @@ public class ListSMSActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				smsItem.address = address;
+				smsItem.body = edtMessage.getText().toString();
+				smsItem.id = 1;
+				smsItem.readStatus = 1;
+				smsItem.type = 2;
+				smsItem.date = System.currentTimeMillis();
+				
 				SMSSender sendSMS =  new SMSSender();
-				sendSMS.sendSMSMessage(address, edtMessage.getText().toString());
+				sendSMS.sendSMSMessage(v.getContext(), smsItem);
 				
 			}
-
 		});
 		
 	}
@@ -202,9 +209,11 @@ public class ListSMSActivity extends ListActivity {
             super.onBackPressed();
 //            this.finish();
             if(isNotify.equals("1")){
+            	
             	Intent intent = new Intent(Intent.ACTION_MAIN);
+            	intent.putExtra("EXIT", "true");
             	intent.addCategory(Intent.CATEGORY_HOME);
-            	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             	startActivity(intent);
             }
     }

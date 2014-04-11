@@ -29,7 +29,7 @@
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="Address number"
-        android:textColor="#3385FF"
+        android:textColor="#070719"
         android:maxLines="1"
         android:typeface="sans"
         android:textSize="15dip"
@@ -50,18 +50,18 @@
         android:text="description to video" />
  
     <!-- Rightend Duration -->
+
     <TextView
         android:id="@+id/time"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/body"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="Time Receive message"
-        android:textColor="#10bcc9"
-        android:textStyle="bold"
-    	android:textSize="12dip"
-
-    />
+        android:text="Time"
+        android:textColor="#0B610B"
+        android:textSize="12dip"
+        android:layout_margin="2dip"
+        android:textStyle="bold" />
 
 </RelativeLayout>

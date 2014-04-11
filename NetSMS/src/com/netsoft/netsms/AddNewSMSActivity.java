@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.util.Random;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -21,6 +23,8 @@ public class AddNewSMSActivity extends Activity {
 	Button btnSendNew;
 	EditText addNew;
 	EditText sendBodyNew;
+	
+	SmsItem smsItem =  new SmsItem();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,10 +53,20 @@ public class AddNewSMSActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				smsItem.address = addNew.getText().toString();
+				smsItem.body = sendBodyNew.getText().toString();
+				smsItem.id = 1;
+				smsItem.readStatus = 1;
+				smsItem.type = 2;
+				smsItem.date = System.currentTimeMillis();
+				
 				SMSSender sendSMS =  new SMSSender();
-				sendSMS.sendSMSMessage(addNew.getText().toString(), sendBodyNew.getText().toString());
+//				sendSMS.sendSMSMessage(addNew.getText().toString(), sendBodyNew.getText().toString());
+				sendSMS.sendSMSMessage(v.getContext(), smsItem);
 				
 				Intent intent = new Intent(v.getContext(), MainActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
 			}
 		});

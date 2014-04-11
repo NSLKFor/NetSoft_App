@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,13 +43,23 @@ public class MainActivity extends ListActivity {
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 
-		loadListContact();
+		loadListContact(MainActivity.this);
 		listContactAdapter =  new ListContactAdapter(MainActivity.this, listContact);
 		setListAdapter(listContactAdapter);
 		
 		ImageButton Add = (ImageButton)findViewById(R.id.header);
+
 		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
 		nameTitle.setText("NetSMS");
+		
+//		
+//		if("+841252840600".substring(1, 1).equals("+")){
+//			Toast.makeText(this, "match ", Toast.LENGTH_LONG).show();
+//		}else{
+//			Toast.makeText(this, " not match ", Toast.LENGTH_LONG).show();
+//		}
+		
+		
 		
 		Add.setOnClickListener(new View.OnClickListener() {
 			
@@ -61,7 +72,7 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	
-	private void loadListContact() {
+	private void loadListContact(Context context ) {
 		// TODO Auto-generated method stub
 		final ListContactFetcher lf=  new ListContactFetcher();	
     
@@ -69,7 +80,7 @@ public class MainActivity extends ListActivity {
 		ContentResolver cr = getContentResolver();
 		Cursor cursor = cr.query(message, null, null, null, null);
 
-		listContact = lf.getListContact(cursor);
+		listContact = lf.getListContact(context,cursor);
 	}
 
 	@Override
@@ -124,6 +135,7 @@ public class MainActivity extends ListActivity {
 		
 
 }
+  
     
 
 }

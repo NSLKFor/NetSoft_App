@@ -51,9 +51,15 @@ public class ListContactAdapter extends BaseAdapter{
 		TextView tviAddress = (TextView)convertView.findViewById(R.id.address);
 		TextView tviBody = (TextView)convertView.findViewById(R.id.body);
 		TextView tviTime = (TextView) convertView.findViewById(R.id.time);
-		 
+		
+		if(listContactItem.name == null || listContactItem.name.equals("")){
+			tviAddress.setText(listContactItem.address);
+		}else{
+			tviAddress.setText(listContactItem.name);
+		}
+		
 		imgThum.setImageResource(R.drawable.user_icon);
-		tviAddress.setText(listContactItem.address);
+		
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
 		

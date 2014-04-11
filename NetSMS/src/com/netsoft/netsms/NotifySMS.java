@@ -40,11 +40,11 @@ public class NotifySMS extends Activity{
 				// TODO Auto-generated method stub
 				
 				Intent smsReceiveIntent = new Intent (NotifySMS.this, ListSMSActivity.class);
-				smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 				smsReceiveIntent.putExtra("address", add);
 				smsReceiveIntent.putExtra("body", bd);
 				smsReceiveIntent.putExtra("isNotify", "1");
-				NotifySMS.this.startActivity(smsReceiveIntent);
+				startActivity(smsReceiveIntent);
 				
 			}
 		})
@@ -85,6 +85,7 @@ public class NotifySMS extends Activity{
 		
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.ic_launcher, adds + ": New message" , System.currentTimeMillis());	
+		notification.flags = Notification.DEFAULT_LIGHTS |Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
 		
 		Intent notificationIntent = new Intent(context, ListSMSActivity.class);		
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
