@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_sms"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="5dip" >
- 
+
     <TextView
         android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#003366"
-        android:typeface="sans"
-        android:textSize="15sp"
-        android:layout_marginTop="1dip"
+        android:layout_alignParentTop="true"
         android:maxWidth="300dp"
         android:text="Body"
-        android:textStyle="bold"/>
-    
+        android:textColor="#003366"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
     <TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/body"
+        android:text="readType"
         android:textColor="#3385FF"
-        android:typeface="sans"
         android:textSize="15sp"
-        android:layout_below="@id/body"
-        android:text="readType"       
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:typeface="sans" />
 
 </RelativeLayout>

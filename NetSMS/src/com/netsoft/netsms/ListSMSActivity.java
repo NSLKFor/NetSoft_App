@@ -50,9 +50,7 @@ public class ListSMSActivity extends ListActivity {
 		
 		ImageButton Add = (ImageButton)findViewById(R.id.header);
 		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-		
-		
-		
+				
 		
 		// get address in application 
 		NetSMSApplication application = (NetSMSApplication) getApplication();
@@ -61,7 +59,6 @@ public class ListSMSActivity extends ListActivity {
 		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
 		//*************** Get add from Bundle extra ****************
-		
 		
 		
 		bundle = getIntent().getExtras();
@@ -107,6 +104,9 @@ public class ListSMSActivity extends ListActivity {
 		//*******************************************
 		smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
 		setListAdapter(smsAdapter);
+		// set select in bottom o flistview 
+		listView.setSelection(smsAdapter.getCount());
+		
 		
 		edtMessage = (EditText)findViewById(R.id.EnterBox);
 		
@@ -126,6 +126,11 @@ public class ListSMSActivity extends ListActivity {
 				
 				SMSSender sendSMS =  new SMSSender();
 				sendSMS.sendSMSMessage(v.getContext(), smsItem);
+				
+				loadListContact();
+				smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
+				setListAdapter(smsAdapter);
+				listView.setSelection(smsAdapter.getCount());
 				
 			}
 		});
@@ -193,23 +198,12 @@ public class ListSMSActivity extends ListActivity {
 		}
 	}
 	
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event)
-//    {
-//        if ((keyCode == KeyEvent.KEYCODE_BACK))
-//        {
-//        	Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
     
     @Override
     public void onBackPressed() {
     	Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
             super.onBackPressed();
-//            this.finish();
-            if(isNotify.equals("1")){
-            	
+            if(isNotify.equals("1")){           	
             	Intent intent = new Intent(Intent.ACTION_MAIN);
             	intent.putExtra("EXIT", "true");
             	intent.addCategory(Intent.CATEGORY_HOME);

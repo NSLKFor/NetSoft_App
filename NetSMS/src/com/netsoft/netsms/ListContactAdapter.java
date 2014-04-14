@@ -62,10 +62,7 @@ public class ListContactAdapter extends BaseAdapter{
 		
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
-		
-//		listContactItem.body = DateFormat.getInstance().format(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
-		
-
+				
 		return convertView;
 	}
 

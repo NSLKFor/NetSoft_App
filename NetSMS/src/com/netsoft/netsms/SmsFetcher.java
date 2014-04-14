@@ -2,6 +2,7 @@ package com.netsoft.netsms;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.R.integer;
@@ -27,12 +28,12 @@ public class SmsFetcher {
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
 				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) ;
-				
-				
-				
+					
 				listMessage.add(item);
 			}
 		}while(cursor.moveToNext());
+		
+		listMessage = SortListSMS(listMessage);
 		
 		return listMessage;
 	}
@@ -65,8 +66,19 @@ public class SmsFetcher {
 		item.type = (Integer) 0 ; //Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
 		item.date = 0; //cursor.getLong(cursor.getColumnIndexOrThrow("date")) / 1000;
 		
-		//listMessage.add(item);
+		listMessage.add(item);
+		
+		listMessage = SortListSMS(listMessage);
 		return listMessage;
 	}
-
+	public List<SmsItem> SortListSMS (List<SmsItem> list){
+		
+		int lenght = list.size();
+		for(int i =0 ; i < lenght/2; i++){
+			SmsItem temp = list.get(i);
+			list.set(i, list.get(lenght - i  - 1));
+			list.set(lenght - i - 1, temp);
+		}
+		return list;
+	}
 }

@@ -66,27 +66,28 @@ public final class R {
     }
     public static final class id {
         public static final int EnterBox=0x7f080004;
-        public static final int action_settings=0x7f080015;
+        public static final int action_settings=0x7f080016;
         public static final int addAddress=0x7f080000;
         public static final int addEnterBox=0x7f080001;
         public static final int addSend=0x7f080002;
         public static final int address=0x7f080009;
         public static final int body=0x7f08000a;
-        public static final int btnDismiss=0x7f080010;
-        public static final int btnPopupSend=0x7f080012;
+        public static final int btnDismiss=0x7f080011;
+        public static final int btnPopupSend=0x7f080013;
         public static final int empty=0x7f080006;
         public static final int emptySMS=0x7f080003;
-        public static final int header=0x7f080014;
-        public static final int imgPopup=0x7f08000d;
+        public static final int header=0x7f080015;
+        public static final int imgPopup=0x7f08000e;
         public static final int imgSend=0x7f080005;
         public static final int list_image=0x7f080008;
+        public static final int list_sms=0x7f08000c;
         public static final int thumbnail=0x7f080007;
         public static final int time=0x7f08000b;
-        public static final int txtAddPopup=0x7f08000e;
-        public static final int txtBodyPopup=0x7f080011;
-        public static final int txtPopupEnterBox=0x7f08000f;
-        public static final int txtTitle=0x7f080013;
-        public static final int type=0x7f08000c;
+        public static final int txtAddPopup=0x7f08000f;
+        public static final int txtBodyPopup=0x7f080012;
+        public static final int txtPopupEnterBox=0x7f080010;
+        public static final int txtTitle=0x7f080014;
+        public static final int type=0x7f08000d;
     }
     public static final class layout {
         public static final int activity_add_new_sms=0x7f030000;

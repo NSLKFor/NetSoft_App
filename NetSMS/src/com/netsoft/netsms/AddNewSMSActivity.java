@@ -56,7 +56,7 @@ public class AddNewSMSActivity extends Activity {
 				
 				smsItem.address = addNew.getText().toString();
 				smsItem.body = sendBodyNew.getText().toString();
-				smsItem.id = 1;
+				smsItem.id = 0;
 				smsItem.readStatus = 1;
 				smsItem.type = 2;
 				smsItem.date = System.currentTimeMillis();
