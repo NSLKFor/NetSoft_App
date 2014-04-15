@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NetSMS</string>
+    <string name="app_name">NetSoft SMS</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="empty_string">Empty</string>
@@ -14,5 +14,7 @@
     <string name="strAddres">To: </string>
     <string name="strAddEnterBox">Enter mesage </string>
     <string name="strAddSend">Send </string>
+    <string name="action_new_sms">New Message </string>
+    
 
 </resources>

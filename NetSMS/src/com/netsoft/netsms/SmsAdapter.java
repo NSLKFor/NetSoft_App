@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import android.content.Context;
@@ -50,7 +52,7 @@ public class SmsAdapter extends BaseAdapter{
 		if(view == null){
 			view = inflater.inflate(R.layout.list_sms_row, parent,false);
 			holder.body = (TextView) view.findViewById(R.id.body);
-			holder.type = (TextView) view.findViewById(R.id.type);
+			holder.time = (TextView) view.findViewById(R.id.type);
 			holder.list_sms = (RelativeLayout)view.findViewById(R.id.list_sms);
 			
 			view.setTag(holder);
@@ -62,43 +64,46 @@ public class SmsAdapter extends BaseAdapter{
 		holder.position = position;
 				
 		holder.body.setText(item.body.toString());
-				
-		holder.type.setText(Integer.toString(item.type));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat(" HH:mm, MMM dd");
+		//tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
+		holder.time.setText(sdf.format(item.date));
 				
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
+		RelativeLayout.LayoutParams timeParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+		
+		
+		timeParams.addRule(RelativeLayout.BELOW, R.id.body);
+		
+		
 		if(item.type == 2){
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		timeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
 		holder.body.setLayoutParams(params);
+		
+//		params.addRule(RelativeLayout.BELOW, R.id.body);
+		holder.time.setLayoutParams(timeParams);
+		
 		holder.list_sms.setBackgroundColor(Color.parseColor("#2ECCFA"));
 	}
 	else{
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		timeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		
 		holder.body.setLayoutParams(params);
+		
+//		params.addRule(RelativeLayout.BELOW, R.id.body);
+		holder.time.setLayoutParams(timeParams);
+		
 		holder.list_sms.setBackgroundColor(Color.parseColor("#A9F5F2"));
-	}
 		
-        
-//		TextView tviBody = (TextView) view.findViewById(R.id.body);
-//		TextView tviType = (TextView) view.findViewById(R.id.type);
-//                		
-//		tviBody.setText(item.body.toString());
-//		tviType.setText( Integer.toString(item.type));
-//		
-//		if(item.type == 2){
-//			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
-//			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//			tviBody.setLayoutParams(params);
-//		}
-//		else{
-//			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tviBody.getLayoutParams();
-//			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//			tviBody.setLayoutParams(params);	
-//		}
-		
-		 
+	}		 
 		return view;
 	}
 
@@ -106,7 +111,7 @@ public class SmsAdapter extends BaseAdapter{
 
 class ViewHolder {
 	  TextView body;
-	  TextView type;
+	  TextView time;
 	  RelativeLayout list_sms;
 	  int position;
 	}

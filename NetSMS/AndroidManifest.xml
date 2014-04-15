@@ -19,12 +19,11 @@
         android:allowBackup="true"
         android:icon="@drawable/logo_netsoft"
         android:label="@string/app_name"
-        android:theme="@style/CustomTheme"
+        android:theme="@style/Theme.Netsoftsms"
         >
         <activity
             android:name="com.netsoft.netsms.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/CustomTheme"
              >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,8 +34,7 @@
         <activity
             android:name="com.netsoft.netsms.ListSMSActivity"
             android:label="@string/title_activity_list_sms"
-            android:parentActivityName="android.app.ListActivity"
-            android:theme="@style/CustomTheme" >
+            android:parentActivityName="android.app.ListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.app.ListActivity" />
@@ -53,7 +51,7 @@
             android:label="@string/title_activity_add_new_sms" >
         </activity>
         
-                <activity
+        <activity
             android:name="com.netsoft.netsms.NotifySMS"
             android:label="@string/NotifySMS" >
         </activity>

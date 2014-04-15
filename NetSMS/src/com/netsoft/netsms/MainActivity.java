@@ -32,9 +32,9 @@ public class MainActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+//		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_main);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+//		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
 		this.empty = (TextView) findViewById(R.id.empty);
 		
@@ -47,20 +47,17 @@ public class MainActivity extends ListActivity {
 		listContactAdapter =  new ListContactAdapter(MainActivity.this, listContact);
 		setListAdapter(listContactAdapter);
 		
-		ImageButton Add = (ImageButton)findViewById(R.id.header);
+		
+		
 
+/*
+ * title of action bar
+		
 		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
 		nameTitle.setText("NetSMS");
-		
-//		
-//		if("+841252840600".substring(1, 1).equals("+")){
-//			Toast.makeText(this, "match ", Toast.LENGTH_LONG).show();
-//		}else{
-//			Toast.makeText(this, " not match ", Toast.LENGTH_LONG).show();
-//		}
-		
-		
-		
+
+
+		ImageButton Add = (ImageButton)findViewById(R.id.header);
 		Add.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -69,7 +66,9 @@ public class MainActivity extends ListActivity {
 				Intent intent = new Intent(v.getContext(), AddNewSMSActivity.class);
 				startActivity(intent);
 			}
-		});
+		});	
+*/
+		
 	}
 	
 	private void loadListContact(Context context ) {
@@ -100,6 +99,10 @@ public class MainActivity extends ListActivity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
+		if (id == R.id.action_new_sms) {
+			Intent intent = new Intent(this, AddNewSMSActivity.class);
+			startActivity(intent);
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -128,6 +131,14 @@ public class MainActivity extends ListActivity {
         
         NetSMSApplication application = (NetSMSApplication) getApplication();
 		application.setAddress(listContactItem.address.toString());
+		
+		if(listContactItem.name == null){
+			application.setName(listContactItem.address.toString());
+		}else{
+			application.setName(listContactItem.name.toString());
+		}
+		
+		application.setThumnail(listContactItem.thumnail);
 		
 		
 		Intent intent = new Intent(this, ListSMSActivity.class);

@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 import android.app.Fragment;
@@ -7,6 +9,7 @@ import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +29,8 @@ import android.widget.Toast;
 public class ListSMSActivity extends ListActivity {
 
 	private String address;
+	private String name;
+	private Uri thumnail;
 	private TextView empty;
 	private ImageView btnSend;
 	
@@ -44,17 +49,15 @@ public class ListSMSActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+//		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_list_sms);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
-		
-		ImageButton Add = (ImageButton)findViewById(R.id.header);
-		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-				
+//		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 		
 		// get address in application 
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		this.address = application.getAddress();
+		this.name = application.getName();
+		this.thumnail = application.getThumnail();
 		
 		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
@@ -87,9 +90,28 @@ public class ListSMSActivity extends ListActivity {
 		//**********************************************************
 		
 		// set title bar 
-		Add.setVisibility(View.INVISIBLE);
-		nameTitle.setText(address);
+//		ImageButton Add = (ImageButton)findViewById(R.id.header);
+//		Add.setVisibility(View.INVISIBLE);
 		
+// Set title name 
+//		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+//		nameTitle.setText(address);
+		
+		
+		setTitle(this.name);
+		
+		if(this.thumnail != null){ 
+		    InputStream inputStream = null;
+			try {
+				inputStream = getContentResolver().openInputStream(this.thumnail);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    getActionBar().setIcon(Drawable.createFromStream(inputStream, this.thumnail.toString()));
+		}
+		
+//		getActionBar().setIcon(icon);
 		//***********Set ListView to render **************
 		final ListView listView = getListView();
 		listView.setItemsCanFocus(false);
@@ -117,20 +139,27 @@ public class ListSMSActivity extends ListActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				
-				smsItem.address = address;
-				smsItem.body = edtMessage.getText().toString();
-				smsItem.id = 1;
-				smsItem.readStatus = 1;
-				smsItem.type = 2;
-				smsItem.date = System.currentTimeMillis();
 				
-				SMSSender sendSMS =  new SMSSender();
-				sendSMS.sendSMSMessage(v.getContext(), smsItem);
+				if(edtMessage.getText().toString().equals("")){
+					Toast.makeText(v.getContext(), "Your message is null \nPlease enter your message and try again.", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				else{
+					smsItem.address = address;
+					smsItem.body = edtMessage.getText().toString();
+					smsItem.id = 1;
+					smsItem.readStatus = 1;
+					smsItem.type = 2;
+					smsItem.date = System.currentTimeMillis();
 				
-				loadListContact();
-				smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
-				setListAdapter(smsAdapter);
-				listView.setSelection(smsAdapter.getCount());
+					SMSSender sendSMS =  new SMSSender();
+					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+				
+					loadListContact();
+					smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
+					setListAdapter(smsAdapter);
+					listView.setSelection(smsAdapter.getCount());
+				}
 				
 			}
 		});

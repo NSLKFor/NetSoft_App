@@ -3,7 +3,8 @@
     android:id="@+id/list_sms"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="5dip" >
+    android:padding="5dip"
+    android:background="@android:color/transparent" >
 
     <TextView
         android:id="@+id/body"

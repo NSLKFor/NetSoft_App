@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AddNewSMSActivity extends Activity {
 
@@ -29,13 +30,13 @@ public class AddNewSMSActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+//		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_add_new_sms);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+//		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 		
-		ImageButton Add = (ImageButton)findViewById(R.id.header);
-		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-		nameTitle.setText("New message");
+//		ImageButton Add = (ImageButton)findViewById(R.id.header);
+//		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+//		nameTitle.setText("New message");
 		
 
 //		if (savedInstanceState == null) {
@@ -61,13 +62,31 @@ public class AddNewSMSActivity extends Activity {
 				smsItem.type = 2;
 				smsItem.date = System.currentTimeMillis();
 				
-				SMSSender sendSMS =  new SMSSender();
-//				sendSMS.sendSMSMessage(addNew.getText().toString(), sendBodyNew.getText().toString());
-				sendSMS.sendSMSMessage(v.getContext(), smsItem);
+				if(addNew.getText().toString().equals("") || sendBodyNew.getText().toString().equals("")){
 				
-				Intent intent = new Intent(v.getContext(), MainActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+					if(addNew.getText().toString().equals("") && !sendBodyNew.getText().toString().equals("")){
+						Toast.makeText(v.getContext(), "Address is Empty.\nPlease enter address and try again.", Toast.LENGTH_SHORT).show();
+					}
+				
+					if(!addNew.getText().toString().equals("") && sendBodyNew.getText().toString().equals("")){
+						Toast.makeText(v.getContext(), "Your message is Empty. \nPlease enter your message and try again.", Toast.LENGTH_SHORT).show();
+					}
+					
+					if(addNew.getText().toString().equals("") && sendBodyNew.getText().toString().equals("")){
+						Toast.makeText(v.getContext(), "Address and your message and is Empty. \nPlease enter address, your message and try again.", Toast.LENGTH_SHORT).show();
+					}
+					return;
+				}
+				else{
+
+					SMSSender sendSMS =  new SMSSender();
+//					sendSMS.sendSMSMessage(addNew.getText().toString(), sendBodyNew.getText().toString());
+					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+				
+					Intent intent = new Intent(v.getContext(), MainActivity.class);
+					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(intent);
+				}
 			}
 		});
 	}

@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 
 public class ListContactFetcher {
@@ -25,6 +27,11 @@ public class ListContactFetcher {
 				   }
 			   }
 
+			   //check if draft sms "no address but have body"
+			   if(cursor.getString(cursor.getColumnIndexOrThrow("address")) == null || 
+					   cursor.getString(cursor.getColumnIndexOrThrow("address")).toString().equals("")){
+				   continue;
+			   }
 				if(status == 0){
 					ListContactItem listContactItem = new ListContactItem();
 					
@@ -34,6 +41,10 @@ public class ListContactFetcher {
 					listContactItem.name = getContactName(context, listContactItem.address);
 					
 //					listContactItem.body = DateFormat.getInstance().format(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
+					
+					long contact_ID = fetchContactIdFromPhoneNumber(context, listContactItem.address);
+
+					listContactItem.thumnail = getPhotoUri(context, contact_ID);
 					
 					listContact.add(listContactItem);
 				}
@@ -61,6 +72,60 @@ public class ListContactFetcher {
 	        }
 	        return contactName;
 	    }
+	  
+	  public long fetchContactIdFromPhoneNumber(Context context,String phoneNumber) {
+		    Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
+		        Uri.encode(phoneNumber));
+		    Cursor cursor = context.getContentResolver().query(uri,
+		        new String[] { PhoneLookup.DISPLAY_NAME, PhoneLookup._ID },
+		        null, null, null);
 
+		    long contactId = 0;
+
+		    if (cursor.moveToFirst()) {
+		        do {
+		        contactId = cursor.getLong(cursor
+		            .getColumnIndex(PhoneLookup._ID));
+		        } while (cursor.moveToNext());
+		    }
+
+		    return contactId;
+		  }
+
+	  public Uri getPhotoUri(Context context, long contactId) {
+		    ContentResolver contentResolver = context.getContentResolver();
+
+		    try {
+		        Cursor cursor = contentResolver
+		            .query(ContactsContract.Data.CONTENT_URI,
+		                null,
+		                ContactsContract.Data.CONTACT_ID
+		                    + "="
+		                    + contactId
+		                    + " AND "
+
+		                    + ContactsContract.Data.MIMETYPE
+		                    + "='"
+		                    + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE
+		                    + "'", null, null);
+
+		        if (cursor != null) {
+		        if (!cursor.moveToFirst()) {
+		            return null; // no photo
+		        }
+		        } else {
+		        return null; // error in cursor process
+		        }
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return null;
+		    }
+
+		    Uri person = ContentUris.withAppendedId(
+		        ContactsContract.Contacts.CONTENT_URI, contactId);
+		    return Uri.withAppendedPath(person,
+		        ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+		  }
 
 }

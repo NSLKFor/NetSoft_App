@@ -58,7 +58,11 @@ public class ListContactAdapter extends BaseAdapter{
 			tviAddress.setText(listContactItem.name);
 		}
 		
-		imgThum.setImageResource(R.drawable.user_icon);
+		if(listContactItem.thumnail == null){
+			imgThum.setImageResource(R.drawable.user_icon);
+		}else{
+			imgThum.setImageURI(listContactItem.thumnail );
+		}
 		
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));

@@ -22,50 +22,51 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ab_background_textured_netsms_theme=0x7f020000;
-        public static final int ab_bottom_solid_netsms_theme=0x7f020001;
-        public static final int ab_solid_netsms_theme=0x7f020002;
-        public static final int ab_stacked_solid_netsms_theme=0x7f020003;
-        public static final int ab_texture_tile_netsms_theme=0x7f020004;
-        public static final int ab_transparent_netsms_theme=0x7f020005;
+        public static final int ab_background_textured_netsoftsms=0x7f020000;
+        public static final int ab_bottom_solid_netsoftsms=0x7f020001;
+        public static final int ab_solid_netsoftsms=0x7f020002;
+        public static final int ab_stacked_solid_netsoftsms=0x7f020003;
+        public static final int ab_texture_tile_netsoftsms=0x7f020004;
+        public static final int ab_transparent_netsoftsms=0x7f020005;
         public static final int add=0x7f020006;
         public static final int add_icon=0x7f020007;
         public static final int background=0x7f020008;
-        public static final int btn_cab_done_default_netsms_theme=0x7f020009;
-        public static final int btn_cab_done_focused_netsms_theme=0x7f02000a;
-        public static final int btn_cab_done_netsms_theme=0x7f02000b;
-        public static final int btn_cab_done_pressed_netsms_theme=0x7f02000c;
-        public static final int cab_background_bottom_netsms_theme=0x7f02000d;
-        public static final int cab_background_top_netsms_theme=0x7f02000e;
+        public static final int btn_cab_done_default_netsoftsms=0x7f020009;
+        public static final int btn_cab_done_focused_netsoftsms=0x7f02000a;
+        public static final int btn_cab_done_netsoftsms=0x7f02000b;
+        public static final int btn_cab_done_pressed_netsoftsms=0x7f02000c;
+        public static final int cab_background_bottom_netsoftsms=0x7f02000d;
+        public static final int cab_background_top_netsoftsms=0x7f02000e;
         public static final int ic_launcher=0x7f02000f;
         public static final int insert_for_not_empty=0x7f020010;
-        public static final int list_focused_netsms_theme=0x7f020011;
-        public static final int list_pressed_netsms_theme=0x7f020012;
+        public static final int list_focused_netsoftsms=0x7f020011;
+        public static final int list_pressed_netsoftsms=0x7f020012;
         public static final int logo=0x7f020013;
         public static final int logo_netsoft=0x7f020014;
-        public static final int menu_dropdown_panel_netsms_theme=0x7f020015;
-        public static final int progress_bg_netsms_theme=0x7f020016;
-        public static final int progress_horizontal_netsms_theme=0x7f020017;
-        public static final int progress_primary_netsms_theme=0x7f020018;
-        public static final int progress_secondary_netsms_theme=0x7f020019;
-        public static final int selectable_background_netsms_theme=0x7f02001a;
+        public static final int menu_dropdown_panel_netsoftsms=0x7f020015;
+        public static final int progress_bg_netsoftsms=0x7f020016;
+        public static final int progress_horizontal_netsoftsms=0x7f020017;
+        public static final int progress_primary_netsoftsms=0x7f020018;
+        public static final int progress_secondary_netsoftsms=0x7f020019;
+        public static final int selectable_background_netsoftsms=0x7f02001a;
         public static final int send_icon=0x7f02001b;
-        public static final int spinner_ab_default_netsms_theme=0x7f02001c;
-        public static final int spinner_ab_disabled_netsms_theme=0x7f02001d;
-        public static final int spinner_ab_focused_netsms_theme=0x7f02001e;
-        public static final int spinner_ab_pressed_netsms_theme=0x7f02001f;
-        public static final int spinner_background_ab_netsms_theme=0x7f020020;
-        public static final int tab_indicator_ab_netsms_theme=0x7f020021;
-        public static final int tab_selected_focused_netsms_theme=0x7f020022;
-        public static final int tab_selected_netsms_theme=0x7f020023;
-        public static final int tab_selected_pressed_netsms_theme=0x7f020024;
-        public static final int tab_unselected_focused_netsms_theme=0x7f020025;
-        public static final int tab_unselected_netsms_theme=0x7f020026;
-        public static final int tab_unselected_pressed_netsms_theme=0x7f020027;
+        public static final int spinner_ab_default_netsoftsms=0x7f02001c;
+        public static final int spinner_ab_disabled_netsoftsms=0x7f02001d;
+        public static final int spinner_ab_focused_netsoftsms=0x7f02001e;
+        public static final int spinner_ab_pressed_netsoftsms=0x7f02001f;
+        public static final int spinner_background_ab_netsoftsms=0x7f020020;
+        public static final int tab_indicator_ab_netsoftsms=0x7f020021;
+        public static final int tab_selected_focused_netsoftsms=0x7f020022;
+        public static final int tab_selected_netsoftsms=0x7f020023;
+        public static final int tab_selected_pressed_netsoftsms=0x7f020024;
+        public static final int tab_unselected_focused_netsoftsms=0x7f020025;
+        public static final int tab_unselected_netsoftsms=0x7f020026;
+        public static final int tab_unselected_pressed_netsoftsms=0x7f020027;
         public static final int user_icon=0x7f020028;
     }
     public static final class id {
         public static final int EnterBox=0x7f080004;
+        public static final int action_new_sms=0x7f080017;
         public static final int action_settings=0x7f080016;
         public static final int addAddress=0x7f080000;
         public static final int addEnterBox=0x7f080001;
@@ -108,6 +109,7 @@ public final class R {
     }
     public static final class string {
         public static final int NotifySMS=0x7f050005;
+        public static final int action_new_sms=0x7f05000c;
         public static final int action_settings=0x7f050002;
         public static final int app_name=0x7f050000;
         public static final int empty_string=0x7f050003;
@@ -121,6 +123,10 @@ public final class R {
         public static final int title_activity_list_sms=0x7f050004;
     }
     public static final class style {
+        public static final int ActionBar_Solid_Netsoftsms=0x7f060005;
+        public static final int ActionBar_Transparent_Netsoftsms=0x7f060006;
+        public static final int ActionBarTabStyle_Netsoftsms=0x7f060009;
+        public static final int ActionButton_CloseMode_Netsoftsms=0x7f06000c;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -149,5 +155,13 @@ public final class R {
         public static final int AppTheme=0x7f060001;
         public static final int CustomTheme=0x7f060003;
         public static final int CustomWindowTitleBackground=0x7f060002;
+        public static final int DropDownListView_Netsoftsms=0x7f060008;
+        public static final int DropDownNav_Netsoftsms=0x7f06000a;
+        public static final int PopupMenu_Netsoftsms=0x7f060007;
+        public static final int ProgressBar_Netsoftsms=0x7f06000b;
+        public static final int Theme_Netsoftsms=0x7f060004;
+        /**  this style is only referenced in a Light.DarkActionBar based theme 
+         */
+        public static final int Theme_Netsoftsms_Widget=0x7f06000d;
     }
 }
