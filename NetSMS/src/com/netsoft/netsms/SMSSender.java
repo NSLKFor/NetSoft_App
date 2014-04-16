@@ -31,6 +31,6 @@ public class SMSSender {
 	     values.put("type", Integer.toString(item.type));
 //	     values.put("_id", Integer.toString(item.id));
 	        
-	        context.getContentResolver().insert(Uri.parse("content://sms/sent"), values);
+	     context.getContentResolver().insert(Uri.parse("content://sms/sent"), values);
 	}
 }

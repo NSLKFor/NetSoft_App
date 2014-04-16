@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,9 +22,11 @@ import android.widget.Toast;
 
 public class AddNewSMSActivity extends Activity {
 
-	Button btnSendNew;
+	ImageButton btnSendNew;
 	EditText addNew;
 	EditText sendBodyNew;
+	
+	Handler delayhandler = new Handler();
 	
 	SmsItem smsItem =  new SmsItem();
 	@Override
@@ -48,7 +51,7 @@ public class AddNewSMSActivity extends Activity {
 		addNew = (EditText)findViewById(R.id.addAddress);
 		sendBodyNew = (EditText)findViewById(R.id.addEnterBox);
 		
-		btnSendNew = (Button) findViewById(R.id.addSend);
+		btnSendNew = (ImageButton) findViewById(R.id.addSend);
 		btnSendNew.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -127,5 +130,16 @@ public class AddNewSMSActivity extends Activity {
 			return rootView;
 		}
 	}
+	
+    private Runnable mUpdateTimeTask = new Runnable()
+    {   public void run()
+        {   // Todo
+
+            // This line is necessary for the next call
+           // delayhandler.postDelayed(this, 200);
+//            btnSend.setImageResource(R.drawable.send_icon);
+
+        }
+    };
 
 }

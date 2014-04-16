@@ -18,10 +18,30 @@ public class ListContactFetcher {
 	public List<ListContactItem>getListContact(Context context, Cursor cursor){	
 		ArrayList<ListContactItem> listContact = new ArrayList<ListContactItem>();
 		cursor.moveToFirst();
-		do{   
+		do{ 
+			String temp = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString();
+			String adds = temp;
+			
+			if(temp.substring(0, 3).equals("+84")){
+			 switch(temp.length()){
+			   case 13:
+				   adds = "0" + temp.substring(3);
+				   break;
+			   case 12:
+				   adds = "0" + temp.substring(3);
+				   break;
+			   };
+			}
+			
 			int status = 0;
 			   for(int i = 0; i < listContact.size(); i++){
-				   if(listContact.get(i).address.equals(cursor.getString(cursor.getColumnIndexOrThrow("address")).toString())){
+
+				   if(listContact.get(i).address.equals(adds) && cursor.getInt(cursor.getColumnIndexOrThrow("read")) == 0){
+					   status = 0;
+					   break;
+				   }
+				   
+				   if(listContact.get(i).address.equals(adds)){
 					   status = 1;
 					   break;
 				   }
@@ -35,7 +55,7 @@ public class ListContactFetcher {
 				if(status == 0){
 					ListContactItem listContactItem = new ListContactItem();
 					
-					listContactItem.address = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString();
+					listContactItem.address = adds;
 					listContactItem.body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
 					listContactItem.time =   cursor.getLong(cursor.getColumnIndexOrThrow("date"));
 					listContactItem.name = getContactName(context, listContactItem.address);
@@ -45,6 +65,7 @@ public class ListContactFetcher {
 					long contact_ID = fetchContactIdFromPhoneNumber(context, listContactItem.address);
 
 					listContactItem.thumnail = getPhotoUri(context, contact_ID);
+					listContactItem.readStatus = cursor.getInt(cursor.getColumnIndexOrThrow("read"));
 					
 					listContact.add(listContactItem);
 				}

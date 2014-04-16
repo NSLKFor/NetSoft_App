@@ -3,7 +3,12 @@ package com.netsoft.netsms;
 import java.text.DateFormat;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +44,10 @@ public class ListContactAdapter extends BaseAdapter{
 		// TODO Auto-generated method stub
 		return position;
 	}
+	
+	public void updateItem(int position, ListContactItem item ){
+		listContacts.set(position, item);
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -51,6 +60,7 @@ public class ListContactAdapter extends BaseAdapter{
 		TextView tviAddress = (TextView)convertView.findViewById(R.id.address);
 		TextView tviBody = (TextView)convertView.findViewById(R.id.body);
 		TextView tviTime = (TextView) convertView.findViewById(R.id.time);
+		
 		
 		if(listContactItem.name == null || listContactItem.name.equals("")){
 			tviAddress.setText(listContactItem.address);
@@ -66,8 +76,13 @@ public class ListContactAdapter extends BaseAdapter{
 		
 		tviBody.setText(listContactItem.body);
 		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
+		
+		if(listContactItem.readStatus == 0){
+			tviBody.setTypeface(null, Typeface.BOLD);
+			tviAddress.setTypeface(null, Typeface.BOLD);
+			tviBody.setTypeface(null, Typeface.BOLD);
+		}
 				
 		return convertView;
 	}
-
 }

@@ -8,6 +8,7 @@ public class ListContactItem {
 	public String body;
 	public long time;
 	public Uri thumnail;
+	public int readStatus;
 	
 
 }

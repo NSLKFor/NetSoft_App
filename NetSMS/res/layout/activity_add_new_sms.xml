@@ -24,13 +24,13 @@
 		    android:layout_toLeftOf="@+id/addSend"
 		    android:hint="@string/strAddEnterBox" />
 
-        <Button
+        <ImageButton
             android:id="@+id/addSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/addEnterBox"
             android:layout_alignBottom="@+id/addEnterBox"
             android:layout_alignParentRight="true"
-            android:text="@string/strAddSend" />
+            android:src="@drawable/send_icon" />
     
 </RelativeLayout>

@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import android.R.integer;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -68,6 +69,7 @@ public class SmsAdapter extends BaseAdapter{
 		SimpleDateFormat sdf = new SimpleDateFormat(" HH:mm, MMM dd");
 		//tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
 		holder.time.setText(sdf.format(item.date));
+		
 				
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -76,32 +78,24 @@ public class SmsAdapter extends BaseAdapter{
 		RelativeLayout.LayoutParams timeParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-		
-		
+				
 		timeParams.addRule(RelativeLayout.BELOW, R.id.body);
-		
-		
+				
 		if(item.type == 2){
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		timeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		
-		holder.body.setLayoutParams(params);
-		
-//		params.addRule(RelativeLayout.BELOW, R.id.body);
-		holder.time.setLayoutParams(timeParams);
-		
-		holder.list_sms.setBackgroundColor(Color.parseColor("#2ECCFA"));
+		timeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);		
+		holder.body.setLayoutParams(params);		
+		holder.time.setLayoutParams(timeParams);		
+		holder.list_sms.setBackgroundColor(Color.parseColor("#A9E2F3"));
 	}
 	else{
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		timeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		
 		holder.body.setLayoutParams(params);
-		
-//		params.addRule(RelativeLayout.BELOW, R.id.body);
 		holder.time.setLayoutParams(timeParams);
 		
-		holder.list_sms.setBackgroundColor(Color.parseColor("#A9F5F2"));
+		holder.list_sms.setBackgroundColor(Color.parseColor("#E0F8F7"));
 		
 	}		 
 		return view;

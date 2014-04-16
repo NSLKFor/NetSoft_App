@@ -5,11 +5,13 @@ import java.util.List;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,7 +72,6 @@ public class MainActivity extends ListActivity {
 */
 		
 	}
-	
 	private void loadListContact(Context context ) {
 		// TODO Auto-generated method stub
 		final ListContactFetcher lf=  new ListContactFetcher();	
@@ -137,9 +138,13 @@ public class MainActivity extends ListActivity {
 		}else{
 			application.setName(listContactItem.name.toString());
 		}
-		
+//		listContact.set(, object)
 		application.setThumnail(listContactItem.thumnail);
 		
+		listContactItem.readStatus = 1;
+		listContactAdapter.updateItem(position, listContactItem);
+		setListAdapter(listContactAdapter);
+		listContactAdapter.notifyDataSetChanged();
 		
 		Intent intent = new Intent(this, ListSMSActivity.class);
 		startActivity(intent);
@@ -147,6 +152,4 @@ public class MainActivity extends ListActivity {
 
 }
   
-    
-
 }

@@ -6,7 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 import android.R.integer;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 public class SmsFetcher {
 	private String address;
@@ -15,12 +19,17 @@ public class SmsFetcher {
 		this.address = address;
 	}
 	
-	public List<SmsItem>getListSMS( Cursor cursor){
+	public List<SmsItem>getListSMS( Context context){
+		
+		Uri message = Uri.parse("content://sms/");
+		ContentResolver cr = context.getContentResolver();
+		Cursor cursor = cr.query(message, null, null, null, null);
 		
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		cursor.moveToFirst();
 		do{
-			if(cursor.getString(cursor.getColumnIndexOrThrow("address")).equals(this.address)){
+			String temp = cursor.getString(cursor.getColumnIndexOrThrow("address"));
+			if(temp.equals(this.address) || temp.equals(convertAddress(this.address))){
 				SmsItem item = new SmsItem();
 				item.address = this.address;
 				item.id = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString()) ;
@@ -28,8 +37,13 @@ public class SmsFetcher {
 				item.readStatus = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 				item.type = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
 				item.date = cursor.getLong(cursor.getColumnIndexOrThrow("date")) ;
-					
+				
 				listMessage.add(item);
+				if(item.readStatus  == 0){
+					ContentValues values = new ContentValues();
+					values.put("read", true);
+					context.getContentResolver().update(Uri.parse("content://sms/inbox"), values, "_id=" + cursor.getString(cursor.getColumnIndexOrThrow("_id")), null);
+				}
 			}
 		}while(cursor.moveToNext());
 		
@@ -43,7 +57,9 @@ public class SmsFetcher {
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		cursor.moveToFirst();
 		do{
-			if(cursor.getString(cursor.getColumnIndexOrThrow("address")).equals(this.address)){
+			String temp = cursor.getString(cursor.getColumnIndexOrThrow("address"));
+			
+			if(temp.equals(this.address) || temp.equals(convertAddress(this.address))){
 				SmsItem item = new SmsItem();
 				item.address = this.address;
 				item.id = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString()) ;
@@ -80,5 +96,19 @@ public class SmsFetcher {
 			list.set(lenght - i - 1, temp);
 		}
 		return list;
+	}
+	public String convertAddress (String add){
+		String temp = "";
+		switch(add.length()){
+		case 10:
+			temp =  "+84" + add.substring(1);
+			break;
+		case 11:
+			temp =  "+84" + add.substring(1);
+			break;
+		};
+
+
+		return temp;
 	}
 }
