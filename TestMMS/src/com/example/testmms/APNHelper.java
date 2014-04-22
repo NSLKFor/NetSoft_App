@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.Telephony;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 public class APNHelper {
@@ -31,7 +32,7 @@ public class APNHelper {
 	    this.context = context;
 	}   
 	
-	@SuppressWarnings("unchecked")
+
 	public List<APN> getMMSApns() {     
 	    final Cursor apnCursor = this.context.getContentResolver().query(Uri.withAppendedPath(Telephony.Carriers.CONTENT_URI, "current"), null, null, null, null);
 	if ( apnCursor == null ) {
@@ -51,7 +52,7 @@ public class APNHelper {
 	                apn.MMSPort = port;
 	                results.add(apn);
 	                
-	                Toast.makeText(context, mmsc + " " + mmsProxy + " " + port, Toast.LENGTH_LONG).show();
+//	                Toast.makeText(context, mmsc + " " + mmsProxy + " " + port, Toast.LENGTH_LONG).show();
 	            }
 	        } while ( apnCursor.moveToNext() ); 
 	             }              
@@ -79,22 +80,27 @@ public class APNHelper {
 					
 					if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION))
 					{
+						Log.e("MMS", "!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)");
 						return;
+						
 					}
 					
-					@SuppressWarnings("deprecation")
 					NetworkInfo mNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 					
-					if ((mNetworkInfo == null) || (mNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE_MMS))
+					if ( /*(mNetworkInfo == null) ||*/ (mNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE_MMS))
 					{
+						Log.e("MMS", "Network type : " + mNetworkInfo.getType());
 						return;
 					}
 					
 					if (!mNetworkInfo.isConnected())
 					{
+						Log.e("MMS", "Network was not connect");
 						return;
 					} else
 					{
+						Log.e("MMS", "sendData(recipient, parts)");
+						
 						sendData(recipient, parts);
 						
 						context.unregisterReceiver(this);
@@ -111,10 +117,10 @@ public class APNHelper {
 		}
 	}
 
-	public void sendData(final String recipient, final MMSPart[] parts)
+	public void sendData( final String recipient, final MMSPart[] parts)
 	{
-		final Context context = this.context;
-		
+	
+		final Context ct = this.context;
 		new Thread(new Runnable() {
 
 			@Override
@@ -128,6 +134,7 @@ public class APNHelper {
 				{
 					sendRequest.addTo(phoneNumber[0]);
 				}
+				Log.e("MMS", "phone nmber: " + phoneNumber[0].toString());
 				
 				final PduBody pduBody = new PduBody();
 				
@@ -152,18 +159,20 @@ public class APNHelper {
 					}
 				}
 				
+				Log.e("MMS", "pdu: " + pduBody.toString());
+				
 				sendRequest.setBody(pduBody);
 				
-				final PduComposer composer = new PduComposer(context, sendRequest);
+				final PduComposer composer = new PduComposer(ct, sendRequest);
 				final byte[] bytesToSend = composer.make();
 				
 				List<APN> apns = new ArrayList<APN>();
-				SharedPreferences sharedPrefs = context.getSharedPreferences(
-						"com.rich_preferences", 0);
+				SharedPreferences sharedPrefs = ct.getSharedPreferences(
+						"netsoft_preferences", 0);
 				
 				try
 				{
-					APNHelper helper = new APNHelper(context);
+					APNHelper helper = new APNHelper(ct);
 					apns = helper.getMMSApns();
 				} catch (Exception e)
 				{
@@ -171,14 +180,25 @@ public class APNHelper {
 					apns.add(apn);
 				}
 				
+				Log.e("MMS", "APN: " + apns.get(0).MMSCenterUrl.toString());
 				try {
-					HttpUtils.httpConnection(context, 4444L, apns.get(0).MMSCenterUrl, bytesToSend, HttpUtils.HTTP_POST_METHOD, !TextUtils.isEmpty(apns.get(0).MMSProxy), apns.get(0).MMSProxy, Integer.parseInt(apns.get(0).MMSPort));
+					boolean isProxy = !TextUtils.isEmpty(apns.get(0).MMSProxy);
+					int port  =  Integer.parseInt(apns.get(0).MMSPort);
+					String Proxy = apns.get(0).MMSProxy.toString();
+					String url = apns.get(0).MMSCenterUrl.toString();
+					
+					Log.e("MMS", "before  httpConnection");
+					
+					HttpUtils.httpConnection(ct, 4444L, url, bytesToSend, HttpUtils.HTTP_POST_METHOD, isProxy, Proxy , port);
 				
-					ConnectivityManager mConnMgr =  (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-					mConnMgr.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE_MMS, "enableMMS");
+					Log.e("MMS", "go next to httpConnection");
+					ConnectivityManager mConnMgr =  (ConnectivityManager)ct.getSystemService(Context.CONNECTIVITY_SERVICE);
+					mConnMgr.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE, "enableMMS");
 					
 					IntentFilter filter = new IntentFilter();
 					filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+					
+					
 					BroadcastReceiver receiver = new BroadcastReceiver() {
 			
 						@Override
@@ -198,9 +218,10 @@ public class APNHelper {
 						
 					};
 					
-					context.registerReceiver(receiver, filter);
+					
+					ct.registerReceiver(receiver, filter);
 				} catch (Exception e) {
-					Cursor query = context.getContentResolver().query(Uri.parse("content://mms"), new String[] {"_id"}, null, null, "date desc");
+					Cursor query = ct.getContentResolver().query(Uri.parse("content://mms"), new String[] {"_id"}, null, null, "date desc");
 					query.moveToFirst();
 					String id = query.getString(query.getColumnIndex("_id"));
 					query.close();
@@ -208,10 +229,9 @@ public class APNHelper {
 					ContentValues values = new ContentValues();
 			        values.put("msg_box", 5);
 			        String where = "_id" + " = '" + id + "'";
-			        context.getContentResolver().update(Uri.parse("content://mms"), values, where, null);
+			        ct.getContentResolver().update(Uri.parse("content://mms"), values, where, null);
 				    
-			        Toast.makeText(context, "MMS Error", Toast.LENGTH_SHORT).show();
-//			        
+			        
 //					((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content).post(new Runnable() {
 //						
 //						@Override
@@ -221,10 +241,8 @@ public class APNHelper {
 //				    	
 //				    });
 				}
-				
 			}
-			
 		}).start();
-			
+					
 	}
 }

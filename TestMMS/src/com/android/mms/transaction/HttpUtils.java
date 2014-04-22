@@ -17,6 +17,13 @@
 
 package com.android.mms.transaction;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Locale;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -25,13 +32,9 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRouteParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.Header;
-
-import com.android.mms.MmsConfig;
-import com.android.mms.LogTag;
 
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
@@ -40,17 +43,10 @@ import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Locale;
+import com.android.mms.MmsConfig;
 
 public class HttpUtils {
-    private static final String TAG = LogTag.TRANSACTION;
+    private static final String TAG = "android-smsmms_transaction";
 
     private static final boolean DEBUG = false;
     private static final boolean LOCAL_LOGV = DEBUG ? Config.LOGD : Config.LOGV;
@@ -101,7 +97,6 @@ public class HttpUtils {
             throw new IllegalArgumentException("URL must not be null.");
         }
 
-        if (Log.isLoggable(LogTag.TRANSACTION, Log.VERBOSE)) {
             Log.v(TAG, "httpConnection: params list");
             Log.v(TAG, "\ttoken\t\t= " + token);
             Log.v(TAG, "\turl\t\t= " + url);
@@ -113,7 +108,6 @@ public class HttpUtils {
             Log.v(TAG, "\tproxyPort\t= " + proxyPort);
             // TODO Print out binary data more readable.
             //Log.v(TAG, "\tpdu\t\t= " + Arrays.toString(pdu));
-        }
 
         AndroidHttpClient client = null;
 
@@ -162,10 +156,8 @@ public class HttpUtils {
                 String xWapProfileUrl = MmsConfig.getUaProfUrl();
 
                 if (xWapProfileUrl != null) {
-                    if (Log.isLoggable(LogTag.TRANSACTION, Log.VERBOSE)) {
-                        Log.d(LogTag.TRANSACTION,
+                        Log.d(TAG,
                                 "[HttpUtils] httpConn: xWapProfUrl=" + xWapProfileUrl);
-                    }
                     req.addHeader(xWapProfileTagName, xWapProfileUrl);
                 }
             }
@@ -310,10 +302,8 @@ public class HttpUtils {
         // set the socket timeout
         int soTimeout = MmsConfig.getHttpSocketTimeout();
 
-        if (Log.isLoggable(LogTag.TRANSACTION, Log.DEBUG)) {
             Log.d(TAG, "[HttpUtils] createHttpClient w/ socket timeout " + soTimeout + " ms, "
                     + ", UA=" + userAgent);
-        }
         HttpConnectionParams.setSoTimeout(params, soTimeout);
         return client;
     }
