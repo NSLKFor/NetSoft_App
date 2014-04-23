@@ -12,7 +12,13 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	
+
 
     <application
         android:name="com.netsoft.netsms.NetSMSApplication"
@@ -43,6 +49,13 @@
         <receiver android:name="com.netsoft.netsms.SMSRECEIVER" >
             <intent-filter android:priority="1000" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        
+         <receiver android:name="com.netsoft.netmms.MMSReceiver" >
+            <intent-filter android:priority="1000" >
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+        		<data android:mimeType="application/vnd.wap.mms-message" />
             </intent-filter>
         </receiver>
 

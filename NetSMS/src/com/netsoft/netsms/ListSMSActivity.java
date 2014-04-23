@@ -1,8 +1,14 @@
 package com.netsoft.netsms;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Fragment;
 import android.app.ListActivity;
@@ -11,10 +17,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.provider.Telephony;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,12 +33,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.netsoft.netmms.*;
 
 public class ListSMSActivity extends ListActivity {
 
@@ -37,12 +50,16 @@ public class ListSMSActivity extends ListActivity {
 	private Uri thumnail;
 	private TextView empty;
 	private ImageButton btnSend;
+	private ImageButton btnAttach;
+	private ImageView imgAttach;
 	
 	private EditText edtMessage;
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
 	private SmsItem smsItem = new SmsItem();
+	private MMSPart[] parts = new MMSPart[1];
 	
+	private static final int SELECT_PHOTO = 100;
 	
 	Bundle bundle;
 	String strAdd = "";
@@ -56,11 +73,17 @@ public class ListSMSActivity extends ListActivity {
 		
 		setContentView(R.layout.activity_list_sms);
 		
+		
+		
+		
 		// get address in application 
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		this.address = application.getAddress();
 		this.name = application.getName();
 		this.thumnail = application.getThumnail();
+		
+		btnAttach = (ImageButton) findViewById(R.id.listAttachButton);
+		imgAttach = (ImageView) findViewById(R.id.listMMSImage);
 		
 		this.empty = (TextView)findViewById(R.id.emptySMS);
 		
@@ -140,8 +163,14 @@ public class ListSMSActivity extends ListActivity {
 					smsItem.type = 2;
 					smsItem.date = System.currentTimeMillis();
 				
-					SMSSender sendSMS =  new SMSSender();
-					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+//					SMSSender sendSMS =  new SMSSender();
+//					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+					
+					APNHelper aHelper = new APNHelper(v.getContext());
+					aHelper.sendMMS(address, parts);
+					String[] tmpAdd =  new String[1];
+					tmpAdd[0] = address;
+					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address, parts[0].Data);
 					
 					loadListContact(v.getContext());
 					smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
@@ -149,11 +178,24 @@ public class ListSMSActivity extends ListActivity {
 					listView.setSelection(smsAdapter.getCount());
 					edtMessage.setText("");
 					
+					imgAttach.setImageBitmap(null);
+					
 				}
 				
 			}
 		});
 		
+		btnAttach.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+				photoPickerIntent.setType("image/*");
+				startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+			}
+		});
 	}
 
 	private void addMessage2List(String strAdd2, String strBody2) {
@@ -175,6 +217,55 @@ public class ListSMSActivity extends ListActivity {
 	}
 
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
+	    super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
+	    switch(requestCode) { 
+	    case SELECT_PHOTO:
+	        if(resultCode == RESULT_OK){ 
+	            Uri selectedImage = imageReturnedIntent.getData();
+	            InputStream imageStream;
+				try {
+					imageStream = getContentResolver().openInputStream(selectedImage);
+		            Bitmap yourSelectedImage = BitmapFactory.decodeStream(imageStream);    		
+		    		imgAttach.setImageBitmap(yourSelectedImage);
+		    		
+		    		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		    		yourSelectedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		    		byte[] byteArray = stream.toByteArray();
+		    		
+		    		parts[0] = new MMSPart();
+		    		parts[0].Name = "Image";
+		    		parts[0].MimeType = GetMimeType(this, selectedImage);
+		    		parts[0].Data = byteArray;
+		    		
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+	        }
+	    }
+	}
+	
+	public static String GetMimeType(Context context, Uri uriImage)
+	{
+	    String strMimeType = null;
+
+	    Cursor cursor = context.getContentResolver().query(uriImage,
+	                        new String[] { MediaStore.MediaColumns.MIME_TYPE },
+	                        null, null, null);
+
+	    if (cursor != null && cursor.moveToNext())
+	    {
+	        strMimeType = cursor.getString(0);
+	    }
+
+	    return strMimeType;
+	}
+	
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
