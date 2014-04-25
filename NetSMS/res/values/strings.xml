@@ -15,6 +15,10 @@
     <string name="strAddEnterBox">Enter mesage </string>
     <string name="strAddSend">Send </string>
     <string name="action_new_sms">New Message </string>
-    
+     <string name="invalid_destination">"Địa chỉ đích không hợp lệ."</string>
+     <string name="service_not_activated">"Dịch vụ không được kích hoạt trên mạng."</string>
+     <string name="service_network_problem">"Không thể gửi do sự cố mạng."</string>
+     <string name="service_message_not_found">"Tin nhắn đã hết hạn hoặc không có."</string>
+     <string name="no_subject">"(Không có chủ đề)"</string>
 
 </resources>

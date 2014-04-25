@@ -23,7 +23,7 @@
          android:focusable="true"
          android:focusableInTouchMode="true"
          android:hint="@string/strEnterBox"
-         android:minLines="3" />
+         android:minLines="4" />
 
         <ListView
             android:id="@android:id/list"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/imgSend"
             android:layout_below="@+id/imgSend"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/attach_icon" />
 
         <ImageView
             android:id="@+id/listMMSImage"

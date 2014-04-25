@@ -203,7 +203,6 @@ public class APNHelper {
 					IntentFilter filter = new IntentFilter();
 					filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 					
-					
 					BroadcastReceiver receiver = new BroadcastReceiver() {
 			
 						@Override

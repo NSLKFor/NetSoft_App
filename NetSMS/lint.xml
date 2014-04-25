@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="NewApi">
+        <ignore path="src/com/android/mms/transaction/NotificationTransaction.java" />
+        <ignore path="src/com/android/mms/transaction/ReadRecTransaction.java" />
+        <ignore path="src/com/android/mms/transaction/RetrieveTransaction.java" />
+        <ignore path="src/com/android/mms/transaction/RetryScheduler.java" />
+        <ignore path="src/com/android/mms/transaction/SendTransaction.java" />
+        <ignore path="src/com/android/mms/transaction/TransactionService.java" />
+        <ignore path="src/com/android/mms/transaction/TransactionSettings.java" />
+        <ignore path="src/com/android/mms/util/RateController.java" />
         <ignore path="src/com/netsoft/netmms/APNHelper.java" />
         <ignore path="src/com/netsoft/netmms/MMSReceiver.java" />
     </issue>

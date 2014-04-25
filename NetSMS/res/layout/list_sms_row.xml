@@ -5,12 +5,19 @@
     android:layout_height="wrap_content"
     android:padding="5dip"
     android:background="@android:color/transparent" >
+        <ImageView
+        android:id="@+id/imgMMS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/imgMMS"
+        android:layout_below="@+id/imgMMS"
         android:maxWidth="300dp"
         android:text="Body"
         android:textColor="#003366"
@@ -21,10 +28,13 @@
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/body"
         android:layout_below="@+id/body"
         android:text="readType"
         android:textColor="#3385FF"
         android:textSize="16dip"
         android:typeface="sans" />
+
+
 
 </RelativeLayout>

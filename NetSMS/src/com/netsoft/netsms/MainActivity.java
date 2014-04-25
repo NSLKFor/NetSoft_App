@@ -26,61 +26,58 @@ import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
 	private TextView empty;
-//	private List<SmsItem>smsItems;
-//	private SmsAdapter sadapter;
+	// private List<SmsItem>smsItems;
+	// private SmsAdapter sadapter;
 	private ListContactAdapter listContactAdapter;
 	private List<ListContactItem> listContact;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-//		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+
+		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_main);
-//		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+		// R.layout.title_bar);
 
 		this.empty = (TextView) findViewById(R.id.empty);
-		
+
 		final ListView listView = getListView();
 		listView.setItemsCanFocus(false);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 
 		loadListContact(MainActivity.this);
-		listContactAdapter =  new ListContactAdapter(MainActivity.this, listContact);
+		listContactAdapter = new ListContactAdapter(MainActivity.this,
+				listContact);
 		setListAdapter(listContactAdapter);
-		
-		
-		
 
-/*
- * title of action bar
-		
-		TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-		nameTitle.setText("NetSMS");
+		/*
+		 * title of action bar
+		 * 
+		 * TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
+		 * nameTitle.setText("NetSMS");
+		 * 
+		 * 
+		 * ImageButton Add = (ImageButton)findViewById(R.id.header);
+		 * Add.setOnClickListener(new View.OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { // TODO Auto-generated method
+		 * stub Intent intent = new Intent(v.getContext(),
+		 * AddNewSMSActivity.class); startActivity(intent); } });
+		 */
 
-
-		ImageButton Add = (ImageButton)findViewById(R.id.header);
-		Add.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(v.getContext(), AddNewSMSActivity.class);
-				startActivity(intent);
-			}
-		});	
-*/
-		
 	}
-	private void loadListContact(Context context ) {
+
+	private void loadListContact(Context context) {
 		// TODO Auto-generated method stub
-		final ListContactFetcher lf=  new ListContactFetcher();	
-    
+		final ListContactFetcher lf = new ListContactFetcher();
+
 		Uri message = Uri.parse("content://sms/");
 		ContentResolver cr = getContentResolver();
 		Cursor cursor = cr.query(message, null, null, null, null);
 
-		listContact = lf.getListContact(context,cursor);
+		listContact = lf.getListContact(context, cursor);
 	}
 
 	@Override
@@ -112,7 +109,6 @@ public class MainActivity extends ListActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
-
 		public PlaceholderFragment() {
 		}
 
@@ -125,31 +121,32 @@ public class MainActivity extends ListActivity {
 		}
 	}
 
-    protected void onListItemClick(ListView l, View v, int position, long id) {              
-        //get selected items
-    	ListContactItem listContactItem = (ListContactItem) getListAdapter().getItem(position);
-        Toast.makeText(this, listContactItem.address.toString(), Toast.LENGTH_SHORT).show();
-        
-        NetSMSApplication application = (NetSMSApplication) getApplication();
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// get selected items
+		ListContactItem listContactItem = (ListContactItem) getListAdapter()
+				.getItem(position);
+		Toast.makeText(this, listContactItem.address.toString(),
+				Toast.LENGTH_SHORT).show();
+
+		NetSMSApplication application = (NetSMSApplication) getApplication();
 		application.setAddress(listContactItem.address.toString());
-		
-		if(listContactItem.name == null){
+
+		if (listContactItem.name == null) {
 			application.setName(listContactItem.address.toString());
-		}else{
+		} else {
 			application.setName(listContactItem.name.toString());
 		}
-//		listContact.set(, object)
+		// listContact.set(, object)
 		application.setThumnail(listContactItem.thumnail);
-		
+
 		listContactItem.readStatus = 1;
 		listContactAdapter.updateItem(position, listContactItem);
 		setListAdapter(listContactAdapter);
 		listContactAdapter.notifyDataSetChanged();
-		
+
 		Intent intent = new Intent(this, ListSMSActivity.class);
 		startActivity(intent);
-		
 
-}
-  
+	}
+
 }

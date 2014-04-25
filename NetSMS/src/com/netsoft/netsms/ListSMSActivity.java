@@ -2,7 +2,9 @@ package com.netsoft.netsms;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Telephony;
@@ -238,6 +241,20 @@ public class ListSMSActivity extends ListActivity {
 		    		parts[0].Name = "Image";
 		    		parts[0].MimeType = GetMimeType(this, selectedImage);
 		    		parts[0].Data = byteArray;
+		    		
+//		    		File sdcard = Environment.getExternalStorageDirectory();
+//		    		File editedFile = new File( sdcard, "myphoto.jpeg" );
+//
+//		    		// if file is already exists then first delete it
+//		    		if ( editedFile.exists() ) 
+//		    		{   
+//		    		    editedFile.delete(); 
+//		    		}
+//
+//		    		FileOutputStream fOut = new FileOutputStream( editedFile );
+//		    		yourSelectedImage.compress( Bitmap.CompressFormat.JPEG, 90, fOut );
+		    		
+		    		
 		    		
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
