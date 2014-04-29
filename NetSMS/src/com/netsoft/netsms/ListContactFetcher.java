@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
 
 public class ListContactFetcher {
 	
@@ -70,6 +71,7 @@ public class ListContactFetcher {
 					listContact.add(listContactItem);
 				}
 		}while(cursor.moveToNext());
+		Log.e("AAAAAAAAAAA", "------------------ Number of  contact: " + listContact.size());
 		
 		return listContact;
 	}

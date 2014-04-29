@@ -320,7 +320,7 @@ public class MMSReceiver extends BroadcastReceiver {
 
 	}
 
-	private byte[] readMMSPart(Context context, String partId) {
+	public static byte[] readMMSPart(Context context, String partId) {
 		byte[] partData = null;
 		Uri partURI = Uri.parse("content://mms/part/" + partId);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -355,7 +355,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return partData;
 	}
 
-	private boolean isImageType(String mime) {
+	public static boolean isImageType(String mime) {
 		boolean result = false;
 		if (mime.equalsIgnoreCase("image/jpg")
 				|| mime.equalsIgnoreCase("image/jpeg")
@@ -367,7 +367,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return result;
 	}
 
-	private void GetMmsAttachment(Context context, String _id, String _data) {
+	public static void GetMmsAttachment(Context context, String _id, String _data) {
 		Uri partURI = Uri.parse("content://mms/part/" + _id);
 		String filePath = "/sdcard/photo.jpg";
 		InputStream is = null;
@@ -425,7 +425,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return -1;
 	}
 
-	private static boolean isDuplicateNotification(Context context,
+	private static  boolean isDuplicateNotification(Context context,
 			NotificationInd nInd) {
 		byte[] rawLocation = nInd.getContentLocation();
 		if (rawLocation != null) {
