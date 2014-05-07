@@ -60,7 +60,7 @@ public class ListSMSActivity extends ListActivity {
 	private List<SmsItem> listSMS;
 	private SmsAdapter smsAdapter;
 	private SmsItem smsItem = new SmsItem();
-	private MMSPart[] parts = new MMSPart[1];
+	private MMSPart[] parts;
 	
 	private static final int SELECT_PHOTO = 100;
 	
@@ -111,8 +111,66 @@ public class ListSMSActivity extends ListActivity {
 			}
 					
 			if(!strAdd.equals("")){
-				address = strAdd;
-				addMessage2List(strAdd, strBody);
+				String phone = "";
+				String temp = strAdd;
+				if (temp.substring(0, 3).equals("+84")) {
+					switch (temp.length()) {
+					case 13:
+						phone = "0" + temp.substring(3);
+						break;
+					case 12:
+						phone = "0" + temp.substring(3);
+						break;
+					case 16:
+						if (temp.subSequence(6, 7).equals(" ")) {
+							phone = "0" + temp.substring(4, 6)
+									+ temp.substring(7, 10)
+									+ temp.substring(11, 13)
+									+ temp.substring(14);
+						}
+						else{
+							phone = "0" + temp.substring(4, 7)
+									+ temp.substring(8, 11)
+									+ temp.substring(12);
+						}
+						break;
+					}
+					;
+				}
+				if (temp.substring(0, 2).equals("84")) {
+					switch (temp.length()) {
+					case 12:
+						phone = "0" + temp.substring(2);
+						break;
+					case 11:
+						phone = "0" + temp.substring(2);
+						break;
+					}
+					;
+				}
+				
+			if(temp.length() == 13 && !temp.substring(0, 3).equals("+84")){
+				if(temp.substring(4, 5).equals(" ")){
+					phone = temp.substring(0,4) + 
+							temp.substring(5,8) + 
+							temp.substring(9);
+				}
+				else{
+					phone = temp.substring(0,3) + 
+							temp.substring(4,7) + 
+							temp.substring(8, 10) + 
+							temp.substring(11);
+							
+				}
+			}
+				
+
+				if (phone == null || "".equals(phone)) {
+					phone = temp;
+				}
+				
+				address = phone;
+				addMessage2List(this, strAdd, strBody);
 			}
 		}
 
@@ -154,6 +212,16 @@ public class ListSMSActivity extends ListActivity {
 //				btnSend.setImageResource(R.drawable.send_selected_icon);
 //				delayhandler.postDelayed(mUpdateTimeTask, 100);
 				
+				if(parts != null){
+					APNHelper aHelper = new APNHelper(v.getContext());
+					aHelper.sendMMS(address, parts);
+					String[] tmpAdd =  new String[1];
+					tmpAdd[0] = address;
+					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address, parts[0].Data);
+					return;
+				}
+		
+		
 				if(edtMessage.getText().toString().equals("")){
 					Toast.makeText(v.getContext(), "Your message is Empty. \nPlease enter your message and try again.", Toast.LENGTH_SHORT).show();
 					return;
@@ -166,14 +234,9 @@ public class ListSMSActivity extends ListActivity {
 					smsItem.type = 2;
 					smsItem.date = System.currentTimeMillis();
 				
-//					SMSSender sendSMS =  new SMSSender();
-//					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+					SMSSender sendSMS =  new SMSSender();
+					sendSMS.sendSMSMessage(v.getContext(), smsItem);
 					
-					APNHelper aHelper = new APNHelper(v.getContext());
-					aHelper.sendMMS(address, parts);
-					String[] tmpAdd =  new String[1];
-					tmpAdd[0] = address;
-					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address, parts[0].Data);
 					
 					loadListContact(v.getContext());
 					smsAdapter =  new SmsAdapter(ListSMSActivity.this, listSMS);
@@ -184,6 +247,8 @@ public class ListSMSActivity extends ListActivity {
 					imgAttach.setImageBitmap(null);
 					
 				}
+				
+				
 				
 			}
 		});
@@ -201,16 +266,12 @@ public class ListSMSActivity extends ListActivity {
 		});
 	}
 
-	private void addMessage2List(String strAdd2, String strBody2) {
+	private void addMessage2List(Context context, String strAdd2, String strBody2) {
 		// TODO Auto-generated method stub
 		
 		final SmsFetcher sf=  new SmsFetcher(strAdd2);	
 	    
-		Uri message = Uri.parse("content://sms/");
-		ContentResolver cr = getContentResolver();
-		Cursor cursor = cr.query(message, null, null, null, null);
-
-		listSMS = sf.addItem2List(cursor, strBody2);
+		listSMS = sf.addItem2List(context, strBody2);
 	}
 
 	private void loadListContact(Context context) {
@@ -237,6 +298,7 @@ public class ListSMSActivity extends ListActivity {
 		    		yourSelectedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 		    		byte[] byteArray = stream.toByteArray();
 		    		
+		    		parts = new MMSPart[1];
 		    		parts[0] = new MMSPart();
 		    		parts[0].Name = "Image";
 		    		parts[0].MimeType = GetMimeType(this, selectedImage);

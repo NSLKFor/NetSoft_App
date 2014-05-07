@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
 public class SmsFetcher {
@@ -36,17 +37,32 @@ public class SmsFetcher {
 		
 		
 
-		Uri message = Uri.parse("content://sms/");
+		Uri message = Uri.parse("content://sms");
 		ContentResolver cr = context.getContentResolver();
-		Cursor cursor = cr.query(message, null, null, null, null);
+		String selection = "";
+		List<String> listNumberFormat= new ArrayList<String>(); 
+		listNumberFormat = formatNumberPhone(this.address);
+		for(int i = 0; i < listNumberFormat.size() - 1; i++){
+			selection = selection + "address = '" + listNumberFormat.get(i) + "' or ";
+		}
+		selection = selection + "address = '" + listNumberFormat.get(listNumberFormat.size() - 1) + "'";
+		
+
+		Cursor cursor = cr.query(message, null, selection, null, null);
+//		Cursor cursor = cr.query(message, null, "address = '"+ this.address+ "' or "+ "address = '"+ convertAddress(this.address)+ "'", null, null);
+//		Cursor cursor = cr.query(message, null,null, null, null);
+		
 
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		cursor.moveToFirst();
 		do {
 			String temp = cursor.getString(cursor
 					.getColumnIndexOrThrow("address"));
+			String ttt =temp.replace(" ", "");
+			temp = ttt;
 			if (temp.equals(this.address)
 					|| temp.equals(convertAddress(this.address))) {
+				
 				SmsItem item = new SmsItem();
 				item.address = this.address;
 				item.id = Integer.parseInt(cursor.getString(
@@ -78,7 +94,7 @@ public class SmsFetcher {
 		listMessage = SortListSMS(listMessage);
 		
 		
-		listMessage.addAll(getMMS(context, "+841252840600"));
+//		listMessage.addAll(getMMS(context, "+841252840600"));
 
 		return listMessage;
 	}
@@ -103,8 +119,21 @@ public class SmsFetcher {
 
 	}
 
-	public List<SmsItem> addItem2List(Cursor cursor, String strBody2) {
+	public List<SmsItem> addItem2List(Context context , String strBody2) {
 		// TODO Auto-generated method stub
+		
+		Uri message = Uri.parse("content://sms");
+		ContentResolver cr = context.getContentResolver();
+		String selection = "";
+		List<String> listNumberFormat= new ArrayList<String>(); 
+		listNumberFormat = formatNumberPhone(this.address);
+		for(int i = 0; i < listNumberFormat.size() - 1; i++){
+			selection = selection + "address = '" + listNumberFormat.get(i) + "' or ";
+		}
+		selection = selection + "address = '" + listNumberFormat.get(listNumberFormat.size() - 1) + "'";
+		Cursor cursor = cr.query(message, null, selection, null, null);
+		
+		
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		cursor.moveToFirst();
 		do {
@@ -176,6 +205,53 @@ public class SmsFetcher {
 		;
 
 		return temp;
+	}
+	
+	public static List<String> formatNumberPhone(String adds){
+		List<String> fmNumber= new ArrayList<String>();
+		String temp = "";
+		fmNumber.add(adds);
+		switch(adds.length()){
+		case 10:
+			temp = adds.substring(0,3) + " " +
+					adds.substring(3,6) + " " +
+					adds.substring(6,8) + " " +
+					adds.substring(8);
+			fmNumber.add(temp);
+			temp= "";
+			
+			temp = "+84" + adds.substring(1);
+			fmNumber.add(temp);
+			temp = "";
+			
+			temp = "+84 " + adds.substring(1,3) + " " +
+					adds.substring(3,6) + " "+
+					adds.substring(6,8) + " "+
+					adds.substring(8);
+			fmNumber.add(temp);
+			break;
+		case 11:
+			temp = "";
+			temp = adds.substring(0,4) +" "+
+					adds.substring(4,7)+" "+
+					adds.substring(7);
+			fmNumber.add(temp);
+			temp = "";
+			
+			
+			temp = "+84" + adds.substring(1);
+			fmNumber.add(temp);
+			temp = "";
+			
+			temp = "+84 " + adds.substring(1,4) + " " +
+					adds.substring(4,7) + " "+
+					adds.substring(7);
+			fmNumber.add(temp);
+			break;
+		}
+		
+		
+		return fmNumber;
 	}
 
 	public List<SmsItem> getMMS(Context context, String address) {
@@ -432,5 +508,6 @@ public class SmsFetcher {
 		// return address.replaceAll("[^0-9]", "");
 		return receiver;
 	}
+	
 
 }

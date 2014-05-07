@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Fragment;
 import android.app.ListActivity;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,6 +35,8 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notificationManager.cancel(9999);
 
 		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_main);
@@ -73,11 +76,9 @@ public class MainActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		final ListContactFetcher lf = new ListContactFetcher();
 
-		Uri message = Uri.parse("content://sms/");
-		ContentResolver cr = getContentResolver();
-		Cursor cursor = cr.query(message, null, null, null, null);
+		
 
-		listContact = lf.getListContact(context, cursor);
+		listContact = lf.getListContact(context);
 	}
 
 	@Override

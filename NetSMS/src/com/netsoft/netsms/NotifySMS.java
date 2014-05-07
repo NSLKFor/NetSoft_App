@@ -49,7 +49,6 @@ public class NotifySMS extends Activity{
 			}
 		})
 		.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
@@ -95,6 +94,7 @@ public class NotifySMS extends Activity{
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		notification.setLatestEventInfo(context, adds , body, pendingIntent);		
 		notificationManager.notify(9999, notification);
+//		notificationManager.cancel(9999);
 		
 		
 	
