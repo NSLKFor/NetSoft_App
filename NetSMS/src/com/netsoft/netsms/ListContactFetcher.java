@@ -88,6 +88,8 @@ public class ListContactFetcher {
 		// }
 		// }while(cursor.moveToNext());
 
+		long time1 = System.currentTimeMillis();
+		
 		ContentResolver contentResolver = context.getContentResolver();
 		Uri uri = Uri.parse("content://mms-sms/conversations/");
 		Cursor query = contentResolver.query(uri, null, null, null, null);
@@ -207,6 +209,8 @@ public class ListContactFetcher {
 
 		Log.e("AAAAAAAAAAA", "------------------ Number of  contact: "
 				+ listContact.size());
+		long time2 = System.currentTimeMillis();
+		Log.e("Time duration ", "Loadlist time duration: " + (time2 - time1) /1000);
 		
 		SortListContact();
 		
@@ -352,7 +356,10 @@ public class ListContactFetcher {
 	//sort the do not read sms to the top of list
 	protected void SortListContact(){
 		int pivot  = 0 ;
-		for(int i = 1; i < listContact.size() - 1; i++){
+		
+		long time1 = System.currentTimeMillis();
+		for(int i = 1; i < listContact.size(); i++){			
+			Log.e("Sort list", "\n--- " + listContact.get(i).address + " ---- readstatus: " + listContact.get(i).readStatus);
 			if(listContact.get(i).readStatus == 0){
 				ListContactItem temp = listContact.get(i);
 				listContact.set(i, listContact.get(pivot));
@@ -360,5 +367,18 @@ public class ListContactFetcher {
 				pivot ++;
 			}
 		}
+		
+		for(int i = pivot; i < listContact.size() - 1; i++){
+			for(int j = i + 1; j < listContact.size(); j ++){
+				if(listContact.get(i).time < listContact.get(j).time){
+					ListContactItem temp = listContact.get(i);
+					listContact.set(i, listContact.get(j));
+					listContact.set(j, temp);
+				}
+			}
+		}
+		long time2 = System.currentTimeMillis();
+		Log.e("Time duration ", "Sortlist Time duration: " + (time2 -time1) /1000);
 	}
+	
 }

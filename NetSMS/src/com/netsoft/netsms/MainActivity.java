@@ -53,6 +53,7 @@ public class MainActivity extends ListActivity {
 		loadListContact(MainActivity.this);
 		listContactAdapter = new ListContactAdapter(MainActivity.this,
 				listContact);
+		listContactAdapter.notifyDataSetChanged();
 		setListAdapter(listContactAdapter);
 
 		/*

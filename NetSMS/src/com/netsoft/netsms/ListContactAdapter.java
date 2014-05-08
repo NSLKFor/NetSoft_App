@@ -14,19 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ListContactAdapter extends BaseAdapter{
-	private  Context context;
-	private  List<ListContactItem> listContacts;
-	private static LayoutInflater inflater=null;
-	
+public class ListContactAdapter extends BaseAdapter {
+	private Context context;
+	private List<ListContactItem> listContacts;
+	private static LayoutInflater inflater = null;
+
 	public ListContactAdapter(Context context1, List<ListContactItem> listItems) {
 		this.context = context1;
 		this.listContacts = listItems;
-		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	
+		inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
+
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
@@ -44,45 +46,62 @@ public class ListContactAdapter extends BaseAdapter{
 		// TODO Auto-generated method stub
 		return position;
 	}
-	
-	public void updateItem(int position, ListContactItem item ){
+
+	public void updateItem(int position, ListContactItem item) {
 		listContacts.set(position, item);
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		 if(convertView==null)
-	        	convertView = inflater.inflate(R.layout.contact_row, null);
-		 final ListContactItem listContactItem = this.listContacts.get(position);
-		 
-		ImageView imgThum = (ImageView) convertView.findViewById(R.id.list_image);
-		TextView tviAddress = (TextView)convertView.findViewById(R.id.address);
-		TextView tviBody = (TextView)convertView.findViewById(R.id.body);
-		TextView tviTime = (TextView) convertView.findViewById(R.id.time);
-		
-		
-		if(listContactItem.name == null || listContactItem.name.equals("")){
-			tviAddress.setText(listContactItem.address);
-		}else{
-			tviAddress.setText(listContactItem.name);
+		View view = convertView;
+		ViewHolderListContact holder;
+		if (view == null) {
+			view = inflater.inflate(R.layout.contact_row, null);
+			holder = new ViewHolderListContact();
+			holder.imgThum = (ImageView) view
+					.findViewById(R.id.list_image);
+			holder.tviAddress = (TextView) view
+					.findViewById(R.id.address);
+			holder.tviBody = (TextView) view.findViewById(R.id.body);
+			holder.tviTime = (TextView) view.findViewById(R.id.time);
+
+			view.setTag(holder);
+		} else {
+			holder = (ViewHolderListContact) view.getTag();
 		}
-		
-		if(listContactItem.thumnail == null){
-			imgThum.setImageResource(R.drawable.user_icon);
-		}else{
-			imgThum.setImageURI(listContactItem.thumnail );
+		final ListContactItem listContactItem = this.listContacts.get(position);
+		holder.position = position;
+
+		if (listContactItem.readStatus == 0) {
+			holder.tviBody.setTypeface(null, Typeface.BOLD);
+			holder.tviAddress.setTypeface(null, Typeface.BOLD);
+			holder.tviBody.setTypeface(null, Typeface.BOLD);
 		}
-		
-		tviBody.setText(listContactItem.body);
-		tviTime.setText(DateFormat.getInstance().format( listContactItem.time));
-		
-		if(listContactItem.readStatus == 0){
-			tviBody.setTypeface(null, Typeface.BOLD);
-			tviAddress.setTypeface(null, Typeface.BOLD);
-			tviBody.setTypeface(null, Typeface.BOLD);
+
+		if (listContactItem.name == null || listContactItem.name.equals("")) {
+			holder.tviAddress.setText(listContactItem.address);
+		} else {
+			holder.tviAddress.setText(listContactItem.name);
 		}
-				
-		return convertView;
+
+		if (listContactItem.thumnail == null) {
+			holder.imgThum.setImageResource(R.drawable.user_icon);
+		} else {
+			holder.imgThum.setImageURI(listContactItem.thumnail);
+		}
+
+		holder.tviBody.setText(listContactItem.body);
+		holder.tviTime.setText(DateFormat.getInstance().format(
+				listContactItem.time));
+		return view;
 	}
+}
+
+class ViewHolderListContact {
+	ImageView imgThum;
+	TextView tviAddress;
+	TextView tviBody;
+	TextView tviTime;
+	int position;
 }
