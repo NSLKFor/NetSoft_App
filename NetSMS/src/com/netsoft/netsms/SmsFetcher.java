@@ -119,7 +119,7 @@ public class SmsFetcher {
 
 	}
 
-	public List<SmsItem> addItem2List(Context context , String strBody2) {
+	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap) {
 		// TODO Auto-generated method stub
 		
 		Uri message = Uri.parse("content://sms");
@@ -173,7 +173,17 @@ public class SmsFetcher {
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
 		item.date = 0; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
 						// 1000;
-		item.imgMMS = null;
+		
+		Bitmap bmp = BitmapFactory.decodeByteArray(bitmap, 0,
+				bitmap.length);
+		item.imgMMS = bmp;
+		
+		if(bitmap!= null){
+			Log.e("akjsfhkjasf", "bitmap not null--" + bitmap.length);
+		}else{
+			Log.e("akjsfhkjasf", "bitmap null");
+		}
+		
 		
 		listMessage.add(item);
 

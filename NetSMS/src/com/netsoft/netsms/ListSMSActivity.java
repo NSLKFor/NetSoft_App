@@ -68,6 +68,7 @@ public class ListSMSActivity extends ListActivity {
 	String strAdd = "";
 	String strBody = "";
 	String isNotify = "";
+	byte[] img = null;
 	Handler delayhandler = new Handler();
 
 	@Override
@@ -105,6 +106,9 @@ public class ListSMSActivity extends ListActivity {
 			if (bundle.getString("isNotify") != null
 					&& !(bundle.getString("isNotify").equals(""))) {
 				isNotify = bundle.getString("isNotify");
+			}
+			if (bundle.getByteArray("img") != null) {
+				img = bundle.getByteArray("img");
 			}
 
 			if (!strAdd.equals("")) {
@@ -161,7 +165,7 @@ public class ListSMSActivity extends ListActivity {
 				}
 
 				address = phone;
-				addMessage2List(this, strAdd, strBody);
+				addMessage2List(this, strAdd, strBody, img);
 			}
 		}
 
@@ -261,12 +265,12 @@ public class ListSMSActivity extends ListActivity {
 	}
 
 	private void addMessage2List(Context context, String strAdd2,
-			String strBody2) {
+			String strBody2,byte[] bitmap) {
 		// TODO Auto-generated method stub
 
 		final SmsFetcher sf = new SmsFetcher(strAdd2);
 
-		listSMS = sf.addItem2List(context, strBody2);
+		listSMS = sf.addItem2List(context, strBody2, bitmap);
 	}
 
 	private void loadListContact(Context context) {
@@ -308,9 +312,8 @@ public class ListSMSActivity extends ListActivity {
 								} else {
 									if ((yourSelectedImage.getByteCount() / 1000) > 500) {
 										res = 90;
-									}
-									else{
-										if((yourSelectedImage.getByteCount() / 1000) > 300){
+									} else {
+										if ((yourSelectedImage.getByteCount() / 1000) > 300) {
 											res = 95;
 										}
 									}
@@ -334,9 +337,8 @@ public class ListSMSActivity extends ListActivity {
 								} else {
 									if ((yourSelectedImage.getByteCount() / 1000) > 500) {
 										res = 95;
-									}
-									else{
-										if((yourSelectedImage.getByteCount() / 1000) > 300){
+									} else {
+										if ((yourSelectedImage.getByteCount() / 1000) > 300) {
 											res = 98;
 										}
 									}

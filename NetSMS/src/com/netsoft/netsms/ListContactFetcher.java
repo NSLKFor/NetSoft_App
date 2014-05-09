@@ -292,7 +292,8 @@ public class ListContactFetcher {
 		return Uri.withAppendedPath(person,
 				ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 	}
-	public String ConvertNumberPhoneAddress(String temp){
+	
+	public static String ConvertNumberPhoneAddress(String temp){
 
 		String phone = "";
 		if (temp.substring(0, 3).equals("+84")) {
