@@ -10,6 +10,6 @@ public class SmsItem {
 	public int readStatus;
 	public int type;
 	public long date;
-	public Bitmap imgMMS;
+	public byte[] imgMMS;
 	
 }

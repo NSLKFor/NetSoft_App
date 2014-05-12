@@ -81,6 +81,18 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		
+		Button bt2 = (Button)findViewById(R.id.button2);
+		bt2.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(v.getContext(), TestListActivity.class);
+				startActivity(intent);
+				
+			}
+		});
 	}
 
 	@Override

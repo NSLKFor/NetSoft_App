@@ -48,6 +48,7 @@ import com.google.android.mms.pdu.RetrieveConf;
 import com.netsoft.netmms.*;
 import com.netsoft.netsms.ListContactFetcher;
 import com.netsoft.netsms.NotifySMS;
+import com.netsoft.netsms.SmsFetcher;
 
 public class MMSReceiver extends BroadcastReceiver {
 
@@ -57,14 +58,13 @@ public class MMSReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		// TODO Auto-generated method stub
-		
+
 		byte[] pduData = intent.getByteArrayExtra("pdu");
 
 		byte[] pushData = intent.getByteArrayExtra("data");
 		PduParser parser = new PduParser(pushData);
-		
+
 		GenericPdu pdu = parser.parse();
-		
 
 		if (null == pdu) {
 			Log.e("MMS", "Invalid PUSH data");
@@ -94,8 +94,8 @@ public class MMSReceiver extends BroadcastReceiver {
 				SqliteWrapper.update(context, cr, uri, values, null, null);
 				break;
 			}
-			case PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND: {				
-				
+			case PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND: {
+
 				NotificationInd nInd = (NotificationInd) pdu;
 
 				if (MmsConfig.getTransIdEnabled()) {
@@ -120,57 +120,56 @@ public class MMSReceiver extends BroadcastReceiver {
 					// don't allow persist() to create a thread for the
 					// notificationInd
 					// because it causes UI jank.
-//					Uri uri = p.persist(pdu, Inbox.CONTENT_URI);
-//
-//					// Start service to finish the notification transaction.
-//					Intent svc = new Intent(context, TransactionService.class);
-//					svc.putExtra(TransactionBundle.URI, uri.toString());
-//					svc.putExtra(TransactionBundle.TRANSACTION_TYPE,
-//							Transaction.NOTIFICATION_TRANSACTION);
-//					context.startService(svc);
-//	
-					
-					/////****** download mms from pdu
+					// Uri uri = p.persist(pdu, Inbox.CONTENT_URI);
+					//
+					// // Start service to finish the notification transaction.
+					// Intent svc = new Intent(context,
+					// TransactionService.class);
+					// svc.putExtra(TransactionBundle.URI, uri.toString());
+					// svc.putExtra(TransactionBundle.TRANSACTION_TYPE,
+					// Transaction.NOTIFICATION_TRANSACTION);
+					// context.startService(svc);
+					//
+
+					// ///****** download mms from pdu
 					List<APN> apns = new ArrayList<APN>();
 					APNHelper helper = new APNHelper(context);
 					apns = helper.getMMSApns();
-					
-					
-					String locationDownload  = new String(nInd.getContentLocation());
+
+					String locationDownload = new String(
+							nInd.getContentLocation());
 					try {
-						
-						boolean isProxy = !TextUtils.isEmpty(apns.get(0).MMSProxy);
-						int port  =  Integer.parseInt(apns.get(0).MMSPort);
+
+						boolean isProxy = !TextUtils
+								.isEmpty(apns.get(0).MMSProxy);
+						int port = Integer.parseInt(apns.get(0).MMSPort);
 						String Proxy = apns.get(0).MMSProxy.toString();
 						String url = apns.get(0).MMSCenterUrl.toString();
-						
-						byte[] resp = HttpUtils.httpConnection(
-						        context, -1L,
-						        locationDownload , 
-						        null, 
-						        HttpUtils.HTTP_GET_METHOD,
-						        isProxy,
-						        Proxy,
-						        port);
-						
-						
-						RetrieveConf retrieveConf = (RetrieveConf) new PduParser(resp).parse();
-						PduPersister persister = PduPersister.getPduPersister(context);
+
+						byte[] resp = HttpUtils
+								.httpConnection(context, -1L, locationDownload,
+										null, HttpUtils.HTTP_GET_METHOD,
+										isProxy, Proxy, port);
+
+						RetrieveConf retrieveConf = (RetrieveConf) new PduParser(
+								resp).parse();
+						PduPersister persister = PduPersister
+								.getPduPersister(context);
 						Uri msgUri = p.persist(retrieveConf, Inbox.CONTENT_URI);
-						
+
 						ContentValues values = new ContentValues(1);
-					    	values.put(Mms.DATE, System.currentTimeMillis() / 1000L);
-					   	SqliteWrapper.update(context, context.getContentResolver(),
-					            msgUri, values, null, null);
+						values.put(Mms.DATE, System.currentTimeMillis() / 1000L);
+						SqliteWrapper.update(context,
+								context.getContentResolver(), msgUri, values,
+								null, null);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						Log.e("LOg e", "Error form httpconnection: " + e.getMessage());
+						Log.e("LOg e",
+								"Error form httpconnection: " + e.getMessage());
 					}
-					
-					
-					
-				////////***** end download mms form pdu	
+
+					// //////***** end download mms form pdu
 				} else if (LOCAL_LOGV) {
 					Log.v(TAG, "Skip downloading duplicate message: "
 							+ new String(nInd.getContentLocation()));
@@ -212,18 +211,20 @@ public class MMSReceiver extends BroadcastReceiver {
 			// Gets subject of message (if any)
 			String subject = curPdu.getString(curPdu.getColumnIndex("sub"));
 			// Gets date of message
-			long date = curPdu.getLong(curPdu.getColumnIndex("date"));
+			long date = curPdu.getLong(curPdu.getColumnIndex("date")) * 1000;
 
 			String selectionAddr = new String("msg_id = '" + id + "'");
 			Uri uriAddr = Uri.parse("content://mms/" + id + "/addr");
 			Cursor curAddr = context.getContentResolver().query(uriAddr, null,
 					null, null, null);
+
+			String address = SmsFetcher.getMMSAddress(context, id);
 			if (curAddr.moveToNext()) {
 				String contact_id = curAddr.getString(curAddr
 						.getColumnIndex("contact_id"));
 				Log.e("MMS REceiver", "contact_id : " + contact_id);
-				String address = curAddr.getString(curAddr
-						.getColumnIndex("address"));
+				// String address = curAddr.getString(curAddr
+				// .getColumnIndex("address"));
 				Log.e("MMS REceiver", "address : " + address);
 				String selectionPart = new String("mid = '" + id + "'");
 				Log.e("MMS REceiver", "selectionPart : " + selectionPart);
@@ -255,37 +256,22 @@ public class MMSReceiver extends BroadcastReceiver {
 						byte[] imgData = readMMSPart(context, partId);
 						Log.e("", "MMSMonitor :: Iimage data length == "
 								+ imgData.length + "\nfileType: " + fileType);
+						if(imgData.length > 0){
+							Intent smsReceiveIntent = new Intent(context,
+									NotifySMS.class);
+							smsReceiveIntent
+									.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							smsReceiveIntent.putExtra("add", ListContactFetcher
+									.ConvertNumberPhoneAddress(address));
+							smsReceiveIntent.putExtra("bd", "New MMS message");
+							smsReceiveIntent.putExtra("timeStamp", date);
+							smsReceiveIntent.putExtra("img", imgData);
+							smsReceiveIntent.putExtra("EXIT", "");
 
-						Bitmap bmp = BitmapFactory.decodeByteArray(imgData, 0,
-								imgData.length);
-						
-						Intent smsReceiveIntent = new Intent (context, NotifySMS.class);
-						smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						smsReceiveIntent.putExtra("add", ListContactFetcher.ConvertNumberPhoneAddress(address));
-						smsReceiveIntent.putExtra("bd", "New MMS message");
-						smsReceiveIntent.putExtra("timeStamp", date);
-						smsReceiveIntent.putExtra("img", imgData);
-						smsReceiveIntent.putExtra("EXIT", "");
-						
-						context.startActivity(smsReceiveIntent);
-						
-//						File sdcard = Environment.getExternalStorageDirectory();
-//						File editedFile = new File(sdcard, "AAAAAAA.jpeg");
-//
-//						// if file is already exists then first delete it
-//						if (editedFile.exists()) {
-//							editedFile.delete();
-//						}
-//
-//						FileOutputStream fOut;
-//						try {
-//							fOut = new FileOutputStream(editedFile);
-//							bmp.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
-//						} catch (FileNotFoundException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+							context.startActivity(smsReceiveIntent);
+						}
 
+						
 					}
 
 					// columns = curPart.getColumnNames();
@@ -427,7 +413,8 @@ public class MMSReceiver extends BroadcastReceiver {
 		return result;
 	}
 
-	public static void GetMmsAttachment(Context context, String _id, String _data) {
+	public static void GetMmsAttachment(Context context, String _id,
+			String _data) {
 		Uri partURI = Uri.parse("content://mms/part/" + _id);
 		String filePath = "/sdcard/photo.jpg";
 		InputStream is = null;
@@ -485,7 +472,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return -1;
 	}
 
-	private static  boolean isDuplicateNotification(Context context,
+	private static boolean isDuplicateNotification(Context context,
 			NotificationInd nInd) {
 		byte[] rawLocation = nInd.getContentLocation();
 		if (rawLocation != null) {

@@ -68,6 +68,7 @@ public class ListSMSActivity extends ListActivity {
 	String strAdd = "";
 	String strBody = "";
 	String isNotify = "";
+	long strTime = 0;
 	byte[] img = null;
 	Handler delayhandler = new Handler();
 
@@ -102,6 +103,9 @@ public class ListSMSActivity extends ListActivity {
 			if (bundle.getString("body") != null
 					&& !(bundle.getString("body").equals(""))) {
 				strBody = bundle.getString("body");
+			}
+			if (bundle.getLong("time") != 0) {
+				strTime = bundle.getLong("time");
 			}
 			if (bundle.getString("isNotify") != null
 					&& !(bundle.getString("isNotify").equals(""))) {
@@ -165,8 +169,14 @@ public class ListSMSActivity extends ListActivity {
 				}
 
 				address = phone;
-				addMessage2List(this, strAdd, strBody, img);
+				addMessage2List(this, strAdd, strBody, img, strTime);
 			}
+		}
+		else{
+			// ***********Load List contact sms *************
+			loadListContact(this);
+
+			// *******************************************
 		}
 
 		setTitle(this.name);
@@ -192,10 +202,7 @@ public class ListSMSActivity extends ListActivity {
 
 		// **************
 
-		// ***********Load List contact sms *************
-		loadListContact(this);
 
-		// *******************************************
 		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
 		setListAdapter(smsAdapter);
 		// set select in bottom o flistview
@@ -265,12 +272,12 @@ public class ListSMSActivity extends ListActivity {
 	}
 
 	private void addMessage2List(Context context, String strAdd2,
-			String strBody2,byte[] bitmap) {
+			String strBody2,byte[] bitmap, long strTime) {
 		// TODO Auto-generated method stub
 
 		final SmsFetcher sf = new SmsFetcher(strAdd2);
 
-		listSMS = sf.addItem2List(context, strBody2, bitmap);
+		listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
 	}
 
 	private void loadListContact(Context context) {

@@ -1,10 +1,18 @@
 package com.netsoft.netsms;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Random;
+
+import com.netsoft.netmms.MMSPart;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -17,39 +25,51 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class AddNewSMSActivity extends Activity {
 
 	ImageButton btnSendNew;
+	ImageButton btnAttach;
+	ImageView attNew;
 	EditText addNew;
 	EditText sendBodyNew;
 
 	Handler delayhandler = new Handler();
 
 	SmsItem smsItem = new SmsItem();
+	private final int SELECT_PHOTO = 100;
+	private MMSPart[] parts;
+	
+	Bundle bundle;
+	String add = "";
+	String bd = "";
+	String timeStamp = "";
+	byte[] imgtemp = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_add_new_sms);
-		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-		// R.layout.title_bar);
 
-		// ImageButton Add = (ImageButton)findViewById(R.id.header);
-		// TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-		// nameTitle.setText("New message");
-
-		// if (savedInstanceState == null) {
-		// getFragmentManager().beginTransaction()
-		// .add(R.id.container, new PlaceholderFragment()).commit();
-		// }
 
 		addNew = (EditText) findViewById(R.id.addAddress);
 		sendBodyNew = (EditText) findViewById(R.id.addEnterBox);
+		attNew = (ImageView)findViewById(R.id.imgAttachNew);
+		btnAttach = (ImageButton)findViewById(R.id.AttachButton);
+		btnAttach.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+				photoPickerIntent.setType("image/*");
+				startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+			}
+		});
 
 		btnSendNew = (ImageButton) findViewById(R.id.addSend);
 		btnSendNew.setOnClickListener(new OnClickListener() {
@@ -64,6 +84,9 @@ public class AddNewSMSActivity extends Activity {
 				smsItem.readStatus = 1;
 				smsItem.type = 2;
 				smsItem.date = System.currentTimeMillis();
+				
+				addNew.setText("dfgsdg");
+				sendBodyNew.setText("sdfsdf");
 
 				if (addNew.getText().toString().equals("")
 						|| sendBodyNew.getText().toString().equals("")) {
@@ -94,15 +117,24 @@ public class AddNewSMSActivity extends Activity {
 					return;
 				} else {
 
-					SMSSender sendSMS = new SMSSender();
-					// sendSMS.sendSMSMessage(addNew.getText().toString(),
-					// sendBodyNew.getText().toString());
-					sendSMS.sendSMSMessage(v.getContext(), smsItem);
-
-					Intent intent = new Intent(v.getContext(),
-							MainActivity.class);
-					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					startActivity(intent);
+//					SMSSender sendSMS = new SMSSender();
+//					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+//
+//					Intent intent = new Intent(v.getContext(),
+//							MainActivity.class);
+//					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//					startActivity(intent);
+					
+					Intent smsReceiveIntent = new Intent(AddNewSMSActivity.this, ListSMSActivity.class);
+					smsReceiveIntent
+							.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					smsReceiveIntent.putExtra("address", "8700");
+					smsReceiveIntent.putExtra("body", "dgsdg");
+					smsReceiveIntent.putExtra("time", System.currentTimeMillis());
+					smsReceiveIntent.putExtra("img", parts[0].Data);
+					smsReceiveIntent.putExtra("isNotify", "1");
+					startActivity(smsReceiveIntent);
+					
 				}
 			}
 		});
@@ -154,5 +186,100 @@ public class AddNewSMSActivity extends Activity {
 
 		}
 	};
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent imageReturnedIntent) {
+		super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+		switch (requestCode) {
+		case SELECT_PHOTO:
+			if (resultCode == RESULT_OK) {
+				Uri selectedImage = imageReturnedIntent.getData();
+				InputStream imageStream;
+				try {
+					imageStream = getContentResolver().openInputStream(
+							selectedImage);
+					Bitmap yourSelectedImage = BitmapFactory
+							.decodeStream(imageStream);
+					attNew.setImageBitmap(yourSelectedImage);
+					int res = 100;
+
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+					String mimeType = ListSMSActivity.GetMimeType(this, selectedImage);
+
+					if (mimeType.equals("image/jpeg")) {
+						if ((yourSelectedImage.getByteCount() / 1000) > 4000) {
+							res = 50;
+						} else {
+							if ((yourSelectedImage.getByteCount() / 1000) > 2000) {
+								res = 80;
+							} else {
+								if ((yourSelectedImage.getByteCount() / 1000) > 1000) {
+									res = 85;
+								} else {
+									if ((yourSelectedImage.getByteCount() / 1000) > 500) {
+										res = 90;
+									} else {
+										if ((yourSelectedImage.getByteCount() / 1000) > 300) {
+											res = 95;
+										}
+									}
+
+								}
+							}
+						}
+
+						yourSelectedImage.compress(Bitmap.CompressFormat.JPEG,
+								res, stream);
+					}
+					if (mimeType.equals("image/png")) {
+						if ((yourSelectedImage.getByteCount() / 1000) > 4000) {
+							res = 70;
+						} else {
+							if ((yourSelectedImage.getByteCount() / 1000) > 2000) {
+								res = 90;
+							} else {
+								if ((yourSelectedImage.getByteCount() / 1000) > 1000) {
+									res = 90;
+								} else {
+									if ((yourSelectedImage.getByteCount() / 1000) > 500) {
+										res = 95;
+									} else {
+										if ((yourSelectedImage.getByteCount() / 1000) > 300) {
+											res = 98;
+										}
+									}
+
+								}
+							}
+						}
+						yourSelectedImage.compress(Bitmap.CompressFormat.PNG,
+								res, stream);
+					}
+
+					byte[] byteArray = stream.toByteArray();
+
+					Toast.makeText(
+							this,
+							"Lenght image: " + yourSelectedImage.getByteCount()
+									/ 1000 + " KB" + "After cpmpress: "
+									+ byteArray.length / 1000,
+							Toast.LENGTH_LONG).show();
+
+					parts = new MMSPart[1];
+					parts[0] = new MMSPart();
+					parts[0].Name = "Image";
+					parts[0].MimeType = mimeType;
+					parts[0].Data = byteArray;
+
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+	}
 
 }

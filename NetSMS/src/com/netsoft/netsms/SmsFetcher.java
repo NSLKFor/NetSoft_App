@@ -119,7 +119,7 @@ public class SmsFetcher {
 
 	}
 
-	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap) {
+	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap, long strTime) {
 		// TODO Auto-generated method stub
 		
 		Uri message = Uri.parse("content://sms");
@@ -171,12 +171,11 @@ public class SmsFetcher {
 								// ;
 		item.readStatus = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-		item.date = 0; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
+		item.date = strTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
 						// 1000;
 		
-		Bitmap bmp = BitmapFactory.decodeByteArray(bitmap, 0,
-				bitmap.length);
-		item.imgMMS = bmp;
+		
+		item.imgMMS = bitmap;
 		
 		if(bitmap!= null){
 			Log.e("akjsfhkjasf", "bitmap not null--" + bitmap.length);
@@ -187,7 +186,7 @@ public class SmsFetcher {
 		
 		listMessage.add(item);
 
-		listMessage = SortListSMS(listMessage);
+		//listMessage = SortListSMS(listMessage);
 		return listMessage;
 	}
 
@@ -364,9 +363,7 @@ public class SmsFetcher {
 					Log.e("", "MMSMonitor :: Iimage data length == "
 							+ imgData.length + "\nfileType: " + fileType);
 
-					Bitmap bmp = BitmapFactory.decodeByteArray(imgData, 0,
-							imgData.length);
-					item.imgMMS = bmp;
+					item.imgMMS = imgData;
 
 //					File sdcard = Environment.getExternalStorageDirectory();
 //					File editedFile = new File(sdcard, "AA" + id + ".jpeg");

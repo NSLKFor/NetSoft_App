@@ -77,8 +77,6 @@ public class MainActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		final ListContactFetcher lf = new ListContactFetcher();
 
-		
-
 		listContact = lf.getListContact(context);
 	}
 

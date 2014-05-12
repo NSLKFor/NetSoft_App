@@ -22,7 +22,7 @@ public class NotifySMS extends Activity {
 	Bundle bundle;
 	String add = "";
 	String bd = "";
-	String timeStamp = "";
+	long timeStamp = 0;
 	byte[] imgtemp = null;
 
 	@Override
@@ -37,7 +37,7 @@ public class NotifySMS extends Activity {
 
 		add = bundle.getString("add");
 		bd = bundle.getString("bd");
-		timeStamp = bundle.getString("timeStamp");
+		timeStamp = bundle.getLong("timeStamp");
 		imgtemp = bundle.getByteArray("img");
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -58,6 +58,7 @@ public class NotifySMS extends Activity {
 										.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 								smsReceiveIntent.putExtra("address", add);
 								smsReceiveIntent.putExtra("body", bd);
+								smsReceiveIntent.putExtra("time", timeStamp);
 								smsReceiveIntent.putExtra("img", imgtemp);
 								smsReceiveIntent.putExtra("isNotify", "1");
 								startActivity(smsReceiveIntent);

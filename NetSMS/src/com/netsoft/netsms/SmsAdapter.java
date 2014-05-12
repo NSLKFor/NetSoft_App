@@ -1,5 +1,6 @@
 package com.netsoft.netsms;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -7,7 +8,10 @@ import java.util.List;
 import android.R.integer;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,8 +79,6 @@ public class SmsAdapter extends BaseAdapter {
 		// listContactItem.time));
 		holder.time.setText(sdf.format(item.date));
 
-		
-
 		RelativeLayout.LayoutParams imgParams = new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.WRAP_CONTENT,
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -100,6 +102,20 @@ public class SmsAdapter extends BaseAdapter {
 			holder.mmsImage.setLayoutParams(imgParams);
 			holder.body.setLayoutParams(bodyParams);
 			holder.time.setLayoutParams(timeParams);
+
+			if (item.imgMMS != null) {
+				
+				int width = 300;
+				int height = 250;
+				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(width,height);
+				holder.mmsImage.setLayoutParams(parms);
+				
+				
+				Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
+						item.imgMMS.length);
+				holder.mmsImage.setImageBitmap(bmp);
+			}
+
 			holder.list_sms.setBackgroundColor(Color.parseColor("#A9E2F3"));
 		} else {
 			bodyParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -109,9 +125,17 @@ public class SmsAdapter extends BaseAdapter {
 			holder.mmsImage.setLayoutParams(imgParams);
 			holder.body.setLayoutParams(bodyParams);
 			holder.time.setLayoutParams(timeParams);
-			
+
 			if (item.imgMMS != null) {
-				holder.mmsImage.setImageBitmap(item.imgMMS);
+				
+				int width = 300;
+				int height = 250;
+				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(width,height);
+				holder.mmsImage.setLayoutParams(parms);
+				
+				Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
+						item.imgMMS.length);
+				holder.mmsImage.setImageBitmap(bmp);
 			}
 
 			holder.list_sms.setBackgroundColor(Color.parseColor("#E0F8F7"));

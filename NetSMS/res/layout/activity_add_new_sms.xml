@@ -1,36 +1,50 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/background"
     android:orientation="horizontal"
-    android:padding="5dip"
-    android:background="@drawable/background" >
+    android:padding="5dip" >
 
-  
-	<EditText
-   		android:id="@+id/addAddress"
+    <EditText
+        android:id="@+id/addAddress"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:minLines="1"
         android:layout_alignParentTop="true"
         android:hint="@string/strAddres"
-        />
+        android:minLines="1" />
 
-		<EditText
-		    android:id="@+id/addEnterBox"
-		    android:layout_width="wrap_content"
-		    android:layout_height="fill_parent"
-		    android:layout_alignLeft="@+id/addAddress"
-		    android:layout_below="@id/addAddress"
-		    android:layout_toLeftOf="@+id/addSend"
-		    android:hint="@string/strAddEnterBox" />
+    <EditText
+        android:id="@+id/addEnterBox"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignLeft="@+id/addAddress"
+        android:layout_below="@+id/imgAttachNew"
+        android:layout_toLeftOf="@+id/addSend"
+        android:hint="@string/strAddEnterBox" />
 
-        <ImageButton
-            android:id="@+id/addSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addEnterBox"
-            android:layout_alignBottom="@+id/addEnterBox"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/send_icon" />
-    
+    <ImageView
+        android:id="@+id/imgAttachNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/addEnterBox"
+        android:layout_below="@+id/addAddress"
+        android:src="@drawable/logo_netsoft" />
+
+    <ImageButton
+        android:id="@+id/addSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/addAddress"
+        android:layout_alignTop="@+id/imgAttachNew"
+        android:src="@drawable/send_icon" />
+
+    <ImageButton
+        android:id="@+id/AttachButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/addSend"
+        android:layout_below="@+id/addSend"
+        android:src="@drawable/attach_icon" />
+
 </RelativeLayout>
