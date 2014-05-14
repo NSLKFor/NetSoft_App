@@ -55,7 +55,7 @@ public class NotifySMS extends Activity {
 								Intent smsReceiveIntent = new Intent(
 										NotifySMS.this, ListSMSActivity.class);
 								smsReceiveIntent
-										.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+										.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 								smsReceiveIntent.putExtra("address", add);
 								smsReceiveIntent.putExtra("body", bd);
 								smsReceiveIntent.putExtra("time", timeStamp);

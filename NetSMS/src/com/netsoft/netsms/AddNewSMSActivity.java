@@ -127,7 +127,7 @@ public class AddNewSMSActivity extends Activity {
 					
 					Intent smsReceiveIntent = new Intent(AddNewSMSActivity.this, ListSMSActivity.class);
 					smsReceiveIntent
-							.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+							.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					smsReceiveIntent.putExtra("address", "8700");
 					smsReceiveIntent.putExtra("body", "dgsdg");
 					smsReceiveIntent.putExtra("time", System.currentTimeMillis());

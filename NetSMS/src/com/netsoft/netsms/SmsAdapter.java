@@ -54,19 +54,20 @@ public class SmsAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		View view = convertView;
-		ViewHolder holder = new ViewHolder();
+		ViewHolder holder = null;
 
-		if (view == null) {
-			view = inflater.inflate(R.layout.list_sms_row, parent, false);
-			holder.mmsImage = (ImageView) view.findViewById(R.id.imgMMS);
-			holder.body = (TextView) view.findViewById(R.id.body);
-			holder.time = (TextView) view.findViewById(R.id.type);
-			holder.list_sms = (RelativeLayout) view.findViewById(R.id.list_sms);
+		if (convertView == null) {
+			convertView = inflater.inflate(R.layout.list_sms_row, null);
+			holder = new ViewHolder();
+			holder.mmsImage = (ImageView) convertView.findViewById(R.id.imgMMS);
+			holder.body = (TextView) convertView.findViewById(R.id.body);
+			holder.time = (TextView) convertView.findViewById(R.id.type);
+			holder.list_sms = (RelativeLayout) convertView
+					.findViewById(R.id.list_sms);
 
-			view.setTag(holder);
+			convertView.setTag(holder);
 		} else {
-			holder = (ViewHolder) view.getTag();
+			holder = (ViewHolder) convertView.getTag();
 		}
 
 		SmsItem item = smsItems.get(position);
@@ -104,16 +105,21 @@ public class SmsAdapter extends BaseAdapter {
 			holder.time.setLayoutParams(timeParams);
 
 			if (item.imgMMS != null) {
-				
+
 				int width = 300;
 				int height = 250;
-				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(width,height);
+				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(
+						width, height);
 				holder.mmsImage.setLayoutParams(parms);
-				
-				
-				Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
-						item.imgMMS.length);
+
+				// Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
+				// item.imgMMS.length);
+				Bitmap bmp = decodeSampledBitmapFromResource(item.imgMMS, 200,
+						200);
 				holder.mmsImage.setImageBitmap(bmp);
+			} else {
+				holder.mmsImage.setImageBitmap(null);
+				holder.mmsImage.destroyDrawingCache();
 			}
 
 			holder.list_sms.setBackgroundColor(Color.parseColor("#A9E2F3"));
@@ -127,21 +133,71 @@ public class SmsAdapter extends BaseAdapter {
 			holder.time.setLayoutParams(timeParams);
 
 			if (item.imgMMS != null) {
-				
+
 				int width = 300;
 				int height = 250;
-				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(width,height);
+				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(
+						width, height);
 				holder.mmsImage.setLayoutParams(parms);
-				
-				Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
-						item.imgMMS.length);
+
+				// Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
+				// item.imgMMS.length);
+
+				Bitmap bmp = decodeSampledBitmapFromResource(item.imgMMS, 200,
+						200);
 				holder.mmsImage.setImageBitmap(bmp);
+			} else {
+				holder.mmsImage.setImageBitmap(null);
+				holder.mmsImage.destroyDrawingCache();
 			}
 
 			holder.list_sms.setBackgroundColor(Color.parseColor("#E0F8F7"));
 
 		}
-		return view;
+		return convertView;
+	}
+
+	public static int calculateInSampleSize(BitmapFactory.Options options,
+			int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			// Calculate ratios of height and width to requested height and
+			// width
+			final int heightRatio = Math.round((float) height
+					/ (float) reqHeight);
+			final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+			// Choose the smallest ratio as inSampleSize value, this will
+			// guarantee
+			// a final image with both dimensions larger than or equal to the
+			// requested height and width.
+			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		}
+
+		return inSampleSize;
+	}
+
+	public static Bitmap decodeSampledBitmapFromResource(byte[] res,
+			int reqWidth, int reqHeight) {
+
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		// BitmapFactory.decodeResource(res, resId, options);
+		BitmapFactory.decodeByteArray(res, 0, res.length, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth,
+				reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeByteArray(res, 0, res.length, options);
 	}
 
 }

@@ -119,9 +119,8 @@ public class SmsFetcher {
 
 	}
 
-	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap, long strTime) {
+	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap, long lTime) {
 		// TODO Auto-generated method stub
-		
 		Uri message = Uri.parse("content://sms");
 		ContentResolver cr = context.getContentResolver();
 		String selection = "";
@@ -171,7 +170,7 @@ public class SmsFetcher {
 								// ;
 		item.readStatus = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-		item.date = strTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
+		item.date = lTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
 						// 1000;
 		
 		
@@ -186,7 +185,7 @@ public class SmsFetcher {
 		
 		listMessage.add(item);
 
-		//listMessage = SortListSMS(listMessage);
+		listMessage = SortListSMS(listMessage);
 		return listMessage;
 	}
 
@@ -263,9 +262,11 @@ public class SmsFetcher {
 		return fmNumber;
 	}
 
-	public List<SmsItem> getMMS(Context context, String address) {
+	public static ArrayList<SmsItem> getMMS(Context context, String address) {
 
-		List<SmsItem> listMMS = new ArrayList<SmsItem>();
+		
+		long time1 = System.currentTimeMillis();
+		ArrayList<SmsItem> listMMS = new ArrayList<SmsItem>();
 		Cursor curPdu = context.getContentResolver().query(
 				Uri.parse("content://mms"), null, null, null, null);
 
@@ -306,9 +307,19 @@ public class SmsFetcher {
 			// ************************************
 			
 			//check address in mms with address of item
-			if(!addr.equals(address)){
+			List<String> listAddress = new ArrayList<String>();
+			listAddress = formatNumberPhone(address);
+			boolean bEqual = false;
+			for(int i = 0; i< listAddress.size(); i++){
+				if(addr.equals(listAddress.get(i))){
+					bEqual = true;
+				}
+			}
+			
+			if(!bEqual){
 				continue;
 			}
+			
 			SmsItem item = new SmsItem();
 			item.address = address;
 			item.date = date;
@@ -325,8 +336,6 @@ public class SmsFetcher {
 				// curPart.getString(curPart.getColumnIndex("address"));
 				// Log.e("-----------------", "--------- Address mms" + addr);
 
-				
-				
 				String contentType = curPart.getString(curPart
 						.getColumnIndex("ct"));
 				String partId = curPart
@@ -391,6 +400,10 @@ public class SmsFetcher {
 		} while (curPdu.moveToNext());
 		// while in herw
 		
+		long time2 = System.currentTimeMillis();
+		
+		Log.e("", "Duration time to load mms is: " + (float)(time2 - time1) / 1000);
+		
 		return listMMS;
 
 	}
@@ -442,7 +455,7 @@ public class SmsFetcher {
 		return partData;
 	}
 
-	private String getMmsText(Context context, String id) {
+	private static String getMmsText(Context context, String id) {
 		Uri partURI = Uri.parse("content://mms/part/" + id);
 		InputStream is = null;
 		StringBuilder sb = new StringBuilder();

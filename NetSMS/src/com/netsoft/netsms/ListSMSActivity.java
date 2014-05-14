@@ -7,10 +7,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Fragment;
 import android.app.ListActivity;
@@ -26,6 +31,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.Telephony;
 import android.util.Log;
@@ -71,18 +77,22 @@ public class ListSMSActivity extends ListActivity {
 	long strTime = 0;
 	byte[] img = null;
 	Handler delayhandler = new Handler();
+	Handler handler = new Handler();
+	boolean isrunning  =  false;
+	boolean stackRunning  =  false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_list_sms);
-
 		// get address in application
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		this.address = application.getAddress();
 		this.name = application.getName();
 		this.thumnail = application.getThumnail();
+		
+		listSMS =  new ArrayList<SmsItem>();
 
 		btnAttach = (ImageButton) findViewById(R.id.listAttachButton);
 		imgAttach = (ImageView) findViewById(R.id.listMMSImage);
@@ -117,63 +127,15 @@ public class ListSMSActivity extends ListActivity {
 
 			if (!strAdd.equals("")) {
 				String phone = "";
-				String temp = strAdd;
-				if (temp.substring(0, 3).equals("+84")) {
-					switch (temp.length()) {
-					case 13:
-						phone = "0" + temp.substring(3);
-						break;
-					case 12:
-						phone = "0" + temp.substring(3);
-						break;
-					case 16:
-						if (temp.subSequence(6, 7).equals(" ")) {
-							phone = "0" + temp.substring(4, 6)
-									+ temp.substring(7, 10)
-									+ temp.substring(11, 13)
-									+ temp.substring(14);
-						} else {
-							phone = "0" + temp.substring(4, 7)
-									+ temp.substring(8, 11)
-									+ temp.substring(12);
-						}
-						break;
-					}
-					;
-				}
-				if (temp.substring(0, 2).equals("84")) {
-					switch (temp.length()) {
-					case 12:
-						phone = "0" + temp.substring(2);
-						break;
-					case 11:
-						phone = "0" + temp.substring(2);
-						break;
-					}
-					;
-				}
-
-				if (temp.length() == 13 && !temp.substring(0, 3).equals("+84")) {
-					if (temp.substring(4, 5).equals(" ")) {
-						phone = temp.substring(0, 4) + temp.substring(5, 8)
-								+ temp.substring(9);
-					} else {
-						phone = temp.substring(0, 3) + temp.substring(4, 7)
-								+ temp.substring(8, 10) + temp.substring(11);
-
-					}
-				}
-
-				if (phone == null || "".equals(phone)) {
-					phone = temp;
-				}
-
+				phone = formatToStandardNumber(strAdd);
+				
 				address = phone;
-				addMessage2List(this, strAdd, strBody, img, strTime);
+				addMessage2List(this, address, strBody, img, strTime);
 			}
 		}
 		else{
 			// ***********Load List contact sms *************
+			address = formatToStandardNumber(address);
 			loadListContact(this);
 
 			// *******************************************
@@ -283,8 +245,27 @@ public class ListSMSActivity extends ListActivity {
 	private void loadListContact(Context context) {
 		// TODO Auto-generated method stub
 		final SmsFetcher sf = new SmsFetcher(this.address);
-		listSMS = sf.getListSMS(context);
+		listSMS.addAll(sf.getListSMS(context));
+		
+		listSMS.addAll(SmsFetcher.getMMS(context, this.address));
+		
+		Collections.sort(listSMS, new FishNameComparator());
+		
+//		LoadMMSAsynsTask loadMMSAsynsTask = new LoadMMSAsynsTask(this);
+//		loadMMSAsynsTask.execute("+841252840600");
+		
+		
+
 	}
+	
+	public void notifiyActivityTaskCompleted(ArrayList<SmsItem> result){		
+
+		listSMS.addAll(result);
+	}
+	public void setStackRunning(){
+		stackRunning = false;
+	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
@@ -454,7 +435,7 @@ public class ListSMSActivity extends ListActivity {
 			Intent intent = new Intent(Intent.ACTION_MAIN);
 			intent.putExtra("EXIT", "true");
 			intent.addCategory(Intent.CATEGORY_HOME);
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 			startActivity(intent);
 		}
 	}
@@ -468,5 +449,70 @@ public class ListSMSActivity extends ListActivity {
 
 		}
 	};
+	
+	public static String formatToStandardNumber (String temp){
+		String phone = "";
+		if (temp.substring(0, 3).equals("+84")) {
+			switch (temp.length()) {
+			case 13:
+				phone = "0" + temp.substring(3);
+				break;
+			case 12:
+				phone = "0" + temp.substring(3);
+				break;
+			case 16:
+				if (temp.subSequence(6, 7).equals(" ")) {
+					phone = "0" + temp.substring(4, 6)
+							+ temp.substring(7, 10)
+							+ temp.substring(11, 13)
+							+ temp.substring(14);
+				} else {
+					phone = "0" + temp.substring(4, 7)
+							+ temp.substring(8, 11)
+							+ temp.substring(12);
+				}
+				break;
+			}
+			;
+		}
+		if (temp.substring(0, 2).equals("84")) {
+			switch (temp.length()) {
+			case 12:
+				phone = "0" + temp.substring(2);
+				break;
+			case 11:
+				phone = "0" + temp.substring(2);
+				break;
+			}
+			;
+		}
 
+		if (temp.length() == 13 && !temp.substring(0, 3).equals("+84")) {
+			if (temp.substring(4, 5).equals(" ")) {
+				phone = temp.substring(0, 4) + temp.substring(5, 8)
+						+ temp.substring(9);
+			} else {
+				phone = temp.substring(0, 3) + temp.substring(4, 7)
+						+ temp.substring(8, 10) + temp.substring(11);
+
+			}
+		}
+
+		if (phone == null || "".equals(phone)) {
+			phone = temp;
+		}
+
+		return phone;
+	}
+	
+	public class FishNameComparator implements Comparator<SmsItem>
+	{
+		@Override
+		public int compare(SmsItem arg1, SmsItem arg0) {
+			// TODO Auto-generated method stub
+			return (arg0.date > arg1.date ) ? -1: (arg0.date == arg1.date ) ? 0 : 1;
+		}
+	}
 }
+
+

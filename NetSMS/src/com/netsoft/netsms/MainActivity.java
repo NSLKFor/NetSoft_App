@@ -98,7 +98,9 @@ public class MainActivity extends ListActivity {
 			return true;
 		}
 		if (id == R.id.action_new_sms) {
+			
 			Intent intent = new Intent(this, AddNewSMSActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
