@@ -34,35 +34,35 @@ public class SmsFetcher {
 	}
 
 	public List<SmsItem> getListSMS(Context context) {
-		
-		
 
 		Uri message = Uri.parse("content://sms");
 		ContentResolver cr = context.getContentResolver();
 		String selection = "";
-		List<String> listNumberFormat= new ArrayList<String>(); 
+		List<String> listNumberFormat = new ArrayList<String>();
 		listNumberFormat = formatNumberPhone(this.address);
-		for(int i = 0; i < listNumberFormat.size() - 1; i++){
-			selection = selection + "address = '" + listNumberFormat.get(i) + "' or ";
+		for (int i = 0; i < listNumberFormat.size() - 1; i++) {
+			selection = selection + "address = '" + listNumberFormat.get(i)
+					+ "' or ";
 		}
-		selection = selection + "address = '" + listNumberFormat.get(listNumberFormat.size() - 1) + "'";
-		
+		selection = selection + "address = '"
+				+ listNumberFormat.get(listNumberFormat.size() - 1) + "'";
 
 		Cursor cursor = cr.query(message, null, selection, null, null);
-//		Cursor cursor = cr.query(message, null, "address = '"+ this.address+ "' or "+ "address = '"+ convertAddress(this.address)+ "'", null, null);
-//		Cursor cursor = cr.query(message, null,null, null, null);
-		
+		// Cursor cursor = cr.query(message, null, "address = '"+ this.address+
+		// "' or "+ "address = '"+ convertAddress(this.address)+ "'", null,
+		// null);
+		// Cursor cursor = cr.query(message, null,null, null, null);
 
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
-		cursor.moveToFirst();
-		do {
-			String temp = cursor.getString(cursor
-					.getColumnIndexOrThrow("address"));
-			String ttt =temp.replace(" ", "");
-			temp = ttt;
-			if (temp.equals(this.address)
-					|| temp.equals(convertAddress(this.address))) {
-				
+		if (cursor.moveToNext()) {
+			do {
+				// String temp = cursor.getString(cursor
+				// .getColumnIndexOrThrow("address"));
+				// String ttt =temp.replace(" ", "");
+				// temp = ttt;
+				// if (temp.equals(this.address)
+				// || temp.equals(convertAddress(this.address))) {
+
 				SmsItem item = new SmsItem();
 				item.address = this.address;
 				item.id = Integer.parseInt(cursor.getString(
@@ -88,13 +88,14 @@ public class SmsFetcher {
 											.getColumnIndexOrThrow("_id")),
 							null);
 				}
-			}
-		} while (cursor.moveToNext());
+				// }
+			} while (cursor.moveToNext());
+			cursor.close();
+		}
 
 		listMessage = SortListSMS(listMessage);
-		
-		
-//		listMessage.addAll(getMMS(context, "+841252840600"));
+
+		// listMessage.addAll(getMMS(context, "+841252840600"));
 
 		return listMessage;
 	}
@@ -105,62 +106,69 @@ public class SmsFetcher {
 		String selection = "_id = " + id;
 		Uri uri = Uri.parse("content://sms");
 		Cursor cursor = contentResolver.query(uri, null, selection, null, null);
-		String phone = cursor.getString(cursor.getColumnIndex("address"));
-		int type = cursor.getInt(cursor.getColumnIndex("type"));// 2 = sent,
-																// etc.
-		long date = cursor.getLong(cursor.getColumnIndex("date"));
-		String body = cursor.getString(cursor.getColumnIndex("body"));
+		if (cursor.moveToNext()) {
+			do {
+				String phone = cursor.getString(cursor
+						.getColumnIndex("address"));
+				int type = cursor.getInt(cursor.getColumnIndex("type"));// 2 =
+																		// sent,
+																		// etc.
+				long date = cursor.getLong(cursor.getColumnIndex("date"));
+				String body = cursor.getString(cursor.getColumnIndex("body"));
+			} while (cursor.moveToNext());
+			cursor.close();
+		}
 
-		Log.e("AAAAAAA", "---- id: " + id);
-		Log.e("AAAAAAA", "---- address: " + phone);
-		Log.e("AAAAAAA", "---- type: " + type);
-		Log.e("AAAAAAA", "---- date: " + date);
-		Log.e("AAAAAAA", "---- body: " + body);
+	
 
 	}
 
-	public List<SmsItem> addItem2List(Context context , String strBody2, byte[] bitmap, long lTime) {
+	public List<SmsItem> addItem2List(Context context, String strBody2,
+			byte[] bitmap, long lTime) {
 		// TODO Auto-generated method stub
 		Uri message = Uri.parse("content://sms");
 		ContentResolver cr = context.getContentResolver();
 		String selection = "";
-		List<String> listNumberFormat= new ArrayList<String>(); 
+		List<String> listNumberFormat = new ArrayList<String>();
 		listNumberFormat = formatNumberPhone(this.address);
-		for(int i = 0; i < listNumberFormat.size() - 1; i++){
-			selection = selection + "address = '" + listNumberFormat.get(i) + "' or ";
+		for (int i = 0; i < listNumberFormat.size() - 1; i++) {
+			selection = selection + "address = '" + listNumberFormat.get(i)
+					+ "' or ";
 		}
-		selection = selection + "address = '" + listNumberFormat.get(listNumberFormat.size() - 1) + "'";
+		selection = selection + "address = '"
+				+ listNumberFormat.get(listNumberFormat.size() - 1) + "'";
 		Cursor cursor = cr.query(message, null, selection, null, null);
-		
-		
+
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
-		cursor.moveToFirst();
-		do {
-			String temp = cursor.getString(cursor
-					.getColumnIndexOrThrow("address"));
+		if (cursor.moveToNext()) {
+			do {
+				String temp = cursor.getString(cursor
+						.getColumnIndexOrThrow("address"));
 
-			if (temp.equals(this.address)
-					|| temp.equals(convertAddress(this.address))) {
-				SmsItem item = new SmsItem();
-				item.address = this.address;
-				item.id = Integer.parseInt(cursor.getString(
-						cursor.getColumnIndexOrThrow("_id")).toString());
-				item.body = cursor.getString(
-						cursor.getColumnIndexOrThrow("body")).toString();
-				item.readStatus = Integer.parseInt(cursor.getString(
-						cursor.getColumnIndexOrThrow("read")).toString());
-				item.type = Integer.parseInt(cursor.getString(
-						cursor.getColumnIndexOrThrow("type")).toString());
-				item.date = cursor
-						.getLong(cursor.getColumnIndexOrThrow("date"));
-				item.imgMMS = null;
+				if (temp.equals(this.address)
+						|| temp.equals(convertAddress(this.address))) {
+					SmsItem item = new SmsItem();
+					item.address = this.address;
+					item.id = Integer.parseInt(cursor.getString(
+							cursor.getColumnIndexOrThrow("_id")).toString());
+					item.body = cursor.getString(
+							cursor.getColumnIndexOrThrow("body")).toString();
+					item.readStatus = Integer.parseInt(cursor.getString(
+							cursor.getColumnIndexOrThrow("read")).toString());
+					item.type = Integer.parseInt(cursor.getString(
+							cursor.getColumnIndexOrThrow("type")).toString());
+					item.date = cursor.getLong(cursor
+							.getColumnIndexOrThrow("date"));
+					item.imgMMS = null;
 
-				// item.body = Integer.toString((int)
-				// System.currentTimeMillis());
-				
-				listMessage.add(item);
-			}
-		} while (cursor.moveToNext());
+					// item.body = Integer.toString((int)
+					// System.currentTimeMillis());
+
+					listMessage.add(item);
+				}
+			} while (cursor.moveToNext());
+			cursor.close();
+		}
 
 		SmsItem item = new SmsItem();
 		item.address = this.address;
@@ -170,19 +178,18 @@ public class SmsFetcher {
 								// ;
 		item.readStatus = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
-		item.date = lTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date")) /
-						// 1000;
-		
-		
+		item.date = lTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date"))
+							// /
+							// 1000;
+
 		item.imgMMS = bitmap;
-		
-		if(bitmap!= null){
+
+		if (bitmap != null) {
 			Log.e("akjsfhkjasf", "bitmap not null--" + bitmap.length);
-		}else{
+		} else {
 			Log.e("akjsfhkjasf", "bitmap null");
 		}
-		
-		
+
 		listMessage.add(item);
 
 		listMessage = SortListSMS(listMessage);
@@ -214,64 +221,54 @@ public class SmsFetcher {
 
 		return temp;
 	}
-	
-	public static List<String> formatNumberPhone(String adds){
-		List<String> fmNumber= new ArrayList<String>();
+
+	public static List<String> formatNumberPhone(String adds) {
+		List<String> fmNumber = new ArrayList<String>();
 		String temp = "";
 		fmNumber.add(adds);
-		switch(adds.length()){
+		switch (adds.length()) {
 		case 10:
-			temp = adds.substring(0,3) + " " +
-					adds.substring(3,6) + " " +
-					adds.substring(6,8) + " " +
-					adds.substring(8);
+			temp = adds.substring(0, 3) + " " + adds.substring(3, 6) + " "
+					+ adds.substring(6, 8) + " " + adds.substring(8);
 			fmNumber.add(temp);
-			temp= "";
-			
+			temp = "";
+
 			temp = "+84" + adds.substring(1);
 			fmNumber.add(temp);
 			temp = "";
-			
-			temp = "+84 " + adds.substring(1,3) + " " +
-					adds.substring(3,6) + " "+
-					adds.substring(6,8) + " "+
-					adds.substring(8);
+
+			temp = "+84 " + adds.substring(1, 3) + " " + adds.substring(3, 6)
+					+ " " + adds.substring(6, 8) + " " + adds.substring(8);
 			fmNumber.add(temp);
 			break;
 		case 11:
 			temp = "";
-			temp = adds.substring(0,4) +" "+
-					adds.substring(4,7)+" "+
-					adds.substring(7);
+			temp = adds.substring(0, 4) + " " + adds.substring(4, 7) + " "
+					+ adds.substring(7);
 			fmNumber.add(temp);
 			temp = "";
-			
-			
+
 			temp = "+84" + adds.substring(1);
 			fmNumber.add(temp);
 			temp = "";
-			
-			temp = "+84 " + adds.substring(1,4) + " " +
-					adds.substring(4,7) + " "+
-					adds.substring(7);
+
+			temp = "+84 " + adds.substring(1, 4) + " " + adds.substring(4, 7)
+					+ " " + adds.substring(7);
 			fmNumber.add(temp);
 			break;
 		}
-		
-		
+
 		return fmNumber;
 	}
 
 	public static ArrayList<SmsItem> getMMS(Context context, String address) {
 
-		
 		long time1 = System.currentTimeMillis();
 		ArrayList<SmsItem> listMMS = new ArrayList<SmsItem>();
 		Cursor curPdu = context.getContentResolver().query(
 				Uri.parse("content://mms"), null, null, null, null);
 
-		// if (curPdu.moveToNext()) {
-		curPdu.moveToFirst();
+		 if (curPdu.moveToNext()) {
 		do {
 
 			// Gets ID of message
@@ -305,21 +302,21 @@ public class SmsFetcher {
 			String addr = getMMSAddress(context, id);
 			// ********************end get address
 			// ************************************
-			
-			//check address in mms with address of item
+
+			// check address in mms with address of item
 			List<String> listAddress = new ArrayList<String>();
 			listAddress = formatNumberPhone(address);
 			boolean bEqual = false;
-			for(int i = 0; i< listAddress.size(); i++){
-				if(addr.equals(listAddress.get(i))){
+			for (int i = 0; i < listAddress.size(); i++) {
+				if (addr.equals(listAddress.get(i))) {
 					bEqual = true;
 				}
 			}
-			
-			if(!bEqual){
+
+			if (!bEqual) {
 				continue;
 			}
-			
+
 			SmsItem item = new SmsItem();
 			item.address = address;
 			item.date = date;
@@ -329,7 +326,6 @@ public class SmsFetcher {
 			item.body = "message " + id;
 
 			curPart.moveToFirst();
-
 			do {
 
 				// String addr =
@@ -356,7 +352,7 @@ public class SmsFetcher {
 						body = curPart
 								.getString(curPart.getColumnIndex("text"));
 					}
-					
+
 					item.body = body;
 					Log.e("MMS REceiver", "--------String  :: string == "
 							+ body);
@@ -374,36 +370,40 @@ public class SmsFetcher {
 
 					item.imgMMS = imgData;
 
-//					File sdcard = Environment.getExternalStorageDirectory();
-//					File editedFile = new File(sdcard, "AA" + id + ".jpeg");
-//
-//					// if file is already exists then first delete it
-//					if (editedFile.exists()) {
-//						// editedFile.delete();
-//					} else {
-//
-//						FileOutputStream fOut;
-//						try {
-//							fOut = new FileOutputStream(editedFile);
-//							bmp.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
-//						} catch (FileNotFoundException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}
+					// File sdcard = Environment.getExternalStorageDirectory();
+					// File editedFile = new File(sdcard, "AA" + id + ".jpeg");
+					//
+					// // if file is already exists then first delete it
+					// if (editedFile.exists()) {
+					// // editedFile.delete();
+					// } else {
+					//
+					// FileOutputStream fOut;
+					// try {
+					// fOut = new FileOutputStream(editedFile);
+					// bmp.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
+					// } catch (FileNotFoundException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
 
 				}
 
 			} while (curPart.moveToNext());
-			
+			curPart.close();
 			listMMS.add(item);
 		} while (curPdu.moveToNext());
+		curPdu.close();
+		
+	}
 		// while in herw
-		
+
 		long time2 = System.currentTimeMillis();
-		
-		Log.e("", "Duration time to load mms is: " + (float)(time2 - time1) / 1000);
-		
+
+		Log.e("", "Duration time to load mms is: " + (float) (time2 - time1)
+				/ 1000);
+
 		return listMMS;
 
 	}
@@ -514,6 +514,7 @@ public class SmsFetcher {
 				;
 
 			} while (cursor.moveToNext());
+			cursor.close();
 		}
 
 		Log.e("-----------------", "\n\n--------- Receive: " + receiver);
@@ -528,6 +529,5 @@ public class SmsFetcher {
 		// return address.replaceAll("[^0-9]", "");
 		return receiver;
 	}
-	
 
 }

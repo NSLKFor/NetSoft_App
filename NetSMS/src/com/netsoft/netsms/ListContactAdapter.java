@@ -77,6 +77,10 @@ public class ListContactAdapter extends BaseAdapter {
 			holder.tviBody.setTypeface(null, Typeface.BOLD);
 			holder.tviAddress.setTypeface(null, Typeface.BOLD);
 			holder.tviBody.setTypeface(null, Typeface.BOLD);
+		}else{
+			holder.tviBody.setTypeface(null, Typeface.NORMAL);
+			holder.tviAddress.setTypeface(null, Typeface.NORMAL);
+			holder.tviBody.setTypeface(null, Typeface.NORMAL);
 		}
 
 		if (listContactItem.name == null || listContactItem.name.equals("")) {

@@ -296,8 +296,11 @@ public class MMSReceiver extends BroadcastReceiver {
 					// }
 
 				}
+				curPart.close();
+				
 			}
 		}
+		curPdu.close();
 
 		/*
 		 * 

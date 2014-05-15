@@ -1,5 +1,7 @@
 package com.netsoft.netsms;
 
+import java.util.List;
+
 import android.app.Application;
 import android.net.Uri;
 
@@ -8,6 +10,7 @@ public class NetSMSApplication extends Application{
 	private String address;
 	private String name;
 	private Uri thumnail;
+	private List<ListContactItem> listContactItem;
 	
 	public NetSMSApplication(){
 		super();
@@ -45,6 +48,13 @@ public class NetSMSApplication extends Application{
 	
 	public Uri getThumnail() {
 		return this.thumnail;
+	}
+	public void setListContactItem(List<ListContactItem> list){
+		this.listContactItem = list;
+	}
+	
+	public List<ListContactItem> getListContactItem() {
+		return this.listContactItem;
 	}
 	
 }

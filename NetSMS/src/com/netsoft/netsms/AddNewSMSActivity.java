@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Random;
 
+import com.netsoft.netmms.APNHelper;
 import com.netsoft.netmms.MMSPart;
 
 import android.app.Activity;
@@ -42,7 +43,7 @@ public class AddNewSMSActivity extends Activity {
 	SmsItem smsItem = new SmsItem();
 	private final int SELECT_PHOTO = 100;
 	private MMSPart[] parts;
-	
+
 	Bundle bundle;
 	String add = "";
 	String bd = "";
@@ -55,13 +56,12 @@ public class AddNewSMSActivity extends Activity {
 
 		setContentView(R.layout.activity_add_new_sms);
 
-
 		addNew = (EditText) findViewById(R.id.addAddress);
 		sendBodyNew = (EditText) findViewById(R.id.addEnterBox);
-		attNew = (ImageView)findViewById(R.id.imgAttachNew);
-		btnAttach = (ImageButton)findViewById(R.id.AttachButton);
+		attNew = (ImageView) findViewById(R.id.imgAttachNew);
+		btnAttach = (ImageButton) findViewById(R.id.AttachButton);
 		btnAttach.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -84,12 +84,10 @@ public class AddNewSMSActivity extends Activity {
 				smsItem.readStatus = 1;
 				smsItem.type = 2;
 				smsItem.date = System.currentTimeMillis();
-				
-				addNew.setText("dfgsdg");
-				sendBodyNew.setText("sdfsdf");
 
-				if (addNew.getText().toString().equals("")
-						|| sendBodyNew.getText().toString().equals("")) {
+				if ((addNew.getText().toString().equals("") || sendBodyNew
+						.getText().toString().equals(""))
+						&& parts == null) {
 
 					if (addNew.getText().toString().equals("")
 							&& !sendBodyNew.getText().toString().equals("")) {
@@ -117,24 +115,55 @@ public class AddNewSMSActivity extends Activity {
 					return;
 				} else {
 
-//					SMSSender sendSMS = new SMSSender();
-//					sendSMS.sendSMSMessage(v.getContext(), smsItem);
-//
-//					Intent intent = new Intent(v.getContext(),
-//							MainActivity.class);
-//					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//					startActivity(intent);
-					
-					Intent smsReceiveIntent = new Intent(AddNewSMSActivity.this, ListSMSActivity.class);
-					smsReceiveIntent
-							.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					smsReceiveIntent.putExtra("address", "8700");
-					smsReceiveIntent.putExtra("body", "dgsdg");
-					smsReceiveIntent.putExtra("time", System.currentTimeMillis());
-					smsReceiveIntent.putExtra("img", parts[0].Data);
-					smsReceiveIntent.putExtra("isNotify", "1");
-					startActivity(smsReceiveIntent);
-					
+					if (addNew.getText().toString().equals("")) {
+						Toast.makeText(
+								v.getContext(),
+								"Address is Empty.\nPlease enter address and try again.",
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+
+					if (parts != null) {
+						String address = addNew.getText().toString()
+								.replaceAll(" ", "");
+						Toast.makeText(getApplicationContext(), "Send MMS",
+								Toast.LENGTH_SHORT).show();
+
+						 APNHelper aHelper = new APNHelper(v.getContext());
+						// aHelper.sendMMS(address, parts);
+						 String[] tmpAdd = new String[1];
+						 tmpAdd[0] = address;
+						 aHelper.insert(v.getContext(), tmpAdd, "MMS to "
+						 + address, parts[0].Data);
+						 
+						 Intent intent = new Intent(v.getContext(),
+									MainActivity.class);
+							intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							startActivity(intent);
+
+//						Intent smsReceiveIntent = new Intent(
+//								AddNewSMSActivity.this, ListSMSActivity.class);
+//						smsReceiveIntent
+//								.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//						smsReceiveIntent.putExtra("address", address);
+//						smsReceiveIntent.putExtra("body", "MMS to " + address);
+//						smsReceiveIntent.putExtra("time",
+//								System.currentTimeMillis());
+//						smsReceiveIntent.putExtra("img", parts[0].Data);
+//						smsReceiveIntent.putExtra("isNotify", "0");
+//						startActivity(smsReceiveIntent);
+						return;
+					}
+					if (!sendBodyNew.getText().toString().equals("")) {
+						// SMSSender sendSMS = new SMSSender();
+						// sendSMS.sendSMSMessage(v.getContext(), smsItem);
+
+						Intent intent = new Intent(v.getContext(),
+								MainActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						startActivity(intent);
+					}
+
 				}
 			}
 		});
@@ -186,13 +215,14 @@ public class AddNewSMSActivity extends Activity {
 
 		}
 	};
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent imageReturnedIntent) {
 		super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 		switch (requestCode) {
 		case SELECT_PHOTO:
+
 			if (resultCode == RESULT_OK) {
 				Uri selectedImage = imageReturnedIntent.getData();
 				InputStream imageStream;
@@ -206,7 +236,8 @@ public class AddNewSMSActivity extends Activity {
 
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-					String mimeType = ListSMSActivity.GetMimeType(this, selectedImage);
+					String mimeType = ListSMSActivity.GetMimeType(this,
+							selectedImage);
 
 					if (mimeType.equals("image/jpeg")) {
 						if ((yourSelectedImage.getByteCount() / 1000) > 4000) {

@@ -125,6 +125,15 @@ public class NotifySMS extends Activity {
 		// notificationManager.cancel(9999);
 
 	}
+	
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		startActivity(intent);
+	}
 
 }
 

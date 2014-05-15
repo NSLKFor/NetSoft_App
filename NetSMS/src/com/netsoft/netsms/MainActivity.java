@@ -1,10 +1,14 @@
 package com.netsoft.netsms;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
+
+import com.netsoft.constant.Constants;
 
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,6 +16,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -31,10 +37,13 @@ public class MainActivity extends ListActivity {
 	// private SmsAdapter sadapter;
 	private ListContactAdapter listContactAdapter;
 	private List<ListContactItem> listContact;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Toast.makeText(getApplicationContext(), "onCreate of Main Activity", Toast.LENGTH_SHORT).show();
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notificationManager.cancel(9999);
 
@@ -50,12 +59,7 @@ public class MainActivity extends ListActivity {
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 
-		loadListContact(MainActivity.this);
-		listContactAdapter = new ListContactAdapter(MainActivity.this,
-				listContact);
-		listContactAdapter.notifyDataSetChanged();
-		setListAdapter(listContactAdapter);
-
+	
 		/*
 		 * title of action bar
 		 * 
@@ -72,12 +76,34 @@ public class MainActivity extends ListActivity {
 		 */
 
 	}
-
-	private void loadListContact(Context context) {
+	@Override
+	protected void onResume() {
 		// TODO Auto-generated method stub
-		final ListContactFetcher lf = new ListContactFetcher();
+		super.onResume();
+		//Toast.makeText(getApplicationContext(), "Onresume of Main Activity", Toast.LENGTH_SHORT).show();
+		if(listContact != null ){
+			NetSMSApplication application = (NetSMSApplication) getApplication();
+			listContact = application.getListContactItem();
+		}
+		else{
+		loadListContact(MainActivity.this);
+		}
+	}
+	
 
-		listContact = lf.getListContact(context);
+	private void loadListContact(final Context context) {
+		// TODO Auto-generated method stub
+		
+		progressDialog = ProgressDialog.show(this, "Load Data", "Loading ... ", true, false);
+		
+		new Thread(){
+			public void run() {
+				final ListContactFetcher lf = new ListContactFetcher();
+				listContact = lf.getListContact(context);
+				handler.sendEmptyMessage(Constants.MSG_GET_ITEMS);
+			}
+		}.start();
+
 	}
 
 	@Override
@@ -125,6 +151,8 @@ public class MainActivity extends ListActivity {
 
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		// get selected items
+		
+	
 		ListContactItem listContactItem = (ListContactItem) getListAdapter()
 				.getItem(position);
 		Toast.makeText(this, listContactItem.address.toString(),
@@ -140,15 +168,40 @@ public class MainActivity extends ListActivity {
 		}
 		// listContact.set(, object)
 		application.setThumnail(listContactItem.thumnail);
+		application.setListContactItem(listContact);
 
 		listContactItem.readStatus = 1;
 		listContactAdapter.updateItem(position, listContactItem);
-		setListAdapter(listContactAdapter);
 		listContactAdapter.notifyDataSetChanged();
 
 		Intent intent = new Intent(this, ListSMSActivity.class);
 		startActivity(intent);
 
 	}
+
+
+
+	private final Handler handler = new Handler() {
+		@Override
+		public void handleMessage(final Message msg) {
+			switch (msg.what) {
+			case Constants.MSG_GET_ITEMS:
+				progressDialog.dismiss();
+				
+				listContactAdapter = new ListContactAdapter(MainActivity.this,
+						listContact);
+				setListAdapter(listContactAdapter);
+				
+				if (listContact == null || listContact.size() == 0) {
+					empty.setText("No Data");
+				} else {
+					listContactAdapter = new ListContactAdapter(MainActivity.this,
+							listContact);
+					setListAdapter(listContactAdapter);
+				}
+				break;
+			}
+		}
+	};
 
 }

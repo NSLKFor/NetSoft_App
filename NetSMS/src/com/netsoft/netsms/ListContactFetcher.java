@@ -95,7 +95,7 @@ public class ListContactFetcher {
 		Cursor query = contentResolver.query(uri, null, null, null, null);
 
 		
-		if (query.moveToFirst()) {
+		if (query.moveToNext()) {
 			do {
 				String string = query.getString(query.getColumnIndex("ct_t"));
 				String id = query.getString(query.getColumnIndex("_id"));
@@ -161,6 +161,7 @@ public class ListContactFetcher {
 
 						
 					} while (cs.moveToNext());
+					cs.close();
 					
 				} else {
 					// it's SMS
@@ -205,6 +206,7 @@ public class ListContactFetcher {
 					listContact.add(listContactItem);
 				}
 			} while (query.moveToNext());
+			query.close();
 		}
 
 		Log.e("AAAAAAAAAAA", "------------------ Number of  contact: "
@@ -227,7 +229,7 @@ public class ListContactFetcher {
 			return null;
 		}
 		String contactName = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToNext()) {
 			contactName = cursor.getString(cursor
 					.getColumnIndex(PhoneLookup.DISPLAY_NAME));
 		}
@@ -247,11 +249,12 @@ public class ListContactFetcher {
 
 		long contactId = 0;
 
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToNext()) {
 			do {
 				contactId = cursor.getLong(cursor
 						.getColumnIndex(PhoneLookup._ID));
 			} while (cursor.moveToNext());
+			cursor.close();
 		}
 
 		return contactId;
@@ -275,7 +278,7 @@ public class ListContactFetcher {
 									+ "'", null, null);
 
 			if (cursor != null) {
-				if (!cursor.moveToFirst()) {
+				if (!cursor.moveToNext()) {
 					return null; // no photo
 				}
 			} else {

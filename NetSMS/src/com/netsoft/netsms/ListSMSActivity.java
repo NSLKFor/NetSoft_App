@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Fragment;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.Telephony;
@@ -50,6 +52,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.netsoft.constant.Constants;
 import com.netsoft.netmms.*;
 
 public class ListSMSActivity extends ListActivity {
@@ -61,6 +64,7 @@ public class ListSMSActivity extends ListActivity {
 	private ImageButton btnSend;
 	private ImageButton btnAttach;
 	private ImageView imgAttach;
+	private ListView listView;
 
 	private EditText edtMessage;
 	private List<SmsItem> listSMS;
@@ -68,6 +72,7 @@ public class ListSMSActivity extends ListActivity {
 	private SmsItem smsItem = new SmsItem();
 	private MMSPart[] parts;
 
+	private ProgressDialog progressDialog;
 	private static final int SELECT_PHOTO = 100;
 
 	Bundle bundle;
@@ -78,8 +83,8 @@ public class ListSMSActivity extends ListActivity {
 	byte[] img = null;
 	Handler delayhandler = new Handler();
 	Handler handler = new Handler();
-	boolean isrunning  =  false;
-	boolean stackRunning  =  false;
+	boolean isrunning = false;
+	boolean stackRunning = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +96,8 @@ public class ListSMSActivity extends ListActivity {
 		this.address = application.getAddress();
 		this.name = application.getName();
 		this.thumnail = application.getThumnail();
-		
-		listSMS =  new ArrayList<SmsItem>();
+
+		listSMS = new ArrayList<SmsItem>();
 
 		btnAttach = (ImageButton) findViewById(R.id.listAttachButton);
 		imgAttach = (ImageView) findViewById(R.id.listMMSImage);
@@ -102,6 +107,21 @@ public class ListSMSActivity extends ListActivity {
 		edtMessage = (EditText) findViewById(R.id.EnterBox);
 		edtMessage.forceLayout();
 		btnSend = (ImageButton) findViewById(R.id.imgSend);
+
+		// ***********Set ListView to render **************
+		listView = getListView();
+		listView.setItemsCanFocus(false);
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		listView.setEmptyView(this.empty);
+
+		// **************
+
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 
 		// *************** Get add from Bundle extra ****************
 		bundle = getIntent().getExtras();
@@ -128,12 +148,11 @@ public class ListSMSActivity extends ListActivity {
 			if (!strAdd.equals("")) {
 				String phone = "";
 				phone = formatToStandardNumber(strAdd);
-				
+
 				address = phone;
 				addMessage2List(this, address, strBody, img, strTime);
 			}
-		}
-		else{
+		} else {
 			// ***********Load List contact sms *************
 			address = formatToStandardNumber(address);
 			loadListContact(this);
@@ -155,20 +174,6 @@ public class ListSMSActivity extends ListActivity {
 					Drawable.createFromStream(inputStream,
 							this.thumnail.toString()));
 		}
-
-		// ***********Set ListView to render **************
-		final ListView listView = getListView();
-		listView.setItemsCanFocus(false);
-		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		listView.setEmptyView(this.empty);
-
-		// **************
-
-
-		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
-		setListAdapter(smsAdapter);
-		// set select in bottom o flistview
-		listView.setSelection(smsAdapter.getCount());
 
 		btnSend.setOnClickListener(new OnClickListener() {
 
@@ -207,9 +212,12 @@ public class ListSMSActivity extends ListActivity {
 					sendSMS.sendSMSMessage(v.getContext(), smsItem);
 
 					loadListContact(v.getContext());
-					smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+					// smsAdapter = new SmsAdapter(ListSMSActivity.this,
+					// listSMS);
 
-					setListAdapter(smsAdapter);
+					// setListAdapter(smsAdapter);
+					listSMS.add(smsItem);
+					smsAdapter.notifyDataSetChanged();
 					listView.setSelection(smsAdapter.getCount());
 					edtMessage.setText("");
 
@@ -234,38 +242,58 @@ public class ListSMSActivity extends ListActivity {
 	}
 
 	private void addMessage2List(Context context, String strAdd2,
-			String strBody2,byte[] bitmap, long strTime) {
+			String strBody2, byte[] bitmap, long strTime) {
 		// TODO Auto-generated method stub
 
 		final SmsFetcher sf = new SmsFetcher(strAdd2);
 
+		// listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
+
+		// It is temporary for this funcition.
+		// In the future the funtion will insert item to list but not reload all
+		// element
 		listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
-	}
 
-	private void loadListContact(Context context) {
-		// TODO Auto-generated method stub
-		final SmsFetcher sf = new SmsFetcher(this.address);
-		listSMS.addAll(sf.getListSMS(context));
-		
 		listSMS.addAll(SmsFetcher.getMMS(context, this.address));
-		
-		Collections.sort(listSMS, new FishNameComparator());
-		
-//		LoadMMSAsynsTask loadMMSAsynsTask = new LoadMMSAsynsTask(this);
-//		loadMMSAsynsTask.execute("+841252840600");
-		
-		
+
+		Collections.sort(listSMS, new SMSTimeComparator());
+
+		// // -----------------temporary ----------------
+	}
+
+	private void loadListContact(final Context context) {
+		// TODO Auto-generated method stub
+		final String add = this.address;
+		progressDialog = ProgressDialog.show(this, "Load Message Data", " Loading ...", true, false);
+		new Thread(){
+			public void run() {
+				
+				
+				final SmsFetcher sf = new SmsFetcher(add);
+				listSMS.addAll(sf.getListSMS(context));
+
+				listSMS.addAll(SmsFetcher.getMMS(context,add));
+
+				Collections.sort(listSMS, new SMSTimeComparator());
+				
+				mhandler.sendEmptyMessage(Constants.MSG_GET_ITEMS);
+				
+			}
+		}.start();
+
+		// LoadMMSAsynsTask loadMMSAsynsTask = new LoadMMSAsynsTask(this);
+		// loadMMSAsynsTask.execute("+841252840600");
 
 	}
-	
-	public void notifiyActivityTaskCompleted(ArrayList<SmsItem> result){		
+
+	public void notifiyActivityTaskCompleted(ArrayList<SmsItem> result) {
 
 		listSMS.addAll(result);
 	}
-	public void setStackRunning(){
+
+	public void setStackRunning() {
 		stackRunning = false;
 	}
-
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
@@ -353,20 +381,6 @@ public class ListSMSActivity extends ListActivity {
 					parts[0].MimeType = mimeType;
 					parts[0].Data = byteArray;
 
-					// File sdcard = Environment.getExternalStorageDirectory();
-					// File editedFile = new File( sdcard, "myphoto.jpeg" );
-					//
-					// // if file is already exists then first delete it
-					// if ( editedFile.exists() )
-					// {
-					// editedFile.delete();
-					// }
-					//
-					// FileOutputStream fOut = new FileOutputStream( editedFile
-					// );
-					// yourSelectedImage.compress( Bitmap.CompressFormat.JPEG,
-					// 90, fOut );
-
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -437,6 +451,7 @@ public class ListSMSActivity extends ListActivity {
 			intent.addCategory(Intent.CATEGORY_HOME);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 			startActivity(intent);
+			super.onDestroy();
 		}
 	}
 
@@ -449,8 +464,8 @@ public class ListSMSActivity extends ListActivity {
 
 		}
 	};
-	
-	public static String formatToStandardNumber (String temp){
+
+	public static String formatToStandardNumber(String temp) {
 		String phone = "";
 		if (temp.substring(0, 3).equals("+84")) {
 			switch (temp.length()) {
@@ -462,13 +477,10 @@ public class ListSMSActivity extends ListActivity {
 				break;
 			case 16:
 				if (temp.subSequence(6, 7).equals(" ")) {
-					phone = "0" + temp.substring(4, 6)
-							+ temp.substring(7, 10)
-							+ temp.substring(11, 13)
-							+ temp.substring(14);
+					phone = "0" + temp.substring(4, 6) + temp.substring(7, 10)
+							+ temp.substring(11, 13) + temp.substring(14);
 				} else {
-					phone = "0" + temp.substring(4, 7)
-							+ temp.substring(8, 11)
+					phone = "0" + temp.substring(4, 7) + temp.substring(8, 11)
 							+ temp.substring(12);
 				}
 				break;
@@ -504,15 +516,34 @@ public class ListSMSActivity extends ListActivity {
 
 		return phone;
 	}
-	
-	public class FishNameComparator implements Comparator<SmsItem>
-	{
+
+	public class SMSTimeComparator implements Comparator<SmsItem> {
 		@Override
 		public int compare(SmsItem arg1, SmsItem arg0) {
 			// TODO Auto-generated method stub
-			return (arg0.date > arg1.date ) ? -1: (arg0.date == arg1.date ) ? 0 : 1;
+			return (arg0.date > arg1.date) ? -1 : (arg0.date == arg1.date) ? 0
+					: 1;
 		}
 	}
+	
+	private final Handler mhandler = new Handler() {
+		@Override
+		public void handleMessage(final Message msg) {
+			switch (msg.what) {
+			case Constants.MSG_GET_ITEMS:
+				progressDialog.dismiss();
+				if (listSMS == null || listSMS.size() == 0) {
+					empty.setText("No Data");
+				} else {
+					smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+					setListAdapter(smsAdapter);
+					// set select in bottom o flistview
+					listView.setSelection(smsAdapter.getCount());
+				}
+				break;
+			}
+		}
+	};
+	
+
 }
-
-
