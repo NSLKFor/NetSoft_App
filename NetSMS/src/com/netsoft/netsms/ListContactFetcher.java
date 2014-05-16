@@ -239,7 +239,7 @@ public class ListContactFetcher {
 		return contactName;
 	}
 
-	public long fetchContactIdFromPhoneNumber(Context context,
+	public static long fetchContactIdFromPhoneNumber(Context context,
 			String phoneNumber) {
 		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
 				Uri.encode(phoneNumber));
@@ -260,7 +260,7 @@ public class ListContactFetcher {
 		return contactId;
 	}
 
-	public Uri getPhotoUri(Context context, long contactId) {
+	public static Uri getPhotoUri(Context context, long contactId) {
 		ContentResolver contentResolver = context.getContentResolver();
 
 		try {

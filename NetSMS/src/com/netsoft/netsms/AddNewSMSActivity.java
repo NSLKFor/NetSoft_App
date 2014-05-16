@@ -130,7 +130,8 @@ public class AddNewSMSActivity extends Activity {
 								Toast.LENGTH_SHORT).show();
 
 						 APNHelper aHelper = new APNHelper(v.getContext());
-						// aHelper.sendMMS(address, parts);
+						 
+						 aHelper.sendMMS(address, parts);
 						 String[] tmpAdd = new String[1];
 						 tmpAdd[0] = address;
 						 aHelper.insert(v.getContext(), tmpAdd, "MMS to "
@@ -155,8 +156,8 @@ public class AddNewSMSActivity extends Activity {
 						return;
 					}
 					if (!sendBodyNew.getText().toString().equals("")) {
-						// SMSSender sendSMS = new SMSSender();
-						// sendSMS.sendSMSMessage(v.getContext(), smsItem);
+						 SMSSender sendSMS = new SMSSender();
+						 sendSMS.sendSMSMessage(v.getContext(), smsItem);
 
 						Intent intent = new Intent(v.getContext(),
 								MainActivity.class);

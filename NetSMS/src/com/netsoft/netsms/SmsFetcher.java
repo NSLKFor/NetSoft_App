@@ -270,9 +270,13 @@ public class SmsFetcher {
 
 		 if (curPdu.moveToNext()) {
 		do {
-
-			// Gets ID of message
+			//Get type of mms
 			String id = curPdu.getString(curPdu.getColumnIndex("_id"));
+			// Gets ID of message
+			int mtype = curPdu.getInt(curPdu.getColumnIndex("msg_box"));
+			//Get read Status
+			int readStatus = curPdu.getInt(curPdu.getColumnIndex("read"));	
+
 			// Gets thread ID of message
 			String thread_id = curPdu.getString(curPdu
 					.getColumnIndex("thread_id"));
@@ -321,9 +325,10 @@ public class SmsFetcher {
 			item.address = address;
 			item.date = date;
 			item.id = Integer.parseInt(id);
-			item.readStatus = 1;
-			item.type = 1;
-			item.body = "message " + id;
+			item.readStatus = readStatus;
+			item.type = mtype;
+			item.body = "";
+			//item.body = "message " + id;
 
 			curPart.moveToFirst();
 			do {
@@ -354,7 +359,7 @@ public class SmsFetcher {
 					}
 
 					item.body = body;
-					Log.e("MMS REceiver", "--------String  :: string == "
+					Log.e("A", "--------String  :: string == "
 							+ body);
 				}
 

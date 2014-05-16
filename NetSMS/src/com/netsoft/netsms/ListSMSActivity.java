@@ -85,6 +85,8 @@ public class ListSMSActivity extends ListActivity {
 	Handler handler = new Handler();
 	boolean isrunning = false;
 	boolean stackRunning = false;
+	boolean isGetSMS = false;
+	boolean isGetMMS = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +124,9 @@ public class ListSMSActivity extends ListActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		
+		
+		
 
 		// *************** Get add from Bundle extra ****************
 		bundle = getIntent().getExtras();
@@ -149,17 +154,35 @@ public class ListSMSActivity extends ListActivity {
 				String phone = "";
 				phone = formatToStandardNumber(strAdd);
 
-				address = phone;
+				this.address = phone;
 				addMessage2List(this, address, strBody, img, strTime);
+				this.name = ListContactFetcher.getContactName(getApplicationContext(), phone);
+				long contact_ID = ListContactFetcher.fetchContactIdFromPhoneNumber(getApplicationContext(),
+						phone);
+
+				this.thumnail = ListContactFetcher.getPhotoUri(
+						getApplicationContext(), contact_ID);
 			}
 		} else {
 			// ***********Load List contact sms *************
-			address = formatToStandardNumber(address);
-			loadListContact(this);
-
-			// *******************************************
+			
+			NetSMSApplication application = (NetSMSApplication) getApplication();
+			this.address = application.getAddress();
+			this.name = application.getName();
+			this.thumnail = application.getThumnail();
+			
+			//error in here did not get listSMSApplication so this application no instance
+			ListSMSApplication listSMSApplication = (ListSMSApplication) getApplication();
+			if (this.address == listSMSApplication.getAddress()) {
+				this.listSMS = listSMSApplication.getListSMSItem();
+				smsAdapter.notifyDataSetChanged();
+			} else {
+				address = formatToStandardNumber(address);
+				loadListContact(this);
+			}
 		}
 
+			// *******************************************
 		setTitle(this.name);
 		if (this.thumnail != null) {
 			InputStream inputStream = null;
@@ -175,6 +198,8 @@ public class ListSMSActivity extends ListActivity {
 							this.thumnail.toString()));
 		}
 
+
+
 		btnSend.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -186,7 +211,7 @@ public class ListSMSActivity extends ListActivity {
 
 				if (parts != null) {
 					APNHelper aHelper = new APNHelper(v.getContext());
-					aHelper.sendMMS(address, parts);
+//					aHelper.sendMMS(address, parts);
 					String[] tmpAdd = new String[1];
 					tmpAdd[0] = address;
 					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address,
@@ -208,19 +233,15 @@ public class ListSMSActivity extends ListActivity {
 					smsItem.type = 2;
 					smsItem.date = System.currentTimeMillis();
 
-					SMSSender sendSMS = new SMSSender();
-					sendSMS.sendSMSMessage(v.getContext(), smsItem);
+					 SMSSender sendSMS = new SMSSender();
+//					 sendSMS.sendSMSMessage(v.getContext(), smsItem);
 
-					loadListContact(v.getContext());
-					// smsAdapter = new SmsAdapter(ListSMSActivity.this,
-					// listSMS);
+					// loadListContact(v.getContext());
 
-					// setListAdapter(smsAdapter);
 					listSMS.add(smsItem);
 					smsAdapter.notifyDataSetChanged();
 					listView.setSelection(smsAdapter.getCount());
 					edtMessage.setText("");
-
 					imgAttach.setImageBitmap(null);
 
 				}
@@ -229,10 +250,15 @@ public class ListSMSActivity extends ListActivity {
 		});
 
 		btnAttach.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				ListSMSApplication lapplication = (ListSMSApplication) getApplication();
+				lapplication.setAddress(address);
+				lapplication.setName(name);
+				lapplication.setThumnail(thumnail);
+				lapplication.setListSMSItem(listSMS);
 
 				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
 				photoPickerIntent.setType("image/*");
@@ -241,43 +267,62 @@ public class ListSMSActivity extends ListActivity {
 		});
 	}
 
-	private void addMessage2List(Context context, String strAdd2,
-			String strBody2, byte[] bitmap, long strTime) {
+	private void addMessage2List(final Context context, final String strAdd2,
+			final String strBody2, final byte[] bitmap, final long strTime) {
 		// TODO Auto-generated method stub
 
 		final SmsFetcher sf = new SmsFetcher(strAdd2);
+		progressDialog = ProgressDialog.show(this, "Load Message Data",
+				" Loading ...", true, false);
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+		setListAdapter(smsAdapter);
 
 		// listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
 
 		// It is temporary for this funcition.
 		// In the future the funtion will insert item to list but not reload all
 		// element
-		listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
 
-		listSMS.addAll(SmsFetcher.getMMS(context, this.address));
+		new Thread() {
+			public void run() {
+				isGetSMS = true;
+				listSMS.addAll(sf.addItem2List(context, strBody2, bitmap, strTime));
+				mhandler.sendEmptyMessage(Constants.MSG_GET_SMS_ITEMS);
+			}
+		}.start();
+		new Thread() {
+			public void run() {
+				isGetMMS = true;
+				listSMS.addAll(SmsFetcher.getMMS(context, strAdd2));
+				mhandler.sendEmptyMessage(Constants.MSG_GET_MMS_ITEMS);
+			}
+		}.start();
 
-		Collections.sort(listSMS, new SMSTimeComparator());
-
-		// // -----------------temporary ----------------
 	}
 
 	private void loadListContact(final Context context) {
 		// TODO Auto-generated method stub
 		final String add = this.address;
-		progressDialog = ProgressDialog.show(this, "Load Message Data", " Loading ...", true, false);
-		new Thread(){
+		progressDialog = ProgressDialog.show(this, "Load Message Data",
+				" Loading ...", true, false);
+
+		final SmsFetcher sf = new SmsFetcher(add);
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+		setListAdapter(smsAdapter);
+
+		new Thread() {
 			public void run() {
-				
-				
-				final SmsFetcher sf = new SmsFetcher(add);
+				isGetSMS = true;
 				listSMS.addAll(sf.getListSMS(context));
+				mhandler.sendEmptyMessage(Constants.MSG_GET_SMS_ITEMS);
+			}
+		}.start();
 
-				listSMS.addAll(SmsFetcher.getMMS(context,add));
-
-				Collections.sort(listSMS, new SMSTimeComparator());
-				
-				mhandler.sendEmptyMessage(Constants.MSG_GET_ITEMS);
-				
+		new Thread() {
+			public void run() {
+				isGetMMS = true;
+				listSMS.addAll(SmsFetcher.getMMS(context, add));
+				mhandler.sendEmptyMessage(Constants.MSG_GET_MMS_ITEMS);
 			}
 		}.start();
 
@@ -287,7 +332,6 @@ public class ListSMSActivity extends ListActivity {
 	}
 
 	public void notifiyActivityTaskCompleted(ArrayList<SmsItem> result) {
-
 		listSMS.addAll(result);
 	}
 
@@ -525,25 +569,41 @@ public class ListSMSActivity extends ListActivity {
 					: 1;
 		}
 	}
-	
+
 	private final Handler mhandler = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-			case Constants.MSG_GET_ITEMS:
-				progressDialog.dismiss();
+			case Constants.MSG_GET_SMS_ITEMS:
+				isGetSMS = false;
 				if (listSMS == null || listSMS.size() == 0) {
 					empty.setText("No Data");
 				} else {
-					smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
-					setListAdapter(smsAdapter);
-					// set select in bottom o flistview
-					listView.setSelection(smsAdapter.getCount());
+					if (!isGetMMS) {
+						progressDialog.dismiss();
+						Collections.sort(listSMS, new SMSTimeComparator());
+						smsAdapter.notifyDataSetChanged();
+						// set select in bottom o flistview
+						listView.setSelection(smsAdapter.getCount());
+					}
+				}
+				break;
+			case Constants.MSG_GET_MMS_ITEMS:
+				isGetMMS = false;
+				if (listSMS == null || listSMS.size() == 0) {
+					empty.setText("No Data");
+				} else {
+					if (!isGetSMS) {
+						progressDialog.dismiss();
+						Collections.sort(listSMS, new SMSTimeComparator());
+						smsAdapter.notifyDataSetChanged();
+						// set select in bottom o flistview
+						listView.setSelection(smsAdapter.getCount());
+					}
 				}
 				break;
 			}
 		}
 	};
-	
 
 }

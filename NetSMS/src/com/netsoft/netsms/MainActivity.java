@@ -47,10 +47,7 @@ public class MainActivity extends ListActivity {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notificationManager.cancel(9999);
 
-		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_main);
-		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-		// R.layout.title_bar);
 
 		this.empty = (TextView) findViewById(R.id.empty);
 
@@ -81,21 +78,25 @@ public class MainActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		//Toast.makeText(getApplicationContext(), "Onresume of Main Activity", Toast.LENGTH_SHORT).show();
-		if(listContact != null ){
-			NetSMSApplication application = (NetSMSApplication) getApplication();
-			listContact = application.getListContactItem();
-		}
-		else{
-		loadListContact(MainActivity.this);
+		NetSMSApplication application = (NetSMSApplication) getApplication();
+		listContact = application.getListContactItem();
+		if(listContact == null ){
+			loadListContact(MainActivity.this);
+		}else{
+			listContactAdapter = new ListContactAdapter(MainActivity.this,
+					listContact);
+			setListAdapter(listContactAdapter);
 		}
 	}
 	
 
 	private void loadListContact(final Context context) {
 		// TODO Auto-generated method stub
-		
-		progressDialog = ProgressDialog.show(this, "Load Data", "Loading ... ", true, false);
-		
+		if (listContact == null) {
+			progressDialog = ProgressDialog.show(this, "Load Data",
+					"Loading ... ", true, false);
+		}
+
 		new Thread(){
 			public void run() {
 				final ListContactFetcher lf = new ListContactFetcher();
@@ -124,6 +125,8 @@ public class MainActivity extends ListActivity {
 			return true;
 		}
 		if (id == R.id.action_new_sms) {
+			NetSMSApplication application = (NetSMSApplication) getApplication();
+			application.setListContactItem(listContact);
 			
 			Intent intent = new Intent(this, AddNewSMSActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
@@ -152,7 +155,6 @@ public class MainActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		// get selected items
 		
-	
 		ListContactItem listContactItem = (ListContactItem) getListAdapter()
 				.getItem(position);
 		Toast.makeText(this, listContactItem.address.toString(),
@@ -176,10 +178,7 @@ public class MainActivity extends ListActivity {
 
 		Intent intent = new Intent(this, ListSMSActivity.class);
 		startActivity(intent);
-
 	}
-
-
 
 	private final Handler handler = new Handler() {
 		@Override

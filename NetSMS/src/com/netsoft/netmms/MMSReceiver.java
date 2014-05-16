@@ -256,7 +256,7 @@ public class MMSReceiver extends BroadcastReceiver {
 						byte[] imgData = readMMSPart(context, partId);
 						Log.e("", "MMSMonitor :: Iimage data length == "
 								+ imgData.length + "\nfileType: " + fileType);
-						if(imgData.length > 0){
+						if (imgData.length > 0) {
 							Intent smsReceiveIntent = new Intent(context,
 									NotifySMS.class);
 							smsReceiveIntent
@@ -271,7 +271,6 @@ public class MMSReceiver extends BroadcastReceiver {
 							context.startActivity(smsReceiveIntent);
 						}
 
-						
 					}
 
 					// columns = curPart.getColumnNames();
@@ -297,7 +296,7 @@ public class MMSReceiver extends BroadcastReceiver {
 
 				}
 				curPart.close();
-				
+
 			}
 		}
 		curPdu.close();

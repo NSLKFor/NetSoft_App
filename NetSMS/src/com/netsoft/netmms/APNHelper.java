@@ -231,7 +231,7 @@ public class APNHelper {
 					query.close();
 					
 					ContentValues values = new ContentValues();
-			        values.put("msg_box", 5);
+			        values.put("msg_box", 2);
 			        String where = "_id" + " = '" + id + "'";
 			        ct.getContentResolver().update(Uri.parse("content://mms"), values, where, null);
 				    
