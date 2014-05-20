@@ -21,10 +21,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint.Align;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract.PhoneLookup;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.text.Layout.Alignment;
 import android.util.Log;
+import android.widget.TextView;
 
 public class SmsFetcher {
 	private String address;
@@ -118,8 +126,6 @@ public class SmsFetcher {
 			} while (cursor.moveToNext());
 			cursor.close();
 		}
-
-	
 
 	}
 
@@ -268,140 +274,122 @@ public class SmsFetcher {
 		Cursor curPdu = context.getContentResolver().query(
 				Uri.parse("content://mms"), null, null, null, null);
 
-		 if (curPdu.moveToNext()) {
-		do {
-			//Get type of mms
-			String id = curPdu.getString(curPdu.getColumnIndex("_id"));
-			// Gets ID of message
-			int mtype = curPdu.getInt(curPdu.getColumnIndex("msg_box"));
-			//Get read Status
-			int readStatus = curPdu.getInt(curPdu.getColumnIndex("read"));	
-
-			// Gets thread ID of message
-			String thread_id = curPdu.getString(curPdu
-					.getColumnIndex("thread_id"));
-			// Gets subject of message (if any)
-			String subject = curPdu.getString(curPdu.getColumnIndex("sub"));
-
-			String selectionPart = new String("mid = '" + id + "'");
-			Log.e("MMS REceiver", "selectionPart : " + selectionPart);
-
-			Cursor curPart = context.getContentResolver().query(
-					Uri.parse("content://mms/part"),
-					// new String[] { "_id", "ct", "_data", "text", "cl" },
-					null, selectionPart, null, null);
-			Log.e("MMS REceiver", "MMSMonitor :: parts records length == "
-					+ curPart.getCount());
-			if (curPart.getCount() == 0) {
-				continue;
-			}
-
-			// Gets date of message
-			long date = curPdu.getLong(curPdu.getColumnIndex("date")) * 1000;
-			String time = DateFormat.getInstance().format(date);
-			Log.e("Time", "\ntime to compare to sms: " + time);
-
-			// *******************get address *******************
-
-			String addr = getMMSAddress(context, id);
-			// ********************end get address
-			// ************************************
-
-			// check address in mms with address of item
-			List<String> listAddress = new ArrayList<String>();
-			listAddress = formatNumberPhone(address);
-			boolean bEqual = false;
-			for (int i = 0; i < listAddress.size(); i++) {
-				if (addr.equals(listAddress.get(i))) {
-					bEqual = true;
-				}
-			}
-
-			if (!bEqual) {
-				continue;
-			}
-
-			SmsItem item = new SmsItem();
-			item.address = address;
-			item.date = date;
-			item.id = Integer.parseInt(id);
-			item.readStatus = readStatus;
-			item.type = mtype;
-			item.body = "";
-			//item.body = "message " + id;
-
-			curPart.moveToFirst();
+		if (curPdu.moveToNext()) {
 			do {
+				// Get type of mms
+				String id = curPdu.getString(curPdu.getColumnIndex("_id"));
+				// Gets ID of message
+				int mtype = curPdu.getInt(curPdu.getColumnIndex("msg_box"));
+				// Get read Status
+				int readStatus = curPdu.getInt(curPdu.getColumnIndex("read"));
 
-				// String addr =
-				// curPart.getString(curPart.getColumnIndex("address"));
-				// Log.e("-----------------", "--------- Address mms" + addr);
+				// Gets thread ID of message
+				String thread_id = curPdu.getString(curPdu
+						.getColumnIndex("thread_id"));
+				// Gets subject of message (if any)
+				String subject = curPdu.getString(curPdu.getColumnIndex("sub"));
 
-				String contentType = curPart.getString(curPart
-						.getColumnIndex("ct"));
-				String partId = curPart
-						.getString(curPart.getColumnIndex("_id"));
-				Log.e("MMS REceiver", "MMSMonitor :: partId == " + partId);
-				Log.e("MMS REceiver", "MMSMonitor :: part mime type == "
-						+ contentType);
+				String selectionPart = new String("mid = '" + id + "'");
+				Log.e("MMS REceiver", "selectionPart : " + selectionPart);
 
-				if (contentType.equals("text/plain")) {
+				Cursor curPart = context.getContentResolver().query(
+						Uri.parse("content://mms/part"),
+						// new String[] { "_id", "ct", "_data", "text", "cl" },
+						null, selectionPart, null, null);
+				Log.e("MMS REceiver", "MMSMonitor :: parts records length == "
+						+ curPart.getCount());
+				if (curPart.getCount() == 0) {
+					continue;
+				}
 
-					String data = curPart.getString(curPart
-							.getColumnIndex("_data"));
-					String body;
-					if (data != null) {
-						// implementation of this method below
-						body = getMmsText(context, partId);
-					} else {
-						body = curPart
-								.getString(curPart.getColumnIndex("text"));
+				// Gets date of message
+				long date = curPdu.getLong(curPdu.getColumnIndex("date")) * 1000;
+				String time = DateFormat.getInstance().format(date);
+				Log.e("Time", "\ntime to compare to sms: " + time);
+
+				// *******************get address *******************
+
+				String addr = getMMSAddress(context, id);
+				// ********************end get address
+				// ************************************
+
+				// check address in mms with address of item
+				List<String> listAddress = new ArrayList<String>();
+				listAddress = formatNumberPhone(address);
+				boolean bEqual = false;
+				for (int i = 0; i < listAddress.size(); i++) {
+					if (addr.equals(listAddress.get(i))) {
+						bEqual = true;
+					}
+				}
+
+				if (!bEqual) {
+					continue;
+				}
+
+				SmsItem item = new SmsItem();
+				item.address = address;
+				item.date = date;
+				item.id = Integer.parseInt(id);
+				item.readStatus = readStatus;
+				item.type = mtype;
+				item.body = "";
+				// item.body = "message " + id;
+
+				curPart.moveToFirst();
+				do {
+
+					// String addr =
+					// curPart.getString(curPart.getColumnIndex("address"));
+					// Log.e("-----------------", "--------- Address mms" +
+					// addr);
+
+					String contentType = curPart.getString(curPart
+							.getColumnIndex("ct"));
+					String partId = curPart.getString(curPart
+							.getColumnIndex("_id"));
+					Log.e("MMS REceiver", "MMSMonitor :: partId == " + partId);
+					Log.e("MMS REceiver", "MMSMonitor :: part mime type == "
+							+ contentType);
+
+					if (contentType.equals("text/plain")) {
+
+						String data = curPart.getString(curPart
+								.getColumnIndex("_data"));
+						String body;
+						if (data != null) {
+							// implementation of this method below
+							body = getMmsText(context, partId);
+						} else {
+							body = curPart.getString(curPart
+									.getColumnIndex("text"));
+						}
+
+						item.body = body;
+						Log.e("A", "--------String  :: string == " + body);
 					}
 
-					item.body = body;
-					Log.e("A", "--------String  :: string == "
-							+ body);
-				}
+					if (isImageType(contentType) == true) {
 
-				if (isImageType(contentType) == true) {
+						Log.e("", "MMSMonitor :: ==== Get the Image start ====");
+						String fileName = "mms_" + partId;
+						String fileType = contentType;
 
-					Log.e("", "MMSMonitor :: ==== Get the Image start ====");
-					String fileName = "mms_" + partId;
-					String fileType = contentType;
+						byte[] imgData = readMMSPart(context, partId);
+						Log.e("", "MMSMonitor :: Iimage data length == "
+								+ imgData.length + "\nfileType: " + fileType);
 
-					byte[] imgData = readMMSPart(context, partId);
-					Log.e("", "MMSMonitor :: Iimage data length == "
-							+ imgData.length + "\nfileType: " + fileType);
+						item.imgMMS = imgData;
 
-					item.imgMMS = imgData;
+					}
 
-					// File sdcard = Environment.getExternalStorageDirectory();
-					// File editedFile = new File(sdcard, "AA" + id + ".jpeg");
-					//
-					// // if file is already exists then first delete it
-					// if (editedFile.exists()) {
-					// // editedFile.delete();
-					// } else {
-					//
-					// FileOutputStream fOut;
-					// try {
-					// fOut = new FileOutputStream(editedFile);
-					// bmp.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
-					// } catch (FileNotFoundException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-					// }
+				} while (curPart.moveToNext());
+				curPart.close();
+				listMMS.add(item);
+			} while (curPdu.moveToNext());
+			curPdu.close();
 
-				}
-
-			} while (curPart.moveToNext());
-			curPart.close();
-			listMMS.add(item);
-		} while (curPdu.moveToNext());
-		curPdu.close();
-		
-	}
+		}
 		// while in herw
 
 		long time2 = System.currentTimeMillis();
@@ -534,5 +522,7 @@ public class SmsFetcher {
 		// return address.replaceAll("[^0-9]", "");
 		return receiver;
 	}
+
+
 
 }

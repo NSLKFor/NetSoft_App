@@ -27,6 +27,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint.Align;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +40,9 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.Telephony;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.text.Layout.Alignment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -124,9 +131,6 @@ public class ListSMSActivity extends ListActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
-		
-		
 
 		// *************** Get add from Bundle extra ****************
 		bundle = getIntent().getExtras();
@@ -156,33 +160,37 @@ public class ListSMSActivity extends ListActivity {
 
 				this.address = phone;
 				addMessage2List(this, address, strBody, img, strTime);
-				this.name = ListContactFetcher.getContactName(getApplicationContext(), phone);
-				long contact_ID = ListContactFetcher.fetchContactIdFromPhoneNumber(getApplicationContext(),
-						phone);
+				this.name = ListContactFetcher.getContactName(
+						getApplicationContext(), phone);
+				long contact_ID = ListContactFetcher
+						.fetchContactIdFromPhoneNumber(getApplicationContext(),
+								phone);
 
 				this.thumnail = ListContactFetcher.getPhotoUri(
 						getApplicationContext(), contact_ID);
 			}
 		} else {
 			// ***********Load List contact sms *************
-			
+
 			NetSMSApplication application = (NetSMSApplication) getApplication();
 			this.address = application.getAddress();
 			this.name = application.getName();
 			this.thumnail = application.getThumnail();
-			
-			//error in here did not get listSMSApplication so this application no instance
-			ListSMSApplication listSMSApplication = (ListSMSApplication) getApplication();
-			if (this.address == listSMSApplication.getAddress()) {
-				this.listSMS = listSMSApplication.getListSMSItem();
-				smsAdapter.notifyDataSetChanged();
-			} else {
-				address = formatToStandardNumber(address);
-				loadListContact(this);
-			}
+
+			// error in here did not get listSMSApplication so this application
+			// no instance
+			// ListSMSApplication listSMSApplication = (ListSMSApplication)
+			// getApplication();
+			// if (this.address == listSMSApplication.getAddress()) {
+			// this.listSMS = listSMSApplication.getListSMSItem();
+			// smsAdapter.notifyDataSetChanged();
+			// } else {
+			address = formatToStandardNumber(address);
+			loadListContact(this);
+			// }
 		}
 
-			// *******************************************
+		// *******************************************
 		setTitle(this.name);
 		if (this.thumnail != null) {
 			InputStream inputStream = null;
@@ -198,8 +206,6 @@ public class ListSMSActivity extends ListActivity {
 							this.thumnail.toString()));
 		}
 
-
-
 		btnSend.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -211,7 +217,7 @@ public class ListSMSActivity extends ListActivity {
 
 				if (parts != null) {
 					APNHelper aHelper = new APNHelper(v.getContext());
-//					aHelper.sendMMS(address, parts);
+					// aHelper.sendMMS(address, parts);
 					String[] tmpAdd = new String[1];
 					tmpAdd[0] = address;
 					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address,
@@ -233,8 +239,8 @@ public class ListSMSActivity extends ListActivity {
 					smsItem.type = 2;
 					smsItem.date = System.currentTimeMillis();
 
-					 SMSSender sendSMS = new SMSSender();
-//					 sendSMS.sendSMSMessage(v.getContext(), smsItem);
+					SMSSender sendSMS = new SMSSender();
+					// sendSMS.sendSMSMessage(v.getContext(), smsItem);
 
 					// loadListContact(v.getContext());
 
@@ -253,7 +259,7 @@ public class ListSMSActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+
 				ListSMSApplication lapplication = (ListSMSApplication) getApplication();
 				lapplication.setAddress(address);
 				lapplication.setName(name);
@@ -286,7 +292,8 @@ public class ListSMSActivity extends ListActivity {
 		new Thread() {
 			public void run() {
 				isGetSMS = true;
-				listSMS.addAll(sf.addItem2List(context, strBody2, bitmap, strTime));
+				listSMS.addAll(sf.addItem2List(context, strBody2, bitmap,
+						strTime));
 				mhandler.sendEmptyMessage(Constants.MSG_GET_SMS_ITEMS);
 			}
 		}.start();

@@ -1,0 +1,42 @@
+	public BitmapDrawable writeOnDrawable(int drawableId, String text) {
+		Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId)
+				.copy(Bitmap.Config.ARGB_8888, true);
+		Canvas canvas = new Canvas(bm);
+
+		TextPaint mTextPaint = new TextPaint();
+		mTextPaint.setColor(Color.RED);
+		mTextPaint.setTextSize(16);
+		StaticLayout mTextLayout = new StaticLayout(
+				"Trong dam gi dep bang sen.",
+				mTextPaint, canvas.getWidth(), Alignment.ALIGN_NORMAL, 1.0f,
+				0.0f, true);
+
+		canvas.save();
+		// calculate x and y position where your text will be placed
+
+		float textX = 0;
+		float textY = 0;
+
+		canvas.translate(textX, textY);
+		mTextLayout.draw(canvas);
+		canvas.restore();
+		
+		
+		mTextPaint.setColor(Color.BLUE);
+		mTextPaint.setTextAlign(Align.RIGHT );
+		mTextLayout = new StaticLayout(
+				"La xanh bong trang lai chen nhi vang.",
+				mTextPaint, canvas.getWidth(), Alignment.ALIGN_NORMAL, 1.0f,
+				0.0f, true);
+		textX = bm.getWidth();
+		textY = 32;
+
+		canvas.translate(textX, textY);
+		mTextLayout.draw(canvas);
+		
+		TextView ttt = new TextView(this);
+
+
+
+		return new BitmapDrawable(bm);
+	}

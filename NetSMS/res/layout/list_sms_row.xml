@@ -20,7 +20,6 @@
         android:layout_alignLeft="@+id/imgMMS"
         android:layout_below="@+id/imgMMS"
         android:maxWidth="300dp"
-        android:text="Body"
         android:textColor="#003366"
         android:textSize="16dip"
         android:typeface="sans" />
@@ -31,7 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/body"
         android:layout_below="@+id/body"
-        android:text="readType"
         android:textColor="#3385FF"
         android:textSize="16dip"
         android:typeface="sans" />

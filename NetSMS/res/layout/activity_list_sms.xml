@@ -1,60 +1,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:background="@drawable/background"
-    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-    > 
+    android:orientation="horizontal"
+    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+
     <TextView
-   		android:id="@+id/emptySMS"
+        android:id="@+id/emptySMS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/empty_string"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:text="@string/empty_string" />
 
-     <EditText
-         android:id="@+id/EnterBox"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentBottom="true"
-         android:layout_alignParentLeft="true"
-         android:layout_toLeftOf="@+id/listAttachButton"
-         android:ems="10"
-         android:focusable="true"
-         android:focusableInTouchMode="true"
-         android:hint="@string/strEnterBox"
-         android:minLines="4" />
+    <EditText
+        android:id="@+id/EnterBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/listAttachButton"
+        android:ems="10"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="@string/strEnterBox"
+        android:minLines="4" />
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_above="@+id/listMMSImage"
-            android:drawSelectorOnTop="false" />
-        
-        <ImageButton
-            android:id="@+id/listAttachButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/imgSend"
-            android:layout_below="@+id/imgSend"
-            android:src="@drawable/attach_icon" />
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/listMMSImage"
+        android:divider="#00000000"
+        android:drawSelectorOnTop="false" />
 
-        <ImageView
-            android:id="@+id/listMMSImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/EnterBox"
-            android:layout_alignParentLeft="true"
-            android:layout_alignRight="@+id/EnterBox"
-           />
+    <ImageButton
+        android:id="@+id/listAttachButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imgSend"
+        android:layout_below="@+id/imgSend"
+        android:src="@drawable/attach_icon" />
 
-        <ImageButton
-            android:id="@+id/imgSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@android:id/list"
-            android:src="@drawable/send_icon" />
-    
+    <ImageView
+        android:id="@+id/listMMSImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/EnterBox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/EnterBox" />
+
+    <ImageButton
+        android:id="@+id/imgSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@android:id/list"
+        android:src="@drawable/send_icon" />
+
 </RelativeLayout>
