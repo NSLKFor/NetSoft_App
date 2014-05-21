@@ -43,6 +43,7 @@ import android.provider.Telephony;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.Layout.Alignment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,7 +99,6 @@ public class ListSMSActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_list_sms);
 		// get address in application
 		NetSMSApplication application = (NetSMSApplication) getApplication();
@@ -217,7 +217,7 @@ public class ListSMSActivity extends ListActivity {
 
 				if (parts != null) {
 					APNHelper aHelper = new APNHelper(v.getContext());
-					// aHelper.sendMMS(address, parts);
+					 aHelper.sendMMS(address, parts);
 					String[] tmpAdd = new String[1];
 					tmpAdd[0] = address;
 					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address,
@@ -240,7 +240,7 @@ public class ListSMSActivity extends ListActivity {
 					smsItem.date = System.currentTimeMillis();
 
 					SMSSender sendSMS = new SMSSender();
-					// sendSMS.sendSMSMessage(v.getContext(), smsItem);
+					sendSMS.sendSMSMessage(v.getContext(), smsItem);
 
 					// loadListContact(v.getContext());
 
@@ -259,12 +259,12 @@ public class ListSMSActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
-				ListSMSApplication lapplication = (ListSMSApplication) getApplication();
-				lapplication.setAddress(address);
-				lapplication.setName(name);
-				lapplication.setThumnail(thumnail);
-				lapplication.setListSMSItem(listSMS);
+				
+//				ListSMSApplication lapplication = (ListSMSApplication) getApplication();
+//				lapplication.setAddress(address);
+//				lapplication.setName(name);
+//				lapplication.setThumnail(thumnail);
+//				lapplication.setListSMSItem(listSMS);
 
 				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
 				photoPickerIntent.setType("image/*");
@@ -280,7 +280,12 @@ public class ListSMSActivity extends ListActivity {
 		final SmsFetcher sf = new SmsFetcher(strAdd2);
 		progressDialog = ProgressDialog.show(this, "Load Message Data",
 				" Loading ...", true, false);
-		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		int height = displaymetrics.heightPixels;
+		int width = displaymetrics.widthPixels;
+		
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width, height);
 		setListAdapter(smsAdapter);
 
 		// listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
@@ -313,8 +318,13 @@ public class ListSMSActivity extends ListActivity {
 		progressDialog = ProgressDialog.show(this, "Load Message Data",
 				" Loading ...", true, false);
 
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		int height = displaymetrics.heightPixels;
+		int width = displaymetrics.widthPixels;
 		final SmsFetcher sf = new SmsFetcher(add);
-		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS);
+		
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width, height);
 		setListAdapter(smsAdapter);
 
 		new Thread() {

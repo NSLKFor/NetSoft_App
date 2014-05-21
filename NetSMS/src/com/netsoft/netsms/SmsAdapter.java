@@ -18,6 +18,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.Layout.Alignment;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +34,14 @@ public class SmsAdapter extends BaseAdapter {
 	private final Context context;
 	private final List<SmsItem> smsItems;
 	private static LayoutInflater inflater = null;
+	private static float wight;
+	private static float height;
 
-	public SmsAdapter(Context context1, List<SmsItem> smsItems) {
+	public SmsAdapter(Context context1, List<SmsItem> smsItems, float fwight, float fheight) {
 		this.context = context1;
 		this.smsItems = smsItems;
+		this.wight = fwight;
+		this.height = fheight;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
@@ -67,10 +73,10 @@ public class SmsAdapter extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.list_sms_row, null);
 			holder = new ViewHolder();
 			holder.mmsImage = (ImageView) convertView.findViewById(R.id.imgMMS);
-			holder.body = (TextView) convertView.findViewById(R.id.body);
-			holder.time = (TextView) convertView.findViewById(R.id.type);
-			holder.list_sms = (RelativeLayout) convertView
-					.findViewById(R.id.list_sms);
+			// holder.body = (TextView) convertView.findViewById(R.id.body);
+			// holder.time = (TextView) convertView.findViewById(R.id.type);
+			// holder.list_sms = (RelativeLayout) convertView
+			// .findViewById(R.id.list_sms);
 
 			convertView.setTag(holder);
 		} else {
@@ -85,10 +91,9 @@ public class SmsAdapter extends BaseAdapter {
 		// SimpleDateFormat sdf = new SimpleDateFormat(" HH:mm, MMM dd");
 		// holder.time.setText(sdf.format(item.date));
 		//
-		// RelativeLayout.LayoutParams imgParams = new
-		// RelativeLayout.LayoutParams(
-		// RelativeLayout.LayoutParams.WRAP_CONTENT,
-		// RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams imgParams = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.WRAP_CONTENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		//
 		// RelativeLayout.LayoutParams bodyParams = new
 		// RelativeLayout.LayoutParams(
@@ -106,55 +111,55 @@ public class SmsAdapter extends BaseAdapter {
 		if (item.type == 2) {
 			// bodyParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			// timeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			// imgParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			//
-			// holder.mmsImage.setLayoutParams(imgParams);
+			imgParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+			holder.mmsImage.setLayoutParams(imgParams);
 			// holder.body.setLayoutParams(bodyParams);
 			// holder.time.setLayoutParams(timeParams);
 
 			if (item.imgMMS != null) {
 
-//				int width = 300;
-//				int height = 250;
-//				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(
-//						width, height);
-//				holder.mmsImage.setLayoutParams(parms);
+				// int width = 300;
+				// int height = 250;
+				// RelativeLayout.LayoutParams parms = new
+				// RelativeLayout.LayoutParams(
+				// width, height);
+				// holder.mmsImage.setLayoutParams(imgParams);
 				Bitmap bmp = decodeSampledBitmapFromResource(item.imgMMS, 200,
 						200);
 				// holder.mmsImage.setImageBitmap(bmp);
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
-				holder.mmsImage.setImageDrawable(writeCanvasBitmap(context,
-						R.drawable.khung_xanh, bmp, item.body,
+				holder.mmsImage.setImageDrawable(writeCanvasRightBitmap(
+						context, R.drawable.green, bmp, item.body,
 						kkk.format(item.date)));
 			} else {
 				// holder.mmsImage.setImageBitmap(null);
 				// holder.mmsImage.destroyDrawingCache();
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
-				holder.mmsImage
-						.setImageDrawable(writeOnDrawable(context,
-								R.drawable.khung_xanh, item.body,
-								kkk.format(item.date)));
+				holder.mmsImage.setImageDrawable(writeOnDrawable(context,
+						R.drawable.green, item.body, kkk.format(item.date)));
 			}
 
 			// holder.list_sms.setBackgroundColor(Color.parseColor("#A9E2F3"));
 		} else {
 			// bodyParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			// timeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			// imgParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			//
-			// holder.mmsImage.setLayoutParams(imgParams);
+			imgParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+
+			holder.mmsImage.setLayoutParams(imgParams);
 			// holder.body.setLayoutParams(bodyParams);
 			// holder.time.setLayoutParams(timeParams);
 
 			if (item.imgMMS != null) {
 
-				int width = 300;
-				int height = 250;
-				RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(
-						width, height);
-				holder.mmsImage.setLayoutParams(parms);
+				// int width = 300;
+				// int height = 250;
+				// RelativeLayout.LayoutParams parms = new
+				// RelativeLayout.LayoutParams(
+				// width, height);
+				// holder.mmsImage.setLayoutParams(parms);
 
 				// Bitmap bmp = BitmapFactory.decodeByteArray(item.imgMMS, 0,
 				// item.imgMMS.length);
@@ -164,16 +169,16 @@ public class SmsAdapter extends BaseAdapter {
 				// holder.mmsImage.setImageBitmap(bmp);
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
-				holder.mmsImage.setImageDrawable(writeCanvasBitmap(context,
-						R.drawable.khung_xanh_duong, bmp, item.body,
-						kkk.format(item.date)));
+				holder.mmsImage
+						.setImageDrawable(writeCanvasLeftBitmap(context,
+								R.drawable.gray, bmp, item.body,
+								kkk.format(item.date)));
 			} else {
 				// holder.mmsImage.setImageBitmap(null);
 				// holder.mmsImage.destroyDrawingCache();
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
 				holder.mmsImage.setImageDrawable(writeOnDrawable(context,
-						R.drawable.khung_xanh_duong, item.body,
-						kkk.format(item.date)));
+						R.drawable.gray, item.body, kkk.format(item.date)));
 			}
 
 			// holder.list_sms.setBackgroundColor(Color.parseColor("#E0F8F7"));
@@ -236,33 +241,39 @@ public class SmsAdapter extends BaseAdapter {
 		// +"Trong dam gi dep bang sen. La xanh bong trang lai chen nhi vang. Nhi vang bong trang la xanh. Gan bun ma chang hoi tanh mui bun.";
 		// String time = "10:12 June 15";
 
+	      float scale = 
+	    		  context.getResources().getDisplayMetrics().density; 
 		TextPaint mTextPaint = new TextPaint();
-		mTextPaint.setColor(Color.RED);
-		mTextPaint.setTextSize(16);
+		mTextPaint.setColor(0xff003366);
+		mTextPaint.setTextSize(convertDpToPixels(16, context));
 		StaticLayout mTextLayout = new StaticLayout(body, mTextPaint, 250,
 				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 
 		int lin = mTextLayout.getLineCount();
-
-		bm = Bitmap.createScaledBitmap(bm, 300, (16 + 3) * (lin + 5), true);
+		int tx = 300;
+		if (body.length() * 10 < 300) {
+			tx = body.length() * 10 > 150 ? body.length() * 10 : 150;
+		}
+		
+		bm = Bitmap.createScaledBitmap(bm, (int)convertDpToPixels(tx, context), (int)convertDpToPixels((16 + 3) * (lin + 3), context), true);
 		Canvas canvas = new Canvas(bm);
 
 		canvas.save();
 		// calculate x and y position where your text will be placed
 
-		float textX = 30;
-		float textY = 20;
+		float textX = 25;
+		float textY = 15;
 
-		canvas.translate(textX, textY);
+		canvas.translate((int)convertDpToPixels(textX, context), (int)convertDpToPixels(textY, context));
 		mTextLayout.draw(canvas);
 		canvas.restore();
 
-		mTextPaint.setColor(Color.BLUE);
+		mTextPaint.setColor(0xff3385FF);
 		mTextPaint.setTextAlign(Align.LEFT);
-		mTextLayout = new StaticLayout(time, mTextPaint, 250,
+		mTextLayout = new StaticLayout(time, mTextPaint, (int) convertDpToPixels(200, context),
 				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-		textX = 30;
-		textY = (16 + 4) * (lin + 1);
+		textX = convertDpToPixels(25, context);
+		textY = convertDpToPixels((16 + 4) * (lin + 1), context);
 
 		canvas.translate(textX, textY);
 		mTextLayout.draw(canvas);
@@ -270,54 +281,144 @@ public class SmsAdapter extends BaseAdapter {
 		return new BitmapDrawable(bm);
 	}
 
-	public BitmapDrawable writeCanvasBitmap(Context context, int drawableId,
-			Bitmap bitmap, String body, String time) {
+	public BitmapDrawable writeCanvasLeftBitmap(Context context,
+			int drawableId, Bitmap bitmap, String body, String time) {
 		Bitmap bm = BitmapFactory.decodeResource(context.getResources(),
 				drawableId).copy(Bitmap.Config.ARGB_8888, true);
 
 		TextPaint mTextPaint = new TextPaint();
-		mTextPaint.setColor(Color.RED);
-		mTextPaint.setTextSize(16);
-		StaticLayout mTextLayout = new StaticLayout(body, mTextPaint, 250,
-				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+		StaticLayout mTextLayout = null;
+		int lin = 0;
+		int tx = 300;
+		if (body != null || "".equals(body)) {
+			// mTextPaint.setColor(Color.RED);
+			mTextPaint.setTextSize(16);
+			mTextLayout = new StaticLayout(body, mTextPaint, 250,
+					Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 
-		int lin = mTextLayout.getLineCount();
+			lin = mTextLayout.getLineCount();
 
-		bm = Bitmap.createScaledBitmap(bm, 300, (16 + 3) * (lin + 5) + bitmap.getHeight(), true);
+			if (body.length() * 10 < 300) {
+				tx = body.length() * 10 > 150 ? body.length() * 10 : 150;
+			}
+		}
+
+		bm = Bitmap.createScaledBitmap(bm, tx > bitmap.getWidth() ? tx + 45
+				: bitmap.getWidth() + 45,
+				(16 + 3) * (lin + 4) + bitmap.getHeight(), true);
 		Canvas canvas = new Canvas(bm);
 
 		Paint paint = new Paint();
-		canvas.drawBitmap(bitmap, 30, 20, paint);
+		canvas.drawBitmap(bitmap, 25, 20, paint);
 
-		canvas.save();
-		// calculate x and y position where your text will be placed
+		float txtX = 30;
+		float txtY = (16 + 4) * (lin + 1) + bitmap.getHeight();
 
-		float textX = 30;
-		float textY = 20 + bitmap.getHeight();
+		if (body != null || !"".equals(body)) {
+			canvas.save();
+			// calculate x and y position where your text will be placed
 
-		canvas.translate(textX, textY);
-		mTextLayout.draw(canvas);
-		canvas.restore();
+			float textX = 30;
+			float textY = (16 + 8) + bitmap.getHeight();
 
-		mTextPaint.setColor(Color.BLUE);
+			canvas.translate(textX, textY);
+			mTextLayout.draw(canvas);
+			canvas.restore();
+
+			txtY = (16 + 8) * (lin + 1) + bitmap.getHeight();
+		}
+
+		// mTextPaint.setColor(Color.BLUE);
 		mTextPaint.setTextAlign(Align.LEFT);
 		mTextLayout = new StaticLayout(time, mTextPaint, 250,
 				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-		textX = 30;
-		textY = (16 + 4) * (lin + 1) + bitmap.getHeight();
 
-		canvas.translate(textX, textY);
+		canvas.translate(txtX, txtY);
 		mTextLayout.draw(canvas);
 
 		return new BitmapDrawable(bm);
+	}
+
+	public BitmapDrawable writeCanvasRightBitmap(Context context,
+			int drawableId, Bitmap bitmap, String body, String time) {
+		Bitmap bm = BitmapFactory.decodeResource(context.getResources(),
+				drawableId).copy(Bitmap.Config.ARGB_8888, true);
+
+		TextPaint mTextPaint = new TextPaint();
+		StaticLayout mTextLayout = null;
+		int lin = 0;
+		int tx = 300;
+		if (body != null || "".equals(body)) {
+			// mTextPaint.setColor(Color.RED);
+			mTextPaint.setTextSize(16);
+			mTextLayout = new StaticLayout(body, mTextPaint, 250,
+					Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+
+			lin = mTextLayout.getLineCount();
+
+			if (body.length() * 10 < 300) {
+				tx = body.length() * 10 > 150 ? body.length() * 10 : 150;
+			}
+		}
+
+		bm = Bitmap.createScaledBitmap(bm, tx > bitmap.getWidth() ? tx + 50
+				: bitmap.getWidth() + 50,
+				(16 + 3) * (lin + 4) + bitmap.getHeight(), true);
+		Canvas canvas = new Canvas(bm);
+
+		Paint paint = new Paint();
+		canvas.drawBitmap(bitmap, 20, 25, paint);
+
+		float txtX = 25;
+		float txtY = (16 + 4) * (lin + 1) + bitmap.getHeight();
+
+		if (body != null || !"".equals(body)) {
+			canvas.save();
+			// calculate x and y position where your text will be placed
+
+			float textX = 25;
+			float textY = (16 + 8) + bitmap.getHeight();
+
+			canvas.translate(textX, textY);
+			mTextLayout.draw(canvas);
+			canvas.restore();
+
+			txtY = (16 + 8) * (lin + 1) + bitmap.getHeight();
+		}
+
+		// mTextPaint.setColor(Color.BLUE);
+		mTextPaint.setTextAlign(Align.LEFT);
+		mTextLayout = new StaticLayout(time, mTextPaint, 250,
+				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+
+		canvas.translate(txtX, txtY);
+		mTextLayout.draw(canvas);
+
+		return new BitmapDrawable(bm);
+	}
+
+	public static float convertDpToPixels(float dp, Context context) {
+		
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float px = dp * (metrics.densityDpi / 160f);
+		return px;
+	}
+
+	public static float convertPixelsToDp(float px, Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float dp = px / (metrics.densityDpi / 160f);
+		return dp;
+
 	}
 
 }
 
 class ViewHolder {
 	ImageView mmsImage;
-	TextView body;
-	TextView time;
-	RelativeLayout list_sms;
+	// TextView body;
+	// TextView time;
+	// RelativeLayout list_sms;
 	int position;
 }
