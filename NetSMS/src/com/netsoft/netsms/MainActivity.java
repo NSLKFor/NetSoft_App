@@ -38,6 +38,7 @@ public class MainActivity extends ListActivity {
 	private ListContactAdapter listContactAdapter;
 	private List<ListContactItem> listContact;
 	private ProgressDialog progressDialog;
+	private boolean isRunning = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +78,15 @@ public class MainActivity extends ListActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		
+		Toast.makeText(getApplicationContext(), "onResum callback", Toast.LENGTH_SHORT).show();
 		//Toast.makeText(getApplicationContext(), "Onresume of Main Activity", Toast.LENGTH_SHORT).show();
 		NetSMSApplication application = (NetSMSApplication) getApplication();
 		listContact = application.getListContactItem();
-		if(listContact == null ){
-			loadListContact(MainActivity.this);
+		if(listContact == null && !isRunning){
+			loadListContact(this);
 		}else{
-			listContactAdapter = new ListContactAdapter(MainActivity.this,
+			listContactAdapter = new ListContactAdapter(this,
 					listContact);
 			setListAdapter(listContactAdapter);
 		}
@@ -92,10 +95,9 @@ public class MainActivity extends ListActivity {
 
 	private void loadListContact(final Context context) {
 		// TODO Auto-generated method stub
-		if (listContact == null) {
+		isRunning = true;
 			progressDialog = ProgressDialog.show(this, "Load Data",
 					"Loading ... ", true, false);
-		}
 
 		new Thread(){
 			public void run() {
@@ -185,6 +187,7 @@ public class MainActivity extends ListActivity {
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 			case Constants.MSG_GET_ITEMS:
+				isRunning = false;
 				progressDialog.dismiss();
 				
 				listContactAdapter = new ListContactAdapter(MainActivity.this,

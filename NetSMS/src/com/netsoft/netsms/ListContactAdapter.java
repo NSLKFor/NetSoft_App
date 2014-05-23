@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,15 +56,14 @@ public class ListContactAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
+		
 		View view = convertView;
 		ViewHolderListContact holder;
 		if (view == null) {
 			view = inflater.inflate(R.layout.contact_row, null);
 			holder = new ViewHolderListContact();
-			holder.imgThum = (ImageView) view
-					.findViewById(R.id.list_image);
-			holder.tviAddress = (TextView) view
-					.findViewById(R.id.address);
+			holder.imgThum = (ImageView) view.findViewById(R.id.list_image);
+			holder.tviAddress = (TextView) view.findViewById(R.id.address);
 			holder.tviBody = (TextView) view.findViewById(R.id.body);
 			holder.tviTime = (TextView) view.findViewById(R.id.time);
 
@@ -77,7 +78,7 @@ public class ListContactAdapter extends BaseAdapter {
 			holder.tviBody.setTypeface(null, Typeface.BOLD);
 			holder.tviAddress.setTypeface(null, Typeface.BOLD);
 			holder.tviBody.setTypeface(null, Typeface.BOLD);
-		}else{
+		} else {
 			holder.tviBody.setTypeface(null, Typeface.NORMAL);
 			holder.tviAddress.setTypeface(null, Typeface.NORMAL);
 			holder.tviBody.setTypeface(null, Typeface.NORMAL);
@@ -98,7 +99,10 @@ public class ListContactAdapter extends BaseAdapter {
 		holder.tviBody.setText(listContactItem.body);
 		holder.tviTime.setText(DateFormat.getInstance().format(
 				listContactItem.time));
+		
+
 		return view;
+
 	}
 }
 

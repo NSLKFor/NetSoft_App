@@ -320,8 +320,8 @@ public class ListSMSActivity extends ListActivity {
 
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		int height = displaymetrics.heightPixels;
-		int width = displaymetrics.widthPixels;
+		float height = displaymetrics.heightPixels;
+		float width = displaymetrics.widthPixels;
 		final SmsFetcher sf = new SmsFetcher(add);
 		
 		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width, height);
