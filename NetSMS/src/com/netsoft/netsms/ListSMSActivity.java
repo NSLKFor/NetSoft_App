@@ -17,12 +17,15 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +33,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -48,10 +52,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -156,7 +162,7 @@ public class ListSMSActivity extends ListActivity {
 
 			if (!strAdd.equals("")) {
 				String phone = "";
-				phone = formatToStandardNumber(strAdd);
+				phone = SMSHelper.formatToStandardNumber(strAdd);
 
 				this.address = phone;
 				addMessage2List(this, address, strBody, img, strTime);
@@ -185,7 +191,7 @@ public class ListSMSActivity extends ListActivity {
 			// this.listSMS = listSMSApplication.getListSMSItem();
 			// smsAdapter.notifyDataSetChanged();
 			// } else {
-			address = formatToStandardNumber(address);
+			address = SMSHelper.formatToStandardNumber(address);
 			loadListContact(this);
 			// }
 		}
@@ -217,7 +223,7 @@ public class ListSMSActivity extends ListActivity {
 
 				if (parts != null) {
 					APNHelper aHelper = new APNHelper(v.getContext());
-					 aHelper.sendMMS(address, parts);
+					aHelper.sendMMS(address, parts);
 					String[] tmpAdd = new String[1];
 					tmpAdd[0] = address;
 					aHelper.insert(v.getContext(), tmpAdd, "MMS of " + address,
@@ -234,7 +240,7 @@ public class ListSMSActivity extends ListActivity {
 				} else {
 					smsItem.address = address;
 					smsItem.body = edtMessage.getText().toString();
-					smsItem.id = 1;
+					smsItem.id = "null";
 					smsItem.readStatus = 1;
 					smsItem.type = 2;
 					smsItem.date = System.currentTimeMillis();
@@ -259,16 +265,30 @@ public class ListSMSActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
-//				ListSMSApplication lapplication = (ListSMSApplication) getApplication();
-//				lapplication.setAddress(address);
-//				lapplication.setName(name);
-//				lapplication.setThumnail(thumnail);
-//				lapplication.setListSMSItem(listSMS);
+
+				// ListSMSApplication lapplication = (ListSMSApplication)
+				// getApplication();
+				// lapplication.setAddress(address);
+				// lapplication.setName(name);
+				// lapplication.setThumnail(thumnail);
+				// lapplication.setListSMSItem(listSMS);
 
 				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
 				photoPickerIntent.setType("image/*");
 				startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+			}
+		});
+
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				Dialog dialog = onCreateDialog(position);
+				dialog.show();
+
+				return false;
 			}
 		});
 	}
@@ -284,8 +304,9 @@ public class ListSMSActivity extends ListActivity {
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 		int height = displaymetrics.heightPixels;
 		int width = displaymetrics.widthPixels;
-		
-		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width, height);
+
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width,
+				height);
 		setListAdapter(smsAdapter);
 
 		// listSMS = sf.addItem2List(context, strBody2, bitmap, strTime);
@@ -323,8 +344,9 @@ public class ListSMSActivity extends ListActivity {
 		float height = displaymetrics.heightPixels;
 		float width = displaymetrics.widthPixels;
 		final SmsFetcher sf = new SmsFetcher(add);
-		
-		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width, height);
+
+		smsAdapter = new SmsAdapter(ListSMSActivity.this, listSMS, width,
+				height);
 		setListAdapter(smsAdapter);
 
 		new Thread() {
@@ -526,67 +548,6 @@ public class ListSMSActivity extends ListActivity {
 		}
 	};
 
-	public static String formatToStandardNumber(String temp) {
-		String phone = "";
-		if (temp.substring(0, 3).equals("+84")) {
-			switch (temp.length()) {
-			case 13:
-				phone = "0" + temp.substring(3);
-				break;
-			case 12:
-				phone = "0" + temp.substring(3);
-				break;
-			case 16:
-				if (temp.subSequence(6, 7).equals(" ")) {
-					phone = "0" + temp.substring(4, 6) + temp.substring(7, 10)
-							+ temp.substring(11, 13) + temp.substring(14);
-				} else {
-					phone = "0" + temp.substring(4, 7) + temp.substring(8, 11)
-							+ temp.substring(12);
-				}
-				break;
-			}
-			;
-		}
-		if (temp.substring(0, 2).equals("84")) {
-			switch (temp.length()) {
-			case 12:
-				phone = "0" + temp.substring(2);
-				break;
-			case 11:
-				phone = "0" + temp.substring(2);
-				break;
-			}
-			;
-		}
-
-		if (temp.length() == 13 && !temp.substring(0, 3).equals("+84")) {
-			if (temp.substring(4, 5).equals(" ")) {
-				phone = temp.substring(0, 4) + temp.substring(5, 8)
-						+ temp.substring(9);
-			} else {
-				phone = temp.substring(0, 3) + temp.substring(4, 7)
-						+ temp.substring(8, 10) + temp.substring(11);
-
-			}
-		}
-
-		if (phone == null || "".equals(phone)) {
-			phone = temp;
-		}
-
-		return phone;
-	}
-
-	public class SMSTimeComparator implements Comparator<SmsItem> {
-		@Override
-		public int compare(SmsItem arg1, SmsItem arg0) {
-			// TODO Auto-generated method stub
-			return (arg0.date > arg1.date) ? -1 : (arg0.date == arg1.date) ? 0
-					: 1;
-		}
-	}
-
 	private final Handler mhandler = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
@@ -598,7 +559,8 @@ public class ListSMSActivity extends ListActivity {
 				} else {
 					if (!isGetMMS) {
 						progressDialog.dismiss();
-						Collections.sort(listSMS, new SMSTimeComparator());
+						Collections.sort(listSMS,
+								new SMSHelper.SMSTimeComparator());
 						smsAdapter.notifyDataSetChanged();
 						// set select in bottom o flistview
 						listView.setSelection(smsAdapter.getCount());
@@ -612,7 +574,8 @@ public class ListSMSActivity extends ListActivity {
 				} else {
 					if (!isGetSMS) {
 						progressDialog.dismiss();
-						Collections.sort(listSMS, new SMSTimeComparator());
+						Collections.sort(listSMS,
+								new SMSHelper.SMSTimeComparator());
 						smsAdapter.notifyDataSetChanged();
 						// set select in bottom o flistview
 						listView.setSelection(smsAdapter.getCount());
@@ -622,5 +585,27 @@ public class ListSMSActivity extends ListActivity {
 			}
 		}
 	};
+
+	public Dialog onCreateDialog(final int position) {
+
+		final String[] optionArray = new String[] {Constants.MSG_DELETE, "option 2","option 3" };
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("").setItems(optionArray,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {						
+						if(optionArray[which].equals(Constants.MSG_DELETE)){
+							SmsItem item = (SmsItem) listView.getItemAtPosition(position);
+							SMSHelper smsHelper = new SMSHelper(ListSMSActivity.this);
+							 if(smsHelper.deleteSMS(item.id)){
+							 Toast.makeText(getApplicationContext(),"Delete message ",
+							 Toast.LENGTH_SHORT).show();
+							 listSMS.remove(position);
+							 smsAdapter.notifyDataSetChanged();
+							 }
+						}
+					}
+				});
+		return builder.create();
+	}
 
 }

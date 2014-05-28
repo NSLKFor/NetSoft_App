@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 public class SmsItem {
 
-	public int id;
+	public String id;
 	public String address;
 	public String body;
 	public int readStatus;

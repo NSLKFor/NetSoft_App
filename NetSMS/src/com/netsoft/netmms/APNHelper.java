@@ -86,21 +86,23 @@ public class APNHelper {
 					if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION))
 					{
 						Log.e("MMS", "!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)");
-						return;
+						return ;
 						
 					}
 					
 					NetworkInfo mNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 					
-					if ( /*(mNetworkInfo == null) ||*/ (mNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE_MMS))
+					if ( /*(mNetworkInfo == null) ||*/ (mNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE_MMS) ||  (mNetworkInfo.getType() != ConnectivityManager.TYPE_MOBILE))
 					{
 						Log.e("MMS", "Network type : " + mNetworkInfo.getType());
-						return;
+						Toast.makeText(context, "Network not type Mobile Data.\n Please enable Mobile Data and try again.", Toast.LENGTH_LONG).show();
+						return ;
 					}
 					
 					if (!mNetworkInfo.isConnected())
 					{
 						Log.e("MMS", "Network was not connect");
+						Toast.makeText(context, "Network is not connected.\n Please enable Mobile Data and try again.", Toast.LENGTH_LONG).show();
 						return;
 					} else
 					{

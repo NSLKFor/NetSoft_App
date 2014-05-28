@@ -36,17 +36,19 @@ public class SmsAdapter extends BaseAdapter {
 	private static LayoutInflater inflater = null;
 	private static float wight;
 	private static float height;
-	private float density ;
 
-	public SmsAdapter(Context context1, List<SmsItem> smsItems, float fwight, float fheight) {
+	// private float density ;
+
+	public SmsAdapter(Context context1, List<SmsItem> smsItems, float fwight,
+			float fheight) {
 		this.context = context1;
 		this.smsItems = smsItems;
 		this.wight = fwight;
 		this.height = fheight;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		density = context.getResources().getDisplayMetrics().density;
+
+		// density = context.getResources().getDisplayMetrics().density;
 	}
 
 	@Override
@@ -134,15 +136,15 @@ public class SmsAdapter extends BaseAdapter {
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
 				holder.mmsImage.setImageDrawable(writeCanvasRightBitmap(
-						context, R.drawable.green, bmp, item.body,
+						context, R.drawable.green_1, bmp, item.body,
 						kkk.format(item.date)));
 			} else {
 				// holder.mmsImage.setImageBitmap(null);
 				// holder.mmsImage.destroyDrawingCache();
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
-				holder.mmsImage.setImageDrawable(writeOnDrawable(context,
-						R.drawable.green, item.body, kkk.format(item.date)));
+				holder.mmsImage.setImageBitmap(writeOnDrawable(context,
+						R.drawable.green_1, item.body, kkk.format(item.date)));
 			}
 
 			// holder.list_sms.setBackgroundColor(Color.parseColor("#A9E2F3"));
@@ -173,14 +175,14 @@ public class SmsAdapter extends BaseAdapter {
 
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
 				holder.mmsImage
-						.setImageDrawable(writeCanvasLeftBitmap(context,
+						.setImageBitmap(writeCanvasLeftBitmap(context,
 								R.drawable.gray, bmp, item.body,
 								kkk.format(item.date)));
 			} else {
 				// holder.mmsImage.setImageBitmap(null);
 				// holder.mmsImage.destroyDrawingCache();
 				SimpleDateFormat kkk = new SimpleDateFormat(" HH:mm, MMM dd");
-				holder.mmsImage.setImageDrawable(writeOnDrawable(context,
+				holder.mmsImage.setImageBitmap(writeOnDrawable(context,
 						R.drawable.gray, item.body, kkk.format(item.date)));
 			}
 
@@ -233,45 +235,62 @@ public class SmsAdapter extends BaseAdapter {
 		return BitmapFactory.decodeByteArray(res, 0, res.length, options);
 	}
 
-	public BitmapDrawable writeOnDrawable(Context context, int drawableId,
+	public Bitmap writeOnDrawable(Context context, int drawableId,
 			String body, String time) {
-		
+
 		TextView j = new TextView(context);
-		j.setText("O");
 		j.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-		
-		
-		
+
 		Bitmap bm = BitmapFactory.decodeResource(context.getResources(),
 				drawableId).copy(Bitmap.Config.ARGB_8888, true);
-		
+
 		TextPaint mTextPaint = new TextPaint();
+		int bodyHeight = 0;
 		float textSize = j.getTextSize();
 		float charWight = textSize;
 		float charHeight = textSize;
-		float dimension =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, textSize, context.getResources().getDisplayMetrics());
+		float dimension = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources()
+						.getDisplayMetrics());
 		mTextPaint.setColor(0xff003366);
 		mTextPaint.setTextSize(dimension);
-		
-		StaticLayout mTextLayout = new StaticLayout(body, mTextPaint, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wight, context.getResources().getDisplayMetrics())
-				,Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 
-		
 		float textWight = wight;
 
-		if (body.length() * charWight < wight) {
-			textWight = body.length() * charWight >  wight / 2 ? wight :( wight / 2) * body.length() * charWight;
+		int len = body.length() < time.length() ? time.length() : body.length();
+		if (len * charWight < wight) {
+			textWight = len * charWight > wight / 2 ? wight
+					: (wight / 2);
 		}
-		
-		int lin = mTextLayout.getLineCount();
-		bm = Bitmap.createScaledBitmap(bm,(int) textWight, (int) charHeight* (lin + 3), true);
+
+		StaticLayout mTextLayout = new StaticLayout(body, mTextPaint,
+				(int) (textWight - (int) TypedValue.applyDimension(
+						TypedValue.COMPLEX_UNIT_DIP, 60, context.getResources()
+								.getDisplayMetrics())), Alignment.ALIGN_NORMAL,
+				1.0f, 0.0f, true);
+
+		bodyHeight = mTextLayout.getHeight();
+		bm = Bitmap.createScaledBitmap(
+				bm,
+				(int) (textWight - (int) TypedValue.applyDimension(
+						TypedValue.COMPLEX_UNIT_DIP, 30, context.getResources()
+								.getDisplayMetrics())),
+				bodyHeight
+						+ 30
+						+ (int) TypedValue.applyDimension(
+								TypedValue.COMPLEX_UNIT_DIP, charHeight,
+								context.getResources().getDisplayMetrics()),
+				true);
+
 		Canvas canvas = new Canvas(bm);
 
 		canvas.save();
 		// calculate x and y position where your text will be placed
 
-		float textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25 * density, context.getResources().getDisplayMetrics());
-		float textY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 * density, context.getResources().getDisplayMetrics());
+		float textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				25, context.getResources().getDisplayMetrics());
+		float textY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				15, context.getResources().getDisplayMetrics());
 
 		canvas.translate(textX, textY);
 		mTextLayout.draw(canvas);
@@ -279,78 +298,156 @@ public class SmsAdapter extends BaseAdapter {
 
 		mTextPaint.setColor(0xff3385FF);
 		mTextPaint.setTextAlign(Align.LEFT);
-		mTextLayout = new StaticLayout(time, mTextPaint, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wight, context.getResources().getDisplayMetrics()),
+		mTextLayout = new StaticLayout(time, mTextPaint,
+				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+						wight, context.getResources().getDisplayMetrics()),
 				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-		
-		textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25 * density, context.getResources().getDisplayMetrics());
-		textY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,j.getHeight() * (lin + 1), context.getResources().getDisplayMetrics());
+
+		textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25,
+				context.getResources().getDisplayMetrics());
+		// textY = textY +
+		// TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+		// charHeight * (lin), context.getResources()
+		// .getDisplayMetrics());
+		textY = textY + bodyHeight;
 
 		canvas.translate(textX, textY);
 		mTextLayout.draw(canvas);
 
-		return new BitmapDrawable(bm);
+		return bm;
 	}
 
-	public BitmapDrawable writeCanvasLeftBitmap(Context context,
+	public Bitmap writeCanvasLeftBitmap(Context context,
 			int drawableId, Bitmap bitmap, String body, String time) {
+		TextView j = new TextView(context);
+		j.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+
 		Bitmap bm = BitmapFactory.decodeResource(context.getResources(),
 				drawableId).copy(Bitmap.Config.ARGB_8888, true);
-		
+
 		TextPaint mTextPaint = new TextPaint();
+		int bodyHeight = 0;
 		StaticLayout mTextLayout = null;
-		int lin = 0;
-		int tx = 300;
-		if (body != null || "".equals(body)) {
-			// mTextPaint.setColor(Color.RED);
-			int size = 100;
-			int pixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                    size, context.getResources().getDisplayMetrics());
-			mTextPaint.setTextSize(pixels);
-			
-			mTextLayout = new StaticLayout(body, mTextPaint, 250,
-					Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+		float textX = 0;
+		float textY = 0;
+		float textSize = j.getTextSize();
+		float charWight = textSize;
+		float charHeight = textSize;
+		float dimension = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources()
+						.getDisplayMetrics());
+		mTextPaint.setColor(0xff003366);
+		mTextPaint.setTextSize(dimension);
 
-			lin = mTextLayout.getLineCount();
-
-			if (body.length() * 10 < 300) {
-				tx = body.length() * 10 > 150 ? body.length() * 10 : 150;
-			}
+		float textWight = wight;
+		int len = 0;
+		if (body != null) {
+			len = body.length() < time.length() ? time.length() : body.length();
 		}
 
-		bm = Bitmap.createScaledBitmap(bm, tx > bitmap.getWidth() ? tx + 45
-				: bitmap.getWidth() + 45,
-				(16 + 3) * (lin + 4) + bitmap.getHeight(), true);
+		if (len * charWight < wight) {
+			textWight = len * charWight > wight / 2 ? wight : (wight / 2);
+		}
+
+		// !Important: alway decode source smaller screen size
+		textWight = textWight > bitmap.getWidth() ? textWight : bitmap
+				.getWidth() + (int) TypedValue.applyDimension(
+						TypedValue.COMPLEX_UNIT_DIP, 90,
+						context.getResources()
+								.getDisplayMetrics());
+		// check textwight over load screen wight so crash app --> the picture is out of the box bit it is not usually
+		textWight = textWight > wight ? wight : textWight;
+
+		if (body != null) {
+			mTextLayout = new StaticLayout(body, mTextPaint,
+					(int) (textWight - (int) TypedValue.applyDimension(
+							TypedValue.COMPLEX_UNIT_DIP, 70, context
+									.getResources().getDisplayMetrics())),
+					Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+
+			bodyHeight = mTextLayout.getHeight();
+
+			bm = Bitmap
+					.createScaledBitmap(
+							bm,
+							(int) textWight -  (int) TypedValue.applyDimension(
+									TypedValue.COMPLEX_UNIT_DIP, 35,
+									context.getResources()
+											.getDisplayMetrics())
+													,
+							bitmap.getHeight()
+									+ 30
+									+ bodyHeight
+									+ 30
+									+ (int) TypedValue.applyDimension(
+											TypedValue.COMPLEX_UNIT_DIP,
+											charHeight, context.getResources()
+													.getDisplayMetrics()), true);
+		} else {
+			bm = Bitmap
+					.createScaledBitmap(
+							bm,
+							(int) textWight
+									+ (int) TypedValue.applyDimension(
+											TypedValue.COMPLEX_UNIT_DIP, 40,
+											context.getResources()
+													.getDisplayMetrics()),
+							bitmap.getHeight()
+									+ 30
+									+ bodyHeight
+									+ 30
+									+ (int) TypedValue.applyDimension(
+											TypedValue.COMPLEX_UNIT_DIP,
+											charHeight, context.getResources()
+													.getDisplayMetrics()), true);
+		}
+
 		Canvas canvas = new Canvas(bm);
 
+		canvas.save();
 		Paint paint = new Paint();
-		canvas.drawBitmap(bitmap, 25, 20, paint);
+		canvas.drawBitmap(bitmap, (textWight - bitmap.getWidth())/2 - TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources()
+				.getDisplayMetrics()), TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources()
+						.getDisplayMetrics()), paint);
 
-		float txtX = 30;
-		float txtY = (16 + 4) * (lin + 1) + bitmap.getHeight();
-
-		if (body != null || !"".equals(body)) {
-			canvas.save();
-			// calculate x and y position where your text will be placed
-
-			float textX = 30;
-			float textY = (16 + 8) + bitmap.getHeight();
+		if (body != null) {
+			textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+					context.getResources().getDisplayMetrics());
+			textY = bitmap.getHeight()
+					+ TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+							20, context.getResources().getDisplayMetrics());
 
 			canvas.translate(textX, textY);
 			mTextLayout.draw(canvas);
-			canvas.restore();
 
-			txtY = (16 + 8) * (lin + 1) + bitmap.getHeight();
+			// textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+			// 25,
+			// context.getResources().getDisplayMetrics());
+			textY = textY + bodyHeight;
+		} else {
+			textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+					context.getResources().getDisplayMetrics());
+			textY = bitmap.getHeight()
+					+ TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+							20, context.getResources().getDisplayMetrics());
 		}
+		// calculate x and y position where your text will be placed
 
-		// mTextPaint.setColor(Color.BLUE);
+		canvas.restore();
+
+		mTextPaint.setColor(0xff3385FF);
 		mTextPaint.setTextAlign(Align.LEFT);
-		mTextLayout = new StaticLayout(time, mTextPaint, 250,
+		mTextLayout = new StaticLayout(time, mTextPaint,
+				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+						wight, context.getResources().getDisplayMetrics()),
 				Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 
-		canvas.translate(txtX, txtY);
+		canvas.translate(textX, textY);
 		mTextLayout.draw(canvas);
 
-		return new BitmapDrawable(bm);
+		return bm;
 	}
 
 	public BitmapDrawable writeCanvasRightBitmap(Context context,
@@ -412,7 +509,7 @@ public class SmsAdapter extends BaseAdapter {
 	}
 
 	public static float convertDpToPixels(float dp, Context context) {
-		
+
 		Resources resources = context.getResources();
 		DisplayMetrics metrics = resources.getDisplayMetrics();
 		float px = dp * (metrics.densityDpi / 160f);
@@ -425,9 +522,6 @@ public class SmsAdapter extends BaseAdapter {
 		float dp = px / (metrics.densityDpi / 160f);
 		return dp;
 	}
-	
-	       
-
 
 }
 

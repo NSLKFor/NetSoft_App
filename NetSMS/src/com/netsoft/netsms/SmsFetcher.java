@@ -64,17 +64,10 @@ public class SmsFetcher {
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		if (cursor.moveToNext()) {
 			do {
-				// String temp = cursor.getString(cursor
-				// .getColumnIndexOrThrow("address"));
-				// String ttt =temp.replace(" ", "");
-				// temp = ttt;
-				// if (temp.equals(this.address)
-				// || temp.equals(convertAddress(this.address))) {
-
 				SmsItem item = new SmsItem();
 				item.address = this.address;
-				item.id = Integer.parseInt(cursor.getString(
-						cursor.getColumnIndexOrThrow("_id")).toString());
+				item.id = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+						.toString();
 				item.body = cursor.getString(
 						cursor.getColumnIndexOrThrow("body")).toString();
 				item.readStatus = Integer.parseInt(cursor.getString(
@@ -155,8 +148,8 @@ public class SmsFetcher {
 						|| temp.equals(convertAddress(this.address))) {
 					SmsItem item = new SmsItem();
 					item.address = this.address;
-					item.id = Integer.parseInt(cursor.getString(
-							cursor.getColumnIndexOrThrow("_id")).toString());
+					item.id = cursor.getString(
+							cursor.getColumnIndexOrThrow("_id")).toString();
 					item.body = cursor.getString(
 							cursor.getColumnIndexOrThrow("body")).toString();
 					item.readStatus = Integer.parseInt(cursor.getString(
@@ -180,7 +173,7 @@ public class SmsFetcher {
 		item.address = this.address;
 		item.body = strBody2;
 
-		item.id = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString())
+		item.id = "null"; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString())
 								// ;
 		item.readStatus = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
@@ -330,7 +323,7 @@ public class SmsFetcher {
 				SmsItem item = new SmsItem();
 				item.address = address;
 				item.date = date;
-				item.id = Integer.parseInt(id);
+				item.id = id;
 				item.readStatus = readStatus;
 				item.type = mtype;
 				item.body = "";
@@ -522,7 +515,5 @@ public class SmsFetcher {
 		// return address.replaceAll("[^0-9]", "");
 		return receiver;
 	}
-
-
 
 }

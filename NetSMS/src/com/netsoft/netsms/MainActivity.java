@@ -57,7 +57,6 @@ public class MainActivity extends ListActivity {
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 
-	
 		/*
 		 * title of action bar
 		 * 
@@ -106,7 +105,6 @@ public class MainActivity extends ListActivity {
 				handler.sendEmptyMessage(Constants.MSG_GET_ITEMS);
 			}
 		}.start();
-
 	}
 
 	@Override
@@ -154,6 +152,7 @@ public class MainActivity extends ListActivity {
 		}
 	}
 
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		// get selected items
 		
