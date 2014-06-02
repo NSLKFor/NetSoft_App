@@ -198,6 +198,8 @@ public class ListSMSActivity extends ListActivity {
 
 		// *******************************************
 		setTitle(this.name);
+
+		// check thumnail: if null set default image
 		if (this.thumnail != null) {
 			InputStream inputStream = null;
 			try {
@@ -207,6 +209,7 @@ public class ListSMSActivity extends ListActivity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			// set thumnail to action bar
 			getActionBar().setIcon(
 					Drawable.createFromStream(inputStream,
 							this.thumnail.toString()));
@@ -221,6 +224,7 @@ public class ListSMSActivity extends ListActivity {
 				// btnSend.setImageResource(R.drawable.send_selected_icon);
 				// delayhandler.postDelayed(mUpdateTimeTask, 100);
 
+				// check and send mms
 				if (parts != null) {
 					APNHelper aHelper = new APNHelper(v.getContext());
 					aHelper.sendMMS(address, parts);
@@ -315,6 +319,7 @@ public class ListSMSActivity extends ListActivity {
 		// In the future the funtion will insert item to list but not reload all
 		// element
 
+		// thead get sms list
 		new Thread() {
 			public void run() {
 				isGetSMS = true;
@@ -323,6 +328,7 @@ public class ListSMSActivity extends ListActivity {
 				mhandler.sendEmptyMessage(Constants.MSG_GET_SMS_ITEMS);
 			}
 		}.start();
+		// thread mms list
 		new Thread() {
 			public void run() {
 				isGetMMS = true;
@@ -349,6 +355,7 @@ public class ListSMSActivity extends ListActivity {
 				height);
 		setListAdapter(smsAdapter);
 
+		// get sms list
 		new Thread() {
 			public void run() {
 				isGetSMS = true;
@@ -357,6 +364,7 @@ public class ListSMSActivity extends ListActivity {
 			}
 		}.start();
 
+		// get mms list
 		new Thread() {
 			public void run() {
 				isGetMMS = true;
@@ -399,6 +407,7 @@ public class ListSMSActivity extends ListActivity {
 
 					String mimeType = GetMimeType(this, selectedImage);
 
+					// calculator compress image
 					if (mimeType.equals("image/jpeg")) {
 						if ((yourSelectedImage.getByteCount() / 1000) > 4000) {
 							res = 50;
@@ -473,6 +482,7 @@ public class ListSMSActivity extends ListActivity {
 		}
 	}
 
+	// get mime type
 	public static String GetMimeType(Context context, Uri uriImage) {
 		String strMimeType = null;
 
@@ -524,6 +534,7 @@ public class ListSMSActivity extends ListActivity {
 		}
 	}
 
+	// get event press back button to close app
 	@Override
 	public void onBackPressed() {
 		Toast.makeText(this, "Press back button", Toast.LENGTH_LONG).show();
@@ -548,6 +559,7 @@ public class ListSMSActivity extends ListActivity {
 		}
 	};
 
+	//hander progress dialog
 	private final Handler mhandler = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
@@ -586,22 +598,27 @@ public class ListSMSActivity extends ListActivity {
 		}
 	};
 
+	//create dialog when long press to listview
 	public Dialog onCreateDialog(final int position) {
 
-		final String[] optionArray = new String[] {Constants.MSG_DELETE, "option 2","option 3" };
+		final String[] optionArray = new String[] { Constants.MSG_DELETE,
+				"option 2", "option 3" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("").setItems(optionArray,
 				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {						
-						if(optionArray[which].equals(Constants.MSG_DELETE)){
-							SmsItem item = (SmsItem) listView.getItemAtPosition(position);
-							SMSHelper smsHelper = new SMSHelper(ListSMSActivity.this);
-							 if(smsHelper.deleteSMS(item.id)){
-							 Toast.makeText(getApplicationContext(),"Delete message ",
-							 Toast.LENGTH_SHORT).show();
-							 listSMS.remove(position);
-							 smsAdapter.notifyDataSetChanged();
-							 }
+					public void onClick(DialogInterface dialog, int which) {
+						if (optionArray[which].equals(Constants.MSG_DELETE)) {
+							SmsItem item = (SmsItem) listView
+									.getItemAtPosition(position);
+							SMSHelper smsHelper = new SMSHelper(
+									ListSMSActivity.this);
+							if (smsHelper.deleteSMS(item.id)) {
+								Toast.makeText(getApplicationContext(),
+										"Delete message ", Toast.LENGTH_SHORT)
+										.show();
+								listSMS.remove(position);
+								smsAdapter.notifyDataSetChanged();
+							}
 						}
 					}
 				});

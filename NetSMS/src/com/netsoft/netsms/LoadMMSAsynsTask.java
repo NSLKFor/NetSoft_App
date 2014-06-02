@@ -1,5 +1,5 @@
 package com.netsoft.netsms;
-
+//test method sync mms
 import java.util.ArrayList;
 import java.util.List;
 

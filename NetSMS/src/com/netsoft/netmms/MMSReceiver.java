@@ -185,20 +185,6 @@ public class MMSReceiver extends BroadcastReceiver {
 			Log.e(TAG, "Unexpected RuntimeException.", e);
 		}
 
-		//
-		// if(type == PduHeaders.MESSAGE_TYPE_DELIVERY_IND) {
-		// messageId = new String(((DeliveryInd)pdu).getMessageId());
-		// //Notify app that mms with messageId was delivered
-		// }
-		//
-		// int status = ((DeliveryInd)pdu).getStatus();
-		// if(status == PduHeaders.STATUS_RETRIEVED) {
-		// //message delivered. update storage
-		// }
-
-		String[] columns = null;
-		String[] values = null;
-
 		Cursor curPdu = context.getContentResolver().query(
 				Uri.parse("content://mms"), null, null, null, null);
 		if (curPdu.moveToNext()) {
@@ -272,28 +258,6 @@ public class MMSReceiver extends BroadcastReceiver {
 						}
 
 					}
-
-					// columns = curPart.getColumnNames();
-					// if(values == null)
-					// values = new String[columns.length];
-					//
-					// for(int i=0; i< curPart.getColumnCount(); i++){
-					// values[i] = curPart.getString(i);
-					// Log.e("MMS REceiver", curPart.getString(i));
-					// }
-					// String contact_idd = curPart.getString(0);
-					//
-					// if(values[3].equals("image/jpeg") ||
-					// values[3].equals("image/bmp") ||
-					// values[3].equals("image/gif") ||
-					// values[3].equals("image/jpg") ||
-					// values[3].equals("image/png"))
-					// {
-					// GetMmsAttachment(context, values[0],values[12]);
-					// //Toast.makeText(getApplicationContext(),
-					// "Retrieved MMS attachment", Toast.LENGTH_LONG);
-					// }
-
 				}
 				curPart.close();
 
@@ -368,6 +332,7 @@ public class MMSReceiver extends BroadcastReceiver {
 
 	}
 
+	// read part of mms message
 	public static byte[] readMMSPart(Context context, String partId) {
 		byte[] partData = null;
 		Uri partURI = Uri.parse("content://mms/part/" + partId);
@@ -403,6 +368,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return partData;
 	}
 
+	//check isImage
 	public static boolean isImageType(String mime) {
 		boolean result = false;
 		if (mime.equalsIgnoreCase("image/jpg")
@@ -415,6 +381,7 @@ public class MMSReceiver extends BroadcastReceiver {
 		return result;
 	}
 
+	// get attach of MMS
 	public static void GetMmsAttachment(Context context, String _id,
 			String _data) {
 		Uri partURI = Uri.parse("content://mms/part/" + _id);

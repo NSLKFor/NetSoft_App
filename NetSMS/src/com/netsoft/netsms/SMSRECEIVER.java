@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
+//get 
 public class SMSRECEIVER extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -35,23 +36,6 @@ public class SMSRECEIVER extends BroadcastReceiver {
 			Toast.makeText(context, "Receive message from: " + address,
 					Toast.LENGTH_LONG).show();
 
-			/*
-			 * Set broadcast intent to action into app to receice Intent
-			 * mainActivityIntent = new Intent (context, MainActivity.class);
-			 * mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			 * context.startActivity(mainActivityIntent);
-			 * 
-			 * //Intent broadcastIntent = new Intent();
-			 * //broadcastIntent.setAction("SMS_RECEIVED_ACTION");
-			 * //broadcastIntent.putExtra("sms", str);
-			 * //context.sendBroadcast(broadcastIntent);
-			 * //this.abortBroadcast();
-			 */
-
-			//
-			// NotifySMS notiSMS = new NotifySMS();
-			//
-			// notiSMS.AlertMessage(context,address, body);
 
 			Intent smsReceiveIntent = new Intent(context, NotifySMS.class);
 			smsReceiveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

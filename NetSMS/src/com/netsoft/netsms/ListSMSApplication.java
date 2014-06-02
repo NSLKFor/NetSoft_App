@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Application;
 import android.net.Uri;
 
+//store information of app
 public class ListSMSApplication extends Application {
 
 	private String address;

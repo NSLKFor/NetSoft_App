@@ -56,11 +56,8 @@ public class SmsFetcher {
 				+ listNumberFormat.get(listNumberFormat.size() - 1) + "'";
 
 		Cursor cursor = cr.query(message, null, selection, null, null);
-		// Cursor cursor = cr.query(message, null, "address = '"+ this.address+
-		// "' or "+ "address = '"+ convertAddress(this.address)+ "'", null,
-		// null);
-		// Cursor cursor = cr.query(message, null,null, null, null);
 
+		//get info of sms
 		List<SmsItem> listMessage = new ArrayList<SmsItem>();
 		if (cursor.moveToNext()) {
 			do {
@@ -122,6 +119,7 @@ public class SmsFetcher {
 
 	}
 
+	//insert new sms to list
 	public List<SmsItem> addItem2List(Context context, String strBody2,
 			byte[] bitmap, long lTime) {
 		// TODO Auto-generated method stub
@@ -174,7 +172,7 @@ public class SmsFetcher {
 		item.body = strBody2;
 
 		item.id = "null"; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")).toString())
-								// ;
+							// ;
 		item.readStatus = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("read")).toString());
 		item.type = (Integer) 0; // Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("type")).toString());
 		item.date = lTime; // cursor.getLong(cursor.getColumnIndexOrThrow("date"))
@@ -331,11 +329,6 @@ public class SmsFetcher {
 
 				curPart.moveToFirst();
 				do {
-
-					// String addr =
-					// curPart.getString(curPart.getColumnIndex("address"));
-					// Log.e("-----------------", "--------- Address mms" +
-					// addr);
 
 					String contentType = curPart.getString(curPart
 							.getColumnIndex("ct"));
@@ -512,7 +505,6 @@ public class SmsFetcher {
 			Log.e("-----------------", "\n\n--------- Type mms: "
 					+ "Message outbound");
 		}
-		// return address.replaceAll("[^0-9]", "");
 		return receiver;
 	}
 

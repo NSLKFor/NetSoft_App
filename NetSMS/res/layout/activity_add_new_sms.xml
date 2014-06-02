@@ -5,13 +5,12 @@
     android:orientation="horizontal"
     android:padding="5dip" >
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/addAddress"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:hint="@string/strAddres"
-        android:minLines="1" />
+         />
 
     <EditText
         android:id="@+id/addEnterBox"

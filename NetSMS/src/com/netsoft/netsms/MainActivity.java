@@ -44,6 +44,7 @@ public class MainActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		//instance element and disable notification
 		Toast.makeText(getApplicationContext(), "onCreate of Main Activity", Toast.LENGTH_SHORT).show();
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notificationManager.cancel(9999);
@@ -57,27 +58,12 @@ public class MainActivity extends ListActivity {
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setEmptyView(this.empty);
 
-		/*
-		 * title of action bar
-		 * 
-		 * TextView nameTitle = (TextView)findViewById(R.id.txtTitle);
-		 * nameTitle.setText("NetSMS");
-		 * 
-		 * 
-		 * ImageButton Add = (ImageButton)findViewById(R.id.header);
-		 * Add.setOnClickListener(new View.OnClickListener() {
-		 * 
-		 * @Override public void onClick(View v) { // TODO Auto-generated method
-		 * stub Intent intent = new Intent(v.getContext(),
-		 * AddNewSMSActivity.class); startActivity(intent); } });
-		 */
-
 	}
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
+		//load list contact
 		Toast.makeText(getApplicationContext(), "onResum callback", Toast.LENGTH_SHORT).show();
 		//Toast.makeText(getApplicationContext(), "Onresume of Main Activity", Toast.LENGTH_SHORT).show();
 		NetSMSApplication application = (NetSMSApplication) getApplication();

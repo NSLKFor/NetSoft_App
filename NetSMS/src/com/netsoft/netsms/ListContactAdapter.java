@@ -70,6 +70,8 @@ public class ListContactAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 
 		View view = convertView;
+		
+		// using holder to render listview
 		final ViewHolderListContact holder;
 		if (view == null) {
 			view = inflater.inflate(R.layout.contact_row, null);
@@ -106,6 +108,7 @@ public class ListContactAdapter extends BaseAdapter {
 		});
 		
 
+		//bold work when message no read
 		if (listContactItem.readStatus == 0) {
 			holder.tviBody.setTypeface(null, Typeface.BOLD);
 			holder.tviAddress.setTypeface(null, Typeface.BOLD);
@@ -122,6 +125,7 @@ public class ListContactAdapter extends BaseAdapter {
 			holder.tviAddress.setText(listContactItem.name);
 		}
 
+		//set thumnail for element if null set deault thumnail
 		if (listContactItem.thumnail == null) {
 			holder.imgThum.setImageResource(R.drawable.user_icon);
 		} else {
@@ -133,6 +137,8 @@ public class ListContactAdapter extends BaseAdapter {
 				listContactItem.time));
 		return view;
 	}
+	
+	//show popup when press to image thumail
 	private void showPopup(final Context context, Point p, final String sPhone) {
 		   int popupWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				   200, context.getResources().getDisplayMetrics());
@@ -179,19 +185,10 @@ public class ListContactAdapter extends BaseAdapter {
 				
 			}
 		});
-		 
-//		   // Getting a reference to Close button, and close the popup when clicked.
-//		   Button close = (Button) layout.findViewById(R.id.close);
-//		   close.setOnClickListener(new OnClickListener() {
-//		 
-//		     @Override
-//		     public void onClick(View v) {
-//		       popup.dismiss();
-//		     }
-//		   });
 		}
 }
 
+//define viewHolder 
 class ViewHolderListContact {
 	ImageButton imgThum;
 	TextView tviAddress;

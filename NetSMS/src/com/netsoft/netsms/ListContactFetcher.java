@@ -20,81 +20,16 @@ import android.util.Log;
 public class ListContactFetcher {
 
 	public ArrayList<ListContactItem> listContact = new ArrayList<ListContactItem>();
-	
+
 	public List<ListContactItem> getListContact(Context context) {
-		// Uri message = Uri.parse("content://sms/");
-		// ContentResolver cr = context.getContentResolver();
-		// Cursor cursor = cr.query(message, null, null, null, null);
-		//
-		// ArrayList<ListContactItem> listContact = new
-		// ArrayList<ListContactItem>();
-		//
-		// cursor.moveToFirst();
-		// do{
-		// String temp =
-		// cursor.getString(cursor.getColumnIndexOrThrow("address")).toString();
-		// String adds = temp;
-		//
-		// if(temp.substring(0, 3).equals("+84")){
-		// switch(temp.length()){
-		// case 13:
-		// adds = "0" + temp.substring(3);
-		// break;
-		// case 12:
-		// adds = "0" + temp.substring(3);
-		// break;
-		// };
-		// }
-		//
-		// int status = 0;
-		// for(int i = 0; i < listContact.size(); i++){
-		//
-		// if(listContact.get(i).address.equals(adds) &&
-		// cursor.getInt(cursor.getColumnIndexOrThrow("read")) == 0){
-		// status = 0;
-		// break;
-		// }
-		//
-		// if(listContact.get(i).address.equals(adds)){
-		// status = 1;
-		// break;
-		// }
-		// }
-		//
-		// //check if draft sms "no address but have body"
-		// if(cursor.getString(cursor.getColumnIndexOrThrow("address")) == null
-		// ||
-		// cursor.getString(cursor.getColumnIndexOrThrow("address")).toString().equals("")){
-		// continue;
-		// }
-		// if(status == 0){
-		// ListContactItem listContactItem = new ListContactItem();
-		//
-		// listContactItem.address = adds;
-		// listContactItem.body =
-		// cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();
-		// listContactItem.time =
-		// cursor.getLong(cursor.getColumnIndexOrThrow("date"));
-		// listContactItem.name = getContactName(context,
-		// listContactItem.address);
-		//
-		// long contact_ID = fetchContactIdFromPhoneNumber(context,
-		// listContactItem.address);
-		// listContactItem.thumnail = getPhotoUri(context, contact_ID);
-		// listContactItem.readStatus =
-		// cursor.getInt(cursor.getColumnIndexOrThrow("read"));
-		//
-		// listContact.add(listContactItem);
-		// }
-		// }while(cursor.moveToNext());
 
 		long time1 = System.currentTimeMillis();
-		
+
+		// get infomation from conversations
 		ContentResolver contentResolver = context.getContentResolver();
 		Uri uri = Uri.parse("content://mms-sms/conversations/");
 		Cursor query = contentResolver.query(uri, null, null, null, null);
 
-		
 		if (query.moveToNext()) {
 			do {
 				String string = query.getString(query.getColumnIndex("ct_t"));
@@ -120,30 +55,33 @@ public class ListContactFetcher {
 						String subject = cs.getString(cs.getColumnIndex("sub"));
 
 						String selectionPart = new String("mid = '" + pid + "'");
-						Log.e("MMS REceiver", "selectionPart : " + selectionPart);
+						Log.e("MMS REceiver", "selectionPart : "
+								+ selectionPart);
 
 						Cursor curPart = context.getContentResolver().query(
 								Uri.parse("content://mms/part"),
-								// new String[] { "_id", "ct", "_data", "text", "cl" },
+								// new String[] { "_id", "ct", "_data", "text",
+								// "cl" },
 								null, selectionPart, null, null);
-						Log.e("MMS REceiver", "MMSMonitor :: parts records length == "
-								+ curPart.getCount());
+						Log.e("MMS REceiver",
+								"MMSMonitor :: parts records length == "
+										+ curPart.getCount());
 						if (curPart.getCount() == 0) {
 							continue;
 						}
 
 						// Gets date of message
 						long date = cs.getLong(cs.getColumnIndex("date")) * 1000;
-//						String time = DateFormat.getInstance().format(date);
-//						Log.e("Time", "\ntime to compare to sms: " + time);
+						// String time = DateFormat.getInstance().format(date);
+						// Log.e("Time", "\ntime to compare to sms: " + time);
 
 						// *******************get address *******************
 
-						//SmsFetcher smsfetcher = new SmsFetcher("");
+						// SmsFetcher smsfetcher = new SmsFetcher("");
 						String temp = SmsFetcher.getMMSAddress(context, pid);
 						// ********************end get address
 						// ************************************
-						
+
 						ListContactItem listContactItem = new ListContactItem();
 						String addr = ConvertNumberPhoneAddress(temp);
 						listContactItem.address = addr;
@@ -151,18 +89,18 @@ public class ListContactFetcher {
 						listContactItem.time = date;
 						listContactItem.name = getContactName(context, addr);
 
-						long contact_ID = fetchContactIdFromPhoneNumber(context,
-								addr);
+						long contact_ID = fetchContactIdFromPhoneNumber(
+								context, addr);
 
-						listContactItem.thumnail = getPhotoUri(context, contact_ID);
+						listContactItem.thumnail = getPhotoUri(context,
+								contact_ID);
 						listContactItem.readStatus = 1;
 
 						listContact.add(listContactItem);
 
-						
 					} while (cs.moveToNext());
 					cs.close();
-					
+
 				} else {
 					// it's SMS
 					// PhoneNumberUtils.formatNumber("0917076422",
@@ -175,10 +113,11 @@ public class ListContactFetcher {
 					cs.moveToFirst();
 					String phone = "";
 					String temp = cs.getString(cs.getColumnIndex("address"));
-					
-					//convert to standard format address
+
+					// convert to standard format address
 					phone = ConvertNumberPhoneAddress(temp);
 
+					// get info of message
 					int type = cs.getInt(cs.getColumnIndex("type"));// 2 = sent,
 																	// etc.
 					long date = cs.getLong(cs.getColumnIndex("date"));
@@ -201,7 +140,8 @@ public class ListContactFetcher {
 							phone);
 
 					listContactItem.thumnail = getPhotoUri(context, contact_ID);
-					listContactItem.readStatus = cs.getInt(cs.getColumnIndexOrThrow("read"));
+					listContactItem.readStatus = cs.getInt(cs
+							.getColumnIndexOrThrow("read"));
 
 					listContact.add(listContactItem);
 				}
@@ -212,13 +152,16 @@ public class ListContactFetcher {
 		Log.e("AAAAAAAAAAA", "------------------ Number of  contact: "
 				+ listContact.size());
 		long time2 = System.currentTimeMillis();
-		Log.e("Time duration ", "Loadlist time duration: " + (time2 - time1) /1000);
-		
+		Log.e("Time duration ", "Loadlist time duration: " + (time2 - time1)
+				/ 1000);
+
+		// sort list contact
 		SortListContact();
-		
+
 		return listContact;
 	}
 
+	// get contact name for phoneNumber
 	public static String getContactName(Context context, String phoneNumber) {
 		ContentResolver cr = context.getContentResolver();
 		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
@@ -239,6 +182,7 @@ public class ListContactFetcher {
 		return contactName;
 	}
 
+	// get contact id for numberphone
 	public static long fetchContactIdFromPhoneNumber(Context context,
 			String phoneNumber) {
 		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
@@ -260,6 +204,7 @@ public class ListContactFetcher {
 		return contactId;
 	}
 
+	// get thumnail for number phone
 	public static Uri getPhotoUri(Context context, long contactId) {
 		ContentResolver contentResolver = context.getContentResolver();
 
@@ -295,8 +240,9 @@ public class ListContactFetcher {
 		return Uri.withAppendedPath(person,
 				ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 	}
-	
-	public static String ConvertNumberPhoneAddress(String temp){
+
+	// convert number phone to standard
+	public static String ConvertNumberPhoneAddress(String temp) {
 
 		String phone = "";
 		if (temp.substring(0, 3).equals("+84")) {
@@ -309,14 +255,10 @@ public class ListContactFetcher {
 				break;
 			case 16:
 				if (temp.subSequence(6, 7).equals(" ")) {
-					phone = "0" + temp.substring(4, 6)
-							+ temp.substring(7, 10)
-							+ temp.substring(11, 13)
-							+ temp.substring(14);
-				}
-				else{
-					phone = "0" + temp.substring(4, 7)
-							+ temp.substring(8, 11)
+					phone = "0" + temp.substring(4, 6) + temp.substring(7, 10)
+							+ temp.substring(11, 13) + temp.substring(14);
+				} else {
+					phone = "0" + temp.substring(4, 7) + temp.substring(8, 11)
 							+ temp.substring(12);
 				}
 				break;
@@ -334,47 +276,43 @@ public class ListContactFetcher {
 			}
 			;
 		}
-		
-	if(temp.length() == 13 && !temp.substring(0, 3).equals("+84")){
-		if(temp.substring(4, 5).equals(" ")){
-			phone = temp.substring(0,4) + 
-					temp.substring(5,8) + 
-					temp.substring(9);
+
+		if (temp.length() == 13 && !temp.substring(0, 3).equals("+84")) {
+			if (temp.substring(4, 5).equals(" ")) {
+				phone = temp.substring(0, 4) + temp.substring(5, 8)
+						+ temp.substring(9);
+			} else {
+				phone = temp.substring(0, 3) + temp.substring(4, 7)
+						+ temp.substring(8, 10) + temp.substring(11);
+
+			}
 		}
-		else{
-			phone = temp.substring(0,3) + 
-					temp.substring(4,7) + 
-					temp.substring(8, 10) + 
-					temp.substring(11);
-					
-		}
-	}
-		
 
 		if (phone == null || "".equals(phone)) {
 			phone = temp;
 		}
 		return phone;
 	}
-	
-	//sort the do not read sms to the top of list
-	protected void SortListContact(){
-		int pivot  = 0 ;
-		
+
+	// sort the do not read sms to the top of list
+	protected void SortListContact() {
+		int pivot = 0;
+
 		long time1 = System.currentTimeMillis();
-		for(int i = 1; i < listContact.size(); i++){			
-			Log.e("Sort list", "\n--- " + listContact.get(i).address + " ---- readstatus: " + listContact.get(i).readStatus);
-			if(listContact.get(i).readStatus == 0){
+		for (int i = 1; i < listContact.size(); i++) {
+			Log.e("Sort list", "\n--- " + listContact.get(i).address
+					+ " ---- readstatus: " + listContact.get(i).readStatus);
+			if (listContact.get(i).readStatus == 0) {
 				ListContactItem temp = listContact.get(i);
 				listContact.set(i, listContact.get(pivot));
 				listContact.set(pivot, temp);
-				pivot ++;
+				pivot++;
 			}
 		}
-		
-		for(int i = pivot; i < listContact.size() - 1; i++){
-			for(int j = i + 1; j < listContact.size(); j ++){
-				if(listContact.get(i).time < listContact.get(j).time){
+
+		for (int i = pivot; i < listContact.size() - 1; i++) {
+			for (int j = i + 1; j < listContact.size(); j++) {
+				if (listContact.get(i).time < listContact.get(j).time) {
 					ListContactItem temp = listContact.get(i);
 					listContact.set(i, listContact.get(j));
 					listContact.set(j, temp);
@@ -382,7 +320,8 @@ public class ListContactFetcher {
 			}
 		}
 		long time2 = System.currentTimeMillis();
-		Log.e("Time duration ", "Sortlist Time duration: " + (time2 -time1) /1000);
+		Log.e("Time duration ", "Sortlist Time duration: " + (time2 - time1)
+				/ 1000);
 	}
-	
+
 }

@@ -29,12 +29,11 @@ public class NotifySMS extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// get info sms and mms
 		bundle = getIntent().getExtras();
-
 		if (bundle.getString("EXIT").equals("true")) {
 			finish();
 		}
-
 		add = bundle.getString("add");
 		bd = bundle.getString("bd");
 		timeStamp = bundle.getLong("timeStamp");
@@ -47,6 +46,7 @@ public class NotifySMS extends Activity {
 				.setPositiveButton("Reply",
 						new DialogInterface.OnClickListener() {
 
+							// call intent to listsmsactivity
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -65,18 +65,12 @@ public class NotifySMS extends Activity {
 
 							}
 						})
+				// close app
 				.setNegativeButton("Close",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								// TODO Auto-generated method stub
-								// Intent intent = new
-								// Intent(Intent.ACTION_MAIN);
-								// intent.addCategory(Intent.CATEGORY_HOME);
-								// intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								// startActivity(intent);
-
 								Intent intent = getIntent();
 								intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 								intent.putExtra("EXIT", "true");
@@ -86,15 +80,10 @@ public class NotifySMS extends Activity {
 						});
 		AlertDialog alert = builder.create();
 		alert.show();
-
+		// show alert
 		AlertMessage(this, add, bd);
-		
-//		File f = new File("/sdcard/AAAAAAA.jpeg");
-//		Bitmap bm = BitmapFactory.decodeFile(f.getAbsolutePath());
-
 
 	}
-
 
 	@SuppressWarnings("deprecation")
 	public void AlertMessage(Context context, String adds, String body) {
@@ -126,28 +115,4 @@ public class NotifySMS extends Activity {
 
 	}
 }
-
-// private void Notify (String notificationTitle, String notificationMessage){
-//
-// //*********************** Show switch content on atatus bar
-// !!!!!!!!!!!!!!!"will updatefor logic in future  "*************
-//
-// NotificationManager notificationManager = (NotificationManager)
-// getSystemService(NOTIFICATION_SERVICE);
-// Notification notification = new Notification(R.drawable.ic_launcher, strAdd +
-// ": New message" , System.currentTimeMillis());
-//
-// Intent notificationIntent = new Intent(this, ListSMSActivity.class);
-// PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-// notificationIntent, 0);
-// // notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-// // notificationIntent.putExtra("address", strAdd);
-// // notificationIntent.putExtra("body", strBody);
-//
-// notification.setLatestEventInfo(ListSMSActivity.this, strAdd , strBody,
-// pendingIntent);
-// notificationManager.notify(9999, notification);
-//
-// //************************************************************************************************************************
-// }
 

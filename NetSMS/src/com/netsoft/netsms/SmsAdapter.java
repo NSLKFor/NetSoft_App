@@ -78,11 +78,6 @@ public class SmsAdapter extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.list_sms_row, null);
 			holder = new ViewHolder();
 			holder.mmsImage = (ImageView) convertView.findViewById(R.id.imgMMS);
-			// holder.body = (TextView) convertView.findViewById(R.id.body);
-			// holder.time = (TextView) convertView.findViewById(R.id.type);
-			// holder.list_sms = (RelativeLayout) convertView
-			// .findViewById(R.id.list_sms);
-
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -235,8 +230,8 @@ public class SmsAdapter extends BaseAdapter {
 		return BitmapFactory.decodeByteArray(res, 0, res.length, options);
 	}
 
-	public Bitmap writeOnDrawable(Context context, int drawableId,
-			String body, String time) {
+	public Bitmap writeOnDrawable(Context context, int drawableId, String body,
+			String time) {
 
 		TextView j = new TextView(context);
 		j.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
@@ -259,8 +254,7 @@ public class SmsAdapter extends BaseAdapter {
 
 		int len = body.length() < time.length() ? time.length() : body.length();
 		if (len * charWight < wight) {
-			textWight = len * charWight > wight / 2 ? wight
-					: (wight / 2);
+			textWight = len * charWight > wight / 2 ? wight : (wight / 2);
 		}
 
 		StaticLayout mTextLayout = new StaticLayout(body, mTextPaint,
@@ -317,8 +311,8 @@ public class SmsAdapter extends BaseAdapter {
 		return bm;
 	}
 
-	public Bitmap writeCanvasLeftBitmap(Context context,
-			int drawableId, Bitmap bitmap, String body, String time) {
+	public Bitmap writeCanvasLeftBitmap(Context context, int drawableId,
+			Bitmap bitmap, String body, String time) {
 		TextView j = new TextView(context);
 		j.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 
@@ -351,11 +345,11 @@ public class SmsAdapter extends BaseAdapter {
 
 		// !Important: alway decode source smaller screen size
 		textWight = textWight > bitmap.getWidth() ? textWight : bitmap
-				.getWidth() + (int) TypedValue.applyDimension(
-						TypedValue.COMPLEX_UNIT_DIP, 90,
-						context.getResources()
-								.getDisplayMetrics());
-		// check textwight over load screen wight so crash app --> the picture is out of the box bit it is not usually
+				.getWidth()
+				+ (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+						90, context.getResources().getDisplayMetrics());
+		// check textwight over load screen wight so crash app --> the picture
+		// is out of the box bit it is not usually
 		textWight = textWight > wight ? wight : textWight;
 
 		if (body != null) {
@@ -370,11 +364,11 @@ public class SmsAdapter extends BaseAdapter {
 			bm = Bitmap
 					.createScaledBitmap(
 							bm,
-							(int) textWight -  (int) TypedValue.applyDimension(
-									TypedValue.COMPLEX_UNIT_DIP, 35,
-									context.getResources()
-											.getDisplayMetrics())
-													,
+							(int) textWight
+									- (int) TypedValue.applyDimension(
+											TypedValue.COMPLEX_UNIT_DIP, 35,
+											context.getResources()
+													.getDisplayMetrics()),
 							bitmap.getHeight()
 									+ 30
 									+ bodyHeight
@@ -406,11 +400,15 @@ public class SmsAdapter extends BaseAdapter {
 
 		canvas.save();
 		Paint paint = new Paint();
-		canvas.drawBitmap(bitmap, (textWight - bitmap.getWidth())/2 - TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources()
-				.getDisplayMetrics()), TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources()
-						.getDisplayMetrics()), paint);
+		canvas.drawBitmap(
+				bitmap,
+				(textWight - bitmap.getWidth())
+						/ 2
+						- TypedValue.applyDimension(
+								TypedValue.COMPLEX_UNIT_DIP, 10, context
+										.getResources().getDisplayMetrics()),
+				TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15,
+						context.getResources().getDisplayMetrics()), paint);
 
 		if (body != null) {
 			textX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
