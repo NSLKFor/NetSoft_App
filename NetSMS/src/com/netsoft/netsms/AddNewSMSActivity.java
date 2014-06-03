@@ -83,6 +83,19 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 		btnAttach = (ImageButton) findViewById(R.id.AttachButton);
 
 		edtAddressNewMessage.addTextChangedListener((TextWatcher) this);
+		edtAddressNewMessage.setThreshold(1);
+
+		edtAddressNewMessage.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				Toast.makeText(getApplicationContext(), "click",
+						Toast.LENGTH_LONG).show();
+				edtAddressNewMessage.showDropDown();
+			}
+		});
 
 		edtAddressNewMessage.setOnItemClickListener(new OnItemClickListener() {
 
@@ -99,11 +112,6 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 						.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
 				int nId = cursor.getInt(cursor
 						.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-
-				// Toast.makeText(getApplicationContext(), "Item click:" +
-				// position + " szId:" + szId
-				// + " nId:" + nId + " Data:" + szDisplayName,
-				// Toast.LENGTH_LONG).show();
 
 				String number = null;
 				ContentResolver cr = getContentResolver();
@@ -134,7 +142,7 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 						"Item click:" + position + " szId:" + szId + " nId:"
 								+ nId + " number :" + number,
 						Toast.LENGTH_SHORT).show();
-				
+
 				mAddress = number;
 
 			}
@@ -144,7 +152,7 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+
 				if (m_curContacts != null)
 					m_curContacts.close();
 				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -215,9 +223,11 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 
 						APNHelper aHelper = new APNHelper(v.getContext());
 
-//						aHelper.sendMMS(address, parts);
-						
-						Toast.makeText(getApplicationContext(),  "Send mms address: " + mAddress, Toast.LENGTH_SHORT).show();
+						// aHelper.sendMMS(address, parts);
+
+						Toast.makeText(getApplicationContext(),
+								"Send mms address: " + mAddress,
+								Toast.LENGTH_SHORT).show();
 						String[] tmpAdd = new String[1];
 						tmpAdd[0] = address;
 						aHelper.insert(v.getContext(), tmpAdd, "MMS to "
@@ -246,9 +256,11 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 					// check and send sms
 					if (!sendBodyNew.getText().toString().equals("")) {
 						SMSSender sendSMS = new SMSSender();
-			//			sendSMS.sendSMSMessage(v.getContext(), smsItem);
-						
-						Toast.makeText(getApplicationContext(), "Send sms address: " + mAddress, Toast.LENGTH_SHORT).show();
+						// sendSMS.sendSMSMessage(v.getContext(), smsItem);
+
+						Toast.makeText(getApplicationContext(),
+								"Send sms address: " + mAddress,
+								Toast.LENGTH_SHORT).show();
 
 						Intent intent = new Intent(v.getContext(),
 								MainActivity.class);
@@ -276,7 +288,7 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 
 		m_curContacts = managedQuery(uri, projection, selection, selectionArgs,
 				sortOrder);
-
+		stopManagingCursor(m_curContacts);
 		String[] fields = new String[] { ContactsContract.Data.DISPLAY_NAME };
 		m_slvAdapter = new SimpleCursorAdapter(this,
 				android.R.layout.simple_list_item_1, m_curContacts, fields,
@@ -295,6 +307,7 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 				String[] selectionArgs = null;// new String[]{"'1'"};//, };
 				Cursor cur = managedQuery(uri, projection, selection,
 						selectionArgs, sortOrder);
+				stopManagingCursor(cur);
 				return cur;
 			}
 
@@ -461,7 +474,7 @@ public class AddNewSMSActivity extends Activity implements OnClickListener,
 		if (m_slvAdapter != null) {
 			m_slvAdapter.getFilter().filter(s);
 			// m_lvContacts.setAdapter(m_slvAdapter);
-			edtAddressNewMessage.setWidth(200);
+			// edtAddressNewMessage.setWidth(200);
 			edtAddressNewMessage.setAdapter(m_slvAdapter);
 		}
 	}
